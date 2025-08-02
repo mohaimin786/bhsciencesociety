@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BHSS Admin Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Add to your existing admin.css */
+    /* Phone number styling */
+.phone-number {
+  display: inline-flex;
+  align-items: center;
+}
+
+.country-code {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.separator {
+  margin: 0 4px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Light mode adjustments */
+body.light-mode .country-code {
+  color: #2E8B57;
+}
+
+body.light-mode .separator {
+  color: rgba(0, 0, 0, 0.5);
+}
+.btn-outline-light {
+  color: var(--light-text);
+  border-color: var(--light-text);
+}
+
+.btn-outline-light:hover {
+  background-color: var(--light-text);
+  color: var(--dark-text);
+}
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1100;
+}
+
+.toast {
+  border-left: 4px solid var(--primary-color);
+  background-color: var(--card-bg);
+  color: var(--light-text);
+  margin-bottom: 10px;
+}
+
+.toast.bg-success {
+  border-left-color: #28a745;
+}
+
+.toast.bg-danger {
+  border-left-color: #dc3545;
+}
+
+.toast-header {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: var(--primary-color);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Light mode adjustments */
+body.light-mode .btn-outline-light {
+  color: #333;
+  border-color: #333;
+}
+
+body.light-mode .btn-outline-light:hover {
+  background-color: #333;
+  color: white;
+}
+    :root {
+      --primary-color: #00ffae;
+      --secondary-color: white;
+      --dark-bg: #0f111a;
+      --card-bg: #1b1e2f;
+      --light-text: #ffffff;
+      --dark-text: #0f111a;
+      --danger-color: #dc3545;
+    }
+    .card-header .text-muted {
+      color: white !important;
+    }
+    body.dark {
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      min-height: 100vh;
+    }
+    
+    /* Admin Container */
+    .admin-container {
+      max-width: 1200px;
+      margin: 100px auto 50px;
+      padding: 30px;
+      background-color: var(--dark-bg);
+    }
+    
+    /* Navbar Overrides */
+    .admin-navbar {
+      background-color: #000000 !important;
+      box-shadow: 0 2px 10px rgba(0, 255, 174, 0.1);
+    }
+    
+    .admin-navbar .navbar-brand {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--primary-color) !important;
+      font-weight: 600;
+    }
+    
+    /* Status Badges */
+    .status-badge {
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    
+    .status-pending { 
+      background-color: rgba(255, 193, 7, 0.2); 
+      color: #ffc107;
+      border: 1px solid #ffc107;
+    }
+    
+    .status-approved { 
+      background-color: rgba(40, 167, 69, 0.2);
+      color: #28a745;
+      border: 1px solid #28a745;
+    }
+    
+    .status-rejected { 
+      background-color: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+      border: 1px solid #dc3545;
+    }
+    
+    /* Submission Cards */
+    .submission-card {
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      margin-bottom: 25px;
+      border-left: 4px solid var(--primary-color);
+      transition: all 0.3s ease;
+      background-color: var(--card-bg);
+      overflow: hidden;
+      color:white;
+      cursor: pointer;
+    }
+    
+    .submission-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 255, 174, 0.2);
+      background-color: rgba(0, 255, 174, 0.05);
+    }
+    
+    .submission-card.selected {
+      transform: scale(0.99);
+      box-shadow: 0 0 0 2px var(--primary-color);
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .card-header {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-weight: 600;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color:white;
+    }
+    
+    .card-body {
+      color:white;
+      padding: 20px;
+    }
+    
+    .detail-row {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 0;
+      margin-bottom: 12px;
+    }
+    
+    .detail-row:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    
+    .detail-label {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+    
+    /* Tabs */
+    .nav-tabs {
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 25px;
+    }
+    
+    .nav-tabs .nav-link {
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 600;
+      padding: 12px 20px;
+      border: none;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-tabs .nav-link:hover {
+      color: var(--primary-color);
+    }
+    
+    .nav-tabs .nav-link.active {
+      color: var(--primary-color);
+      background: transparent;
+      border: none;
+    }
+    
+    .nav-tabs .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--primary-color);
+    }
+    .nav-tabs .nav-link:hover {
+  color: var(--primary-color) !important;
+  background-color: rgba(0, 255, 174, 0.1) !important;
+}
+
+/* Specific hover colors for each tab */
+.nav-tabs .nav-link[data-status="pending"]:hover {
+  color: #ffc107 !important;
+  background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+.nav-tabs .nav-link[data-status="approved"]:hover {
+  color: #28a745 !important;
+  background-color: rgba(40, 167, 69, 0.1) !important;
+}
+
+.nav-tabs .nav-link[data-status="rejected"]:hover {
+  color: #dc3545 !important;
+  background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
+.nav-tabs .nav-link[data-status="all"]:hover {
+  color: var(--secondary-color) !important;
+  background-color: rgba(13, 192, 222, 0.1) !important;
+}
+
+/* Light mode adjustments */
+body.light-mode .nav-tabs .nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .nav-tabs .nav-link[data-status="pending"]:hover {
+  color: #d39e00 !important;
+  background-color: rgba(255, 193, 7, 0.15) !important;
+}
+
+body.light-mode .nav-tabs .nav-link[data-status="approved"]:hover {
+  color: #218838 !important;
+  background-color: rgba(40, 167, 69, 0.15) !important;
+}
+
+body.light-mode .nav-tabs .nav-link[data-status="rejected"]:hover {
+  color: #c82333 !important;
+  background-color: rgba(220, 53, 69, 0.15) !important;
+}
+
+body.light-mode .nav-tabs .nav-link[data-status="all"]:hover {
+  color: #138496 !important;
+  background-color: rgba(13, 192, 222, 0.15) !important;
+}
+    
+    /* Buttons */
+    .action-btn {
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      margin-right: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .btn-outline-primary {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: var(--dark-text);
+    }
+    
+    .btn-delete {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .btn-delete:hover {
+      background-color: #c82333;
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-top: 30px;
+    }
+    
+    .empty-state i {
+      font-size: 3.5rem;
+      color: rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+    }
+    
+    .empty-state h4 {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1100;
+    }
+    
+    .toast {
+      border-left: 4px solid var(--primary-color);
+      background-color: var(--card-bg);
+      color: var(--light-text);
+    }
+    
+    .toast-header {
+      background-color: rgba(0, 0, 0, 0.1);
+      color: var(--primary-color);
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Modals */
+    .modal-content {
+      background-color: var(--card-bg);
+      color: var(--light-text);
+      border: none;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    .modal-footer .btn {
+      min-width: 120px;
+      text-align: center;
+    }
+    
+    .form-control, .form-select {
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--light-text);
+    }
+    
+    .form-control:focus, .form-select:focus {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-color: var(--primary-color);
+      color: var(--light-text);
+      box-shadow: 0 0 0 0.25rem rgba(0, 255, 174, 0.25);
+    }
+    
+    /* Badges in subjects */
+    .subject-badge {
+      background-color: rgba(0, 255, 174, 0.1);
+      color: var(--primary-color);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+    
+    /* Light Mode Overrides */
+    body.light-mode {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    body.light-mode .admin-container,
+    body.light-mode .submission-card,
+    body.light-mode .modal-content {
+      background-color: #ffffff;
+    }
+    
+    body.light-mode .card-header,
+    body.light-mode .modal-header {
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    body.light-mode .detail-label {
+      color: #2E8B57;
+    }
+    
+    body.light-mode .nav-tabs .nav-link {
+      color: #555;
+    }
+    
+    body.light-mode .nav-tabs .nav-link.active {
+      color: #2E8B57;
+    }
+    
+    body.light-mode .nav-tabs .nav-link.active::after {
+      background-color: #2E8B57;
+    }
+    
+    body.light-mode .subject-badge {
+      background-color: rgba(46, 139, 87, 0.1);
+      color: #2E8B57;
+    }
+    
+    body.light-mode .empty-state {
+      background-color: rgba(0, 0, 0, 0.05);
+      color: #666;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .admin-container {
+        padding: 20px 15px;
+        margin-top: 80px;
+      }
+      
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .card-header > div:last-child {
+        width: 100%;
+        justify-content: flex-start;
+        color:white;      }
+    }
+
+    /* NEW STYLES FOR ADDED FEATURES */
+    
+    /* Selection mode styles */
+    .selection-mode-bar {
+      background-color: var(--card-bg);
+      padding: 10px 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .selection-count {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-right: 15px;
+    }
+    
+    .selection-actions .btn {
+      margin-left: 10px;
+    }
+    
+    .submission-card.selected {
+      border-left: 4px solid #ffc107;
+      background-color: rgba(255, 193, 7, 0.05);
+    }
+    
+    .submission-card.selected .card-header {
+      background-color: rgba(255, 193, 7, 0.1);
+    }
+    
+    .selection-checkbox {
+      margin-right: 10px;
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+    
+    /* Improved status modal */
+    .status-select-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    .status-select-wrapper::after {
+      content: "▼";
+      font-size: 12px;
+      color: var(--primary-color);
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    
+    #statusSelect, #bulkStatusSelect {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding: 12px 15px;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      font-size: 16px;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    #statusSelect:focus, #bulkStatusSelect:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 255, 174, 0.2);
+      outline: none;
+    }
+    
+    /* Status option colors */
+    #statusSelect option, #bulkStatusSelect option {
+      background-color: var(--card-bg);
+    }
+    
+    #statusSelect option[value="pending"], 
+    #bulkStatusSelect option[value="pending"] {
+      color: #ffc107;
+    }
+    
+    #statusSelect option[value="approved"], 
+    #bulkStatusSelect option[value="approved"] {
+      color: #28a745;
+    }
+    
+    #statusSelect option[value="rejected"], 
+    #bulkStatusSelect option[value="rejected"] {
+      color: #dc3545;
+    }
+    
+    /* Improved update button */
+    .update-status {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .update-status:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%, -50%);
+      transform-origin: 50% 50%;
+    }
+    
+    .update-status:focus:not(:active)::after {
+      animation: ripple 1s ease-out;
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(20, 20);
+        opacity: 0;
+      }
+    }
+    
+    /* Bulk action buttons */
+    .btn-bulk {
+      min-width: 100px;
+      position: relative;
+    }
+    
+    .btn-bulk-approve {
+      background-color: rgba(40, 167, 69, 0.2);
+      color: #28a745;
+      border-color: #28a745;
+    }
+    
+    .btn-bulk-approve:hover {
+      background-color: #28a745;
+      color: white;
+    }
+    
+    .btn-bulk-reject {
+      background-color: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+      border-color: #dc3545;
+    }
+    
+    .btn-bulk-reject:hover {
+      background-color: #dc3545;
+      color: white;
+    }
+    
+    .btn-bulk-delete {
+      background-color: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+      border-color: #dc3545;
+    }
+    
+    .btn-bulk-delete:hover {
+      background-color: #dc3545;
+      color: white;
+    }
+    
+    /* Toast variants */
+    .toast-success {
+      border-left-color: #28a745 !important;
+    }
+    
+    .toast-success .toast-header {
+      color: #28a745 !important;
+    }
+    
+    .toast-error {
+      border-left-color: #dc3545 !important;
+    }
+    
+    .toast-error .toast-header {
+      color: #dc3545 !important;
+    }
+    
+    .toast-info {
+      border-left-color: #17a2b8 !important;
+    }
+    
+    .toast-info .toast-header {
+      color: #17a2b8 !important;
+    }
+
+    /* Improved Confirm Button */
+    #confirmStatusUpdate, #confirmBulkAction {
+      background-color: var(--primary-color);
+      color: var(--dark-text);
+      border: none;
+      padding: 10px 24px;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #confirmStatusUpdate:hover, #confirmBulkAction:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 255, 174, 0.3);
+    }
+
+    #confirmStatusUpdate:active, #confirmBulkAction:active {
+      transform: translateY(0);
+    }
+
+    /* Improved Update Button in Modal */
+    .modal-footer .btn-primary {
+      background: linear-gradient(135deg, #00ffae 0%, #00b894 100%);
+      border: none;
+      padding: 10px 24px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .modal-footer .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--light-text);
+    }
+
+    #confirmDelete {
+      background: linear-gradient(135deg, #ff4d4d 0%, #c82333 100%);
+      border: none;
+      padding: 10px 24px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body class="dark">
+  <header>
+    <nav class="navbar admin-navbar navbar-expand-lg navbar-dark fixed-top">
+      <div class="container">
+        <div class="logo-container">
+          <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/logo.png?v=1747136438719" alt="BHSS Logo" class="logo" loading="lazy" />
+          <span class="title">BHSS Admin</span>
+        </div>
+
+        <div class="ms-auto d-flex align-items-center">
+          <span class="text-white me-3" id="submissionCount">Loading...</span>
+          <button id="exportBtn" class="btn btn-sm btn-outline-light me-2">
+            <i class="fas fa-file-export"></i> Export CSV
+          </button>
+          <button id="selectionModeBtn" class="btn btn-sm btn-outline-warning me-2">
+            <i class="fas fa-check-square"></i> Select Mode
+          </button>
+          <button id="refreshBtn" class="btn btn-sm btn-outline-light">
+            <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none"></span>
+            Refresh
+          </button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="admin-container">
+    <div id="selectionModeBar" class="selection-mode-bar d-none">
+      <div class="d-flex align-items-center">
+        <span class="selection-count"><span id="selectedCount">0</span> selected</span>
+        <div class="selection-actions">
+          <button class="btn btn-sm btn-bulk btn-bulk-approve" id="bulkApproveBtn">
+            <i class="fas fa-check-circle"></i> Approve
+          </button>
+          <button class="btn btn-sm btn-bulk btn-bulk-reject" id="bulkRejectBtn">
+            <i class="fas fa-times-circle"></i> Reject
+          </button>
+          <button class="btn btn-sm btn-bulk btn-bulk-delete" id="bulkDeleteBtn">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline-secondary" id="cancelSelectionBtn">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+
+    <ul class="nav nav-tabs" id="statusTabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="#" data-status="all">All Submissions</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-status="pending">Pending</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-status="approved">Approved</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-status="rejected">Rejected</a>
+      </li>
+    </ul>
+
+    <div id="submissionsContainer">
+      <div class="empty-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <h4>Loading submissions...</h4>
+        <p>Please wait while we load the latest applications</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Modal -->
+  <div class="modal fade" id="statusModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Application Status</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Update status for application from <strong id="modalSubmissionName" class="text-primary"></strong></p>
+          <div class="status-select-wrapper">
+            <select id="statusSelect" class="form-select mb-3">
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="statusNotes" class="form-label">Admin Notes</label>
+            <textarea id="statusNotes" class="form-control" rows="4" placeholder="Add any notes for internal use..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="confirmStatusUpdate" class="btn btn-primary">Update Status</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Action Confirmation Modal -->
+  <div class="modal fade" id="bulkActionModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bulkActionModalTitle">Confirm Bulk Action</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="bulkActionModalBody">
+          <p>You are about to update <strong><span id="bulkActionCount">0</span></strong> applications.</p>
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Warning:</strong> This action will affect all selected submissions.
+          </div>
+          <div id="bulkStatusSelectContainer" class="mb-3 d-none">
+            <label for="bulkStatusSelect" class="form-label">New Status</label>
+            <select id="bulkStatusSelect" class="form-select">
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="confirmBulkAction" class="btn btn-primary">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Confirm Deletion</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>You are about to permanently delete the application from:</p>
+          <h5 class="text-center my-3"><strong id="deleteSubmissionName" class="text-danger"></strong></h5>
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Warning:</strong> This action cannot be undone. All data will be permanently removed.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="confirmDelete" class="btn btn-danger">
+            <i class="fas fa-trash me-1"></i> Delete Permanently
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Toast -->
+  <div class="toast-container">
+    <div id="deleteToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto text-success"><i class="fas fa-check-circle me-2"></i>Success</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        <i class="fas fa-check me-2 text-success"></i>
+        <span id="toastMessage">Application was deleted successfully.</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const submissionsContainer = document.getElementById('submissionsContainer');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const submissionCount = document.getElementById('submissionCount');
+    const statusTabs = document.getElementById('statusTabs');
+    const statusModal = new bootstrap.Modal('#statusModal');
+    const deleteModal = new bootstrap.Modal('#deleteModal');
+    const bulkActionModal = new bootstrap.Modal('#bulkActionModal');
+    const deleteToast = new bootstrap.Toast(document.getElementById('deleteToast'));
+    const statusSelect = document.getElementById('statusSelect');
+    const confirmBtn = document.getElementById('confirmStatusUpdate');
+    const confirmDeleteBtn = document.getElementById('confirmDelete');
+    const statusNotes = document.getElementById('statusNotes');
+    const modalSubmissionName = document.getElementById('modalSubmissionName');
+    const deleteSubmissionName = document.getElementById('deleteSubmissionName');
+    const selectionModeBtn = document.getElementById('selectionModeBtn');
+    const selectionModeBar = document.getElementById('selectionModeBar');
+    const cancelSelectionBtn = document.getElementById('cancelSelectionBtn');
+    const selectedCount = document.getElementById('selectedCount');
+    const bulkApproveBtn = document.getElementById('bulkApproveBtn');
+    const bulkRejectBtn = document.getElementById('bulkRejectBtn');
+    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+    const confirmBulkAction = document.getElementById('confirmBulkAction');
+    const bulkActionModalTitle = document.getElementById('bulkActionModalTitle');
+    const bulkActionModalBody = document.getElementById('bulkActionModalBody');
+    const bulkActionCount = document.getElementById('bulkActionCount');
+    const bulkStatusSelectContainer = document.getElementById('bulkStatusSelectContainer');
+    const bulkStatusSelect = document.getElementById('bulkStatusSelect');
+    const toastMessage = document.getElementById('toastMessage');
+    
+    let currentSubmissionId = null;
+    let currentFilter = 'all';
+    let allSubmissions = [];
+    let selectedSubmissions = new Set();
+    let isSelectionMode = false;
+    let currentBulkAction = null;
+
+    // Load submissions
+    function loadSubmissions() {
+      loadingSpinner.classList.remove('d-none');
+      refreshBtn.disabled = true;
+      
+      fetch('/api/submissions')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            allSubmissions = data.data;
+            updateSubmissionCount();
+            renderSubmissions();
+          }
+        })
+        .catch(err => {
+          console.error('Error:', err);
+          submissionsContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-exclamation-triangle"></i>
+              <h4>Error Loading Submissions</h4>
+              <p>Failed to load submissions. Please try again later.</p>
+              <button class="btn btn-primary mt-3" onclick="location.reload()">
+                <i class="fas fa-sync-alt me-2"></i>Reload Page
+              </button>
+            </div>
+          `;
+        })
+        .finally(() => {
+          loadingSpinner.classList.add('d-none');
+          refreshBtn.disabled = false;
+        });
+    }
+
+    // Update submission count display
+    function updateSubmissionCount() {
+      const pendingCount = allSubmissions.filter(s => s.status === 'pending').length;
+      const approvedCount = allSubmissions.filter(s => s.status === 'approved').length;
+      const rejectedCount = allSubmissions.filter(s => s.status === 'rejected').length;
+      
+      submissionCount.innerHTML = `
+        <span class="badge bg-dark">Total: ${allSubmissions.length}</span>
+        <span class="badge status-pending ms-2">Pending: ${pendingCount}</span>
+        <span class="badge status-approved ms-2">Approved: ${approvedCount}</span>
+        <span class="badge status-rejected ms-2">Rejected: ${rejectedCount}</span>
+      `;
+    }
+
+    // Render submissions based on current filter
+    function renderSubmissions() {
+      let filteredSubmissions = allSubmissions;
+      
+      if (currentFilter !== 'all') {
+        filteredSubmissions = allSubmissions.filter(s => s.status === currentFilter);
+      }
+      
+      if (filteredSubmissions.length === 0) {
+        submissionsContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h4>No ${currentFilter === 'all' ? '' : currentFilter} applications found</h4>
+            <p>When new applications are submitted, they will appear here.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      submissionsContainer.innerHTML = filteredSubmissions.map(sub => `
+        <div class="card submission-card mb-3 ${selectedSubmissions.has(sub._id) ? 'selected' : ''}" id="submission-${sub._id}">
+          <div class="card-header">
+            <div class="d-flex align-items-center">
+              ${isSelectionMode ? `
+                <input type="checkbox" class="selection-checkbox" data-id="${sub._id}" 
+                  ${selectedSubmissions.has(sub._id) ? 'checked' : ''}>
+              ` : ''}
+              <span class="status-badge status-${sub.status} me-2">${sub.status.toUpperCase()}</span>
+              <strong>${sub.fullName}</strong>
+                <span class="separator"> - </span>
+
+              <span class="text-muted ms-2" style="color:white;">${sub.email}</span>
+            </div>
+            <div class="mt-2 mt-md-0">
+              <small class="text-muted me-3">
+                <i class="far fa-clock me-1"></i>
+                ${new Date(sub.timestamp).toLocaleString()}
+              </small>
+              ${!isSelectionMode ? `
+                <button class="btn btn-sm btn-outline-primary action-btn update-status" data-id="${sub._id}">
+                  <i class="fas fa-edit me-1"></i> Update
+                </button>
+                <button class="btn btn-sm btn-delete action-btn delete-submission" data-id="${sub._id}">
+                  <i class="fas fa-trash me-1"></i> Delete
+                </button>
+              ` : ''}
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row detail-row">
+              <div class="col-md-3 detail-label"><i class="fas fa-user me-2"></i>Basic Info</div>
+              <div class="col-md-9">
+                  <div><strong>Name:</strong> ${sub.fullName || 'Not provided'}</div>
+
+                 <div><strong>Email:</strong> ${sub.email || 'Not provided'}</div>
+
+                  <div><strong>Phone:</strong> 
+                    ${sub.phone ? `
+                      <span class="phone-number">
+                        ${sub.countryCode ? `
+                          <span class="country-code">${sub.countryCode}</span>
+                          <span class="separator"> - </span>
+                        ` : ''}
+                        <span class="local-number">${sub.countryCode ? sub.phone.replace(sub.countryCode, '') : sub.phone}</span>
+                      </span>
+                    ` : 'Not provided'}
+                  </div>             
+                  <div><strong>Date of Birth:</strong> ${sub.dob || 'Not provided'}</div>
+                <div><strong>Grade:</strong> ${sub.grade || 'Not provided'}</div>
+              </div>
+            </div>
+            
+            <div class="row detail-row">
+              <div class="col-md-3 detail-label"><i class="fas fa-school me-2"></i>School Info</div>
+              <div class="col-md-9">
+                  ${sub.isBhStudent === true || sub.isBhStudent === 'yes' ? `
+                    <div><strong>Bloomfield Hall Student:</strong> Yes</div>
+                    ${sub.section ? `<div><strong>Section:</strong> ${sub.section}</div>` : ''}
+                  ` : `
+                    <div><strong>Bloomfield Hall Student:</strong> No</div>
+                    ${sub.country ? `<div><strong>Country:</strong> ${sub.country}</div>` : ''}
+                    ${sub.school ? `<div><strong>School:</strong> ${sub.school}</div>` : ''}
+                  `}
+              </div>
+            </div>
+            
+            <div class="row detail-row">
+              <div class="col-md-3 detail-label"><i class="fas fa-book me-2"></i>Subjects of Interest</div>
+              <div class="col-md-9">
+                ${sub.subjects && sub.subjects.length > 0 ? 
+                  sub.subjects.map(subj => `<span class="subject-badge">${subj}</span>`).join('') : 
+                  '<span class="text-muted">None selected</span>'}
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-3 detail-label"><i class="fas fa-comment me-2"></i>Motivation</div>
+              <div class="col-md-9">
+                <div class="bg-dark p-3 rounded">${sub.motivation || 'No motivation provided'}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      
+      // Add event listeners to update buttons if not in selection mode
+      if (!isSelectionMode) {
+        document.querySelectorAll('.update-status').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            currentSubmissionId = e.target.closest('button').dataset.id;
+            const submission = allSubmissions.find(s => s._id === currentSubmissionId);
+            if (submission) {
+              modalSubmissionName.textContent = submission.fullName;
+              statusSelect.value = submission.status;
+              statusNotes.value = submission.notes || '';
+              statusModal.show();
+            }
+          });
+        });
+      } else {
+        // Add event listeners to checkboxes in selection mode
+        document.querySelectorAll('.selection-checkbox').forEach(checkbox => {
+          checkbox.addEventListener('change', (e) => {
+            const submissionId = e.target.dataset.id;
+            if (e.target.checked) {
+              selectedSubmissions.add(submissionId);
+              document.getElementById(`submission-${submissionId}`).classList.add('selected');
+            } else {
+              selectedSubmissions.delete(submissionId);
+              document.getElementById(`submission-${submissionId}`).classList.remove('selected');
+            }
+            updateSelectedCount();
+          });
+        });
+
+        // Add click event to entire card for selection
+        document.querySelectorAll('.submission-card').forEach(card => {
+          card.addEventListener('click', (e) => {
+            // Don't trigger if clicking on checkbox directly
+            if (e.target.classList.contains('selection-checkbox')) return;
+            
+            const checkbox = card.querySelector('.selection-checkbox');
+            if (!checkbox) return;
+            
+            const submissionId = checkbox.dataset.id;
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+              selectedSubmissions.add(submissionId);
+              card.classList.add('selected');
+            } else {
+              selectedSubmissions.delete(submissionId);
+              card.classList.remove('selected');
+            }
+            updateSelectedCount();
+          });
+          
+          // Prevent text selection when clicking rapidly
+          card.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('selection-checkbox')) return;
+            e.preventDefault();
+          });
+        });
+      }
+    }
+
+    // Update selected count display
+    function updateSelectedCount() {
+      selectedCount.textContent = selectedSubmissions.size;
+      
+      // Enable/disable bulk action buttons based on selection
+      const hasSelection = selectedSubmissions.size > 0;
+      bulkApproveBtn.disabled = !hasSelection;
+      bulkRejectBtn.disabled = !hasSelection;
+      bulkDeleteBtn.disabled = !hasSelection;
+    }
+
+    // Toggle selection mode
+    function toggleSelectionMode() {
+      isSelectionMode = !isSelectionMode;
+      
+      if (isSelectionMode) {
+        selectionModeBtn.innerHTML = '<i class="fas fa-check-square"></i> Selection Mode';
+        selectionModeBtn.classList.add('active');
+        selectionModeBar.classList.remove('d-none');
+      } else {
+        selectionModeBtn.innerHTML = '<i class="fas fa-check-square"></i> Select Mode';
+        selectionModeBtn.classList.remove('active');
+        selectionModeBar.classList.add('d-none');
+        selectedSubmissions.clear();
+        updateSelectedCount();
+      }
+      
+      renderSubmissions();
+    }
+
+    // Handle bulk actions
+    function handleBulkAction(action) {
+      if (selectedSubmissions.size === 0) return;
+      
+      currentBulkAction = action;
+      bulkActionCount.textContent = selectedSubmissions.size;
+      
+      if (action === 'delete') {
+        bulkActionModalTitle.textContent = 'Confirm Bulk Deletion';
+        bulkActionModalBody.innerHTML = `
+          <p>You are about to delete <strong>${selectedSubmissions.size}</strong> applications.</p>
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Warning:</strong> This action cannot be undone. All data will be permanently removed.
+          </div>
+        `;
+        bulkStatusSelectContainer.classList.add('d-none');
+      } else {
+        bulkActionModalTitle.textContent = action === 'approve' ? 'Bulk Approve Applications' : 'Bulk Reject Applications';
+        bulkStatusSelectContainer.classList.remove('d-none');
+        bulkStatusSelect.value = action === 'approve' ? 'approved' : 'rejected';
+      }
+      
+      bulkActionModal.show();
+    }
+    function isValidId(id) {
+  return typeof id === 'string' && id.trim().length > 0;
+}    // Perform bulk action
+    // Perform bulk action
+// Perform bulk action
+async function performBulkAction() {
+  if (selectedSubmissions.size === 0) {
+    showToast('Warning', 'No submissions selected', 'warning');
+    return;
+  }
+
+  // Convert to array and validate IDs
+  const submissionIds = Array.from(selectedSubmissions);
+  const validIds = submissionIds.map(id => String(id)).filter(id => id.trim().length > 0);
+
+  if (validIds.length === 0) {
+    showToast('Error', 'No valid submission IDs found', 'error');
+    return;
+  }
+
+  // UI Loading State
+  const originalButtonText = confirmBulkAction.innerHTML;
+  confirmBulkAction.disabled = true;
+  confirmBulkAction.innerHTML = `
+    <span class="spinner-border spinner-border-sm me-2"></span>
+    Processing ${validIds.length} submissions...
+  `;
+
+  // Track results
+  let successCount = 0;
+  let failCount = 0;
+  const failedIds = [];
+
+  // Process each ID sequentially
+  for (const id of validIds) {
+    try {
+      let response, data;
+      
+      if (currentBulkAction === 'delete') {
+        // Single delete request
+        response = await fetch(`/api/submissions/${id}`, {
+          method: 'DELETE',
+          headers: { 'Accept': 'application/json' }
+        });
+        data = await response.json();
+        
+        if (response.ok && data.success) {
+          // Remove from local data
+          allSubmissions = allSubmissions.filter(sub => sub._id !== id);
+          successCount++;
+        } else {
+          throw new Error(data.error || 'Delete failed');
+        }
+      } else {
+        // Single status update
+        const newStatus = currentBulkAction === 'approve' ? 'approved' : 'rejected';
+        response = await fetch(`/api/submissions/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+        data = await response.json();
+        
+        if (response.ok && data.success) {
+          // Update local data
+          const submission = allSubmissions.find(sub => sub._id === id);
+          if (submission) submission.status = newStatus;
+          successCount++;
+        } else {
+          throw new Error(data.error || 'Status update failed');
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to process ID ${id}:`, error);
+      failCount++;
+      failedIds.push(id);
+    }
+  }
+
+  // Update UI
+  selectedSubmissions.clear();
+  renderSubmissions();
+  updateSubmissionCount();
+
+  // Show results
+  if (failCount === 0) {
+    showToast(
+      'Success', 
+      `Completed all ${successCount} operations successfully`,
+      'success'
+    );
+  } else {
+    showToast(
+      'Partial Success',
+      `Completed ${successCount} operations, failed on ${failCount} submissions`,
+      'warning'
+    );
+    
+    // Optionally log failed IDs for debugging
+    console.log('Failed IDs:', failedIds);
+  }
+
+  bulkActionModal.hide();
+  confirmBulkAction.disabled = false;
+  confirmBulkAction.innerHTML = originalButtonText;
+}
+  
+
+    // Tab filtering
+    statusTabs.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tab = e.target.closest('a');
+      if (!tab) return;
+      
+      // Update active tab
+      statusTabs.querySelectorAll('.nav-link').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      // Update filter and render
+      currentFilter = tab.dataset.status;
+      renderSubmissions();
+    });
+
+    // Update status
+       confirmBtn.addEventListener('click', () => {
+      const newStatus = statusSelect.value;
+      const notes = statusNotes.value;
+      
+      if (!currentSubmissionId) return;
+
+      loadingSpinner.classList.remove('d-none');
+      confirmBtn.disabled = true;
+
+      fetch(`/api/submissions/${currentSubmissionId}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ 
+          status: newStatus,
+          notes: notes 
+        })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            // Update the local submission data
+            const index = allSubmissions.findIndex(s => s._id === currentSubmissionId);
+            if (index !== -1) {
+              allSubmissions[index].status = newStatus;
+              allSubmissions[index].notes = notes;
+            }
+            statusModal.hide();
+            showToast('Success', `Application status updated to ${newStatus}`, 'success');
+            renderSubmissions();
+            updateSubmissionCount();
+          } else {
+            throw new Error(data.error || 'Failed to update status');
+          }
+        })
+        .catch(err => {
+          console.error('Error:', err);
+          showToast('Error', 'Failed to update status: ' + err.message, 'error');
+        })
+        .finally(() => {
+          loadingSpinner.classList.add('d-none');
+          confirmBtn.disabled = false;
+        });
+    });
+
+
+    // Delete submission
+   document.addEventListener('click', function(e) {
+      // Handle delete button clicks
+      if (e.target.classList.contains('delete-submission') || 
+          e.target.closest('.delete-submission')) {
+        const btn = e.target.classList.contains('delete-submission') ? 
+                   e.target : e.target.closest('.delete-submission');
+        currentSubmissionId = btn.dataset.id;
+        const submission = allSubmissions.find(s => s._id === currentSubmissionId);
+        if (submission) {
+          deleteSubmissionName.textContent = submission.fullName;
+          deleteModal.show();
+        }
+        e.stopPropagation(); // Prevent card selection when clicking delete button
+      }
+    });
+
+    confirmDeleteBtn.addEventListener('click', () => {
+  if (!currentSubmissionId) return;
+
+  confirmDeleteBtn.disabled = true;
+  confirmDeleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Deleting...';
+
+  fetch(`/api/submissions/${currentSubmissionId}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (data.success) {
+      deleteModal.hide();
+      allSubmissions = allSubmissions.filter(s => s._id !== currentSubmissionId);
+      toastMessage.textContent = 'Application was deleted successfully.';
+      deleteToast.show();
+      renderSubmissions();
+      updateSubmissionCount();
+    } else {
+      throw new Error(data.error || 'Failed to delete submission');
+    }
+  })
+  .catch(err => {
+    console.error('Error:', err);
+    toastMessage.textContent = 'Failed to delete application: ' + err.message;
+    deleteToast.show();
+  })
+  .finally(() => {
+    confirmDeleteBtn.disabled = false;
+    confirmDeleteBtn.innerHTML = '<i class="fas fa-trash me-1"></i> Delete Permanently';
+  });
+});
+    // Manual refresh
+    refreshBtn.addEventListener('click', () => {
+      loadSubmissions();
+    });
+
+    // CSV Export functionality - Fixed version
+    document.getElementById('exportBtn').addEventListener('click', async () => {
+      const exportBtn = document.getElementById('exportBtn');
+      const originalHtml = exportBtn.innerHTML;
+      
+      try {
+        exportBtn.disabled = true;
+        exportBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Exporting...';
+        
+        const response = await fetch('/api/submissions/export');
+        
+        if (!response.ok) {
+          throw new Error('Export failed with status: ' + response.status);
+        }
+        
+        // Get the filename from content-disposition or create a default one
+        const contentDisposition = response.headers.get('content-disposition');
+        let filename = 'bhss-submissions.csv';
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+          if (filenameMatch && filenameMatch[1]) {
+            filename = filenameMatch[1];
+          }
+        }
+        
+        // Convert response to blob and create download link
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Cleanup
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        showToast('Export Complete', 'CSV file downloaded successfully');
+      } catch (err) {
+        console.error('Export error:', err);
+        showToast('Export Failed', err.message, 'error');
+      } finally {
+        exportBtn.disabled = false;
+        exportBtn.innerHTML = originalHtml;
+      }
+    });
+
+    // Toast notification function
+    function showToast(title, message, type = 'success') {
+      // Remove any existing toasts to prevent stacking
+      document.querySelectorAll('.toast-container .toast').forEach(toast => {
+        if (toast.id !== 'deleteToast') {
+          toast.remove();
+        }
+      });
+      
+      const toast = document.createElement('div');
+      toast.className = `toast ${type === 'error' ? 'toast-error' : type === 'info' ? 'toast-info' : 'toast-success'}`;
+      toast.innerHTML = `
+        <div class="toast-header">
+          <strong class="me-auto">${title}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">${message}</div>
+      `;
+      
+      document.querySelector('.toast-container').appendChild(toast);
+      const bsToast = new bootstrap.Toast(toast);
+      bsToast.show();
+      
+      setTimeout(() => toast.remove(), 5000);
+    }
+
+    // Check authentication status
+    (async () => {
+      try {
+        const response = await fetch('/api/admin/status');
+        const data = await response.json();
+        if (!data.authenticated) {
+          window.location.href = '/admin-login';
+        }
+      } catch (err) {
+        console.error('Authentication check failed:', err);
+        window.location.href = '/admin-login';
+      }
+    })();
+
+    // Event listeners for selection mode
+    selectionModeBtn.addEventListener('click', toggleSelectionMode);
+    cancelSelectionBtn.addEventListener('click', toggleSelectionMode);
+    
+    // Event listeners for bulk actions
+    bulkApproveBtn.addEventListener('click', () => handleBulkAction('approve'));
+    bulkRejectBtn.addEventListener('click', () => handleBulkAction('reject'));
+    bulkDeleteBtn.addEventListener('click', () => handleBulkAction('delete'));
+    confirmBulkAction.addEventListener('click', performBulkAction);
+
+    // Initial load
+    loadSubmissions();
+  });
+</script>
+
+</body>
+</html>

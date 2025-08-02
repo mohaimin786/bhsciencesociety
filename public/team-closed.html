@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meet the Team</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <title>Meet the Team | Bloomfield Hall Science Society</title>
+    <link
+      rel="icon"
+      href="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/logo.png?v=1747136438719"
+      type="image/png"
+    />
+    <style>
+      .subject-pairs-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 40px;
+  margin-top: 30px;
+}
+
+/* Add this new rule to center the last item if it's alone */
+.subject-pairs-container:after {
+  content: "";
+  width: 300px; /* Same as your subject-pair width */
+}
+      .scroll-down {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 10;
+        opacity: 0;
+        animation: bounce 2s infinite 1s, pulse 2s infinite 1s,
+          fadeIn 0.5s ease-out 1s forwards;
+      }
+      :root {
+        --emerald: #2e8b57;
+        --slate-blue: #6a5acd;
+        --cream: #f5f5dc;
+        --white: #ffffff;
+        --gold: #ffd700;
+        --space-blue: #0a0e23;
+        --neon-glow: 0 0 10px rgba(46, 139, 87, 0.8),
+          0 0 20px rgba(46, 139, 87, 0.6);
+        --blue-glow: 0 0 10px rgba(106, 90, 205, 0.8),
+          0 0 20px rgba(106, 90, 205, 0.6);
+        --gold-glow: 0 0 10px rgba(255, 215, 0, 0.7),
+          0 0 20px rgba(255, 215, 0, 0.5);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #121212;
+        color: var(--cream);
+        overflow-x: hidden;
+        background-image: radial-gradient(
+            circle at 10% 20%,
+            rgba(46, 139, 87, 0.1) 0%,
+            transparent 20%
+          ),
+          radial-gradient(
+            circle at 90% 80%,
+            rgba(106, 90, 205, 0.1) 0%,
+            transparent 20%
+          );
+      }
+
+      /* Particle Background */
+      #particles-js {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        top: 0;
+        left: 0;
+      }
+
+      /* Hero Section */
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        padding: 0 20px;
+      }
+
+      .hero h1 {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(90deg, var(--emerald), var(--slate-blue));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: var(--neon-glow);
+        position: relative;
+      }
+
+      .hero p {
+        font-size: 1.5rem;
+        max-width: 800px;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+
+      .scroll-prompt {
+        position: absolute;
+        bottom: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: bounce 2s infinite;
+      }
+
+      .scroll-prompt i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: var(--emerald);
+        text-shadow: var(--neon-glow);
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-20px);
+        }
+        60% {
+          transform: translateY(-10px);
+        }
+      }
+
+      /* Section Styling */
+      section {
+        padding: 80px 20px;
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        margin-bottom: 50px;
+        text-align: center;
+        position: relative;
+        display: inline-block;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--emerald),
+          var(--slate-blue),
+          transparent
+        );
+        border-radius: 3px;
+      }
+
+      /* Council Members */
+      .council-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+        perspective: 1000px;
+      }
+
+      .council-card {
+        width: 250px;
+        height: 350px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.8s;
+        cursor: pointer;
+      }
+
+      .council-card:hover {
+        transform: rotateY(180deg);
+      }
+
+      .card-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(30, 30, 40, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(46, 139, 87, 0.3);
+      }
+
+      .card-front {
+        transform: rotateY(0deg);
+      }
+
+      .card-back {
+        transform: rotateY(180deg);
+        background: rgba(20, 20, 30, 0.9);
+        text-align: center;
+        justify-content: flex-start;
+        padding-top: 40px;
+      }
+
+      .member-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--emerald);
+        box-shadow: var(--neon-glow);
+        margin-bottom: 20px;
+      }
+
+      .member-name {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: var(--cream);
+        text-align:center;
+      }
+
+      .member-role {
+        font-size: 1rem;
+        color: var(--slate-blue);
+        font-weight: bold;
+        padding: 5px 15px;
+        border-radius: 20px;
+        background: rgba(106, 90, 205, 0.2);
+        margin-bottom: 20px;
+      }
+
+      .member-bio {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 15px;
+      }
+
+      /* Subject Teams - New Enhanced Design */
+      .subject-pairs-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 40px;
+        margin-top: 30px;
+      }
+
+      .subject-pair {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 20px;
+        border-radius: 20px;
+        background: rgba(30, 30, 40, 0.6);
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(106, 90, 205, 0.2);
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .subject-pair:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        border-color: currentColor;
+      }
+
+      .subject-icon-container {
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .subject-icon {
+        font-size: 2.5rem;
+        z-index: 2;
+        background: rgba(30, 30, 40, 0.9);
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 2px solid;
+        box-shadow: 0 0 15px currentColor;
+      }
+
+      .subject-connector {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: currentColor;
+        z-index: 1;
+        opacity: 0.3;
+        transform: translateY(-50%);
+      }
+
+      .subject-cards {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        gap: 20px;
+        position: relative;
+      }
+
+      .subject-card {
+        flex: 1;
+        min-width: 120px;
+        height: 220px;
+        background: rgba(40, 40, 50, 0.8);
+        backdrop-filter: blur(5px);
+        border-radius: 15px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(106, 90, 205, 0.3);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .subject-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          45deg,
+          rgba(46, 139, 87, 0.1),
+          rgba(106, 90, 205, 0.1)
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+      }
+
+      .subject-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      .subject-card:hover::before {
+        opacity: 0.5;
+      }
+
+      .subject-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 2px solid var(--cream);
+        transition: all 0.3s ease;
+      }
+
+      .subject-card:hover .subject-avatar {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px currentColor;
+      }
+
+      .subject-card-head .subject-avatar {
+        border-color: var(--emerald);
+      }
+
+      .subject-card-assistant .subject-avatar {
+        border-color: var(--slate-blue);
+      }
+
+      .subject-name {
+        font-size: 1rem;
+        text-align: center;
+        margin-bottom: 5px;
+        color: var(--cream);
+        text-align:center;
+      }
+
+      .subject-role {
+        font-size: 0.8rem;
+        text-align: center;
+        color: var(--cream);
+        padding: 3px 10px;
+        border-radius: 15px;
+        background: rgba(0, 0, 0, 0.3);
+      }
+
+      .subject-card-head .subject-role {
+        background: rgba(46, 139, 87, 0.3);
+      }
+
+      .subject-card-assistant .subject-role {
+        background: rgba(106, 90, 205, 0.3);
+      }
+
+      /* Subject Colors */
+      .subject-1 {
+        color: var(--emerald);
+      }
+      .subject-2 {
+        color: var(--slate-blue);
+      }
+      .subject-3 {
+        color: var(--gold);
+      }
+      .subject-4 {
+        color: #ff6b6b;
+      }
+      .subject-5 {
+        color: #4ecdc4;
+      }
+      .subject-6 {
+        color: #ff9f43;
+      }
+      .subject-7 {
+        color: #a55eea;
+      }
+      .subject-8 {
+        color: #45aaf2;
+      }
+      .subject-9 {
+        color: #fc5c65;
+      }
+      .subject-10 {
+        color: #26de81;
+      }
+
+      /* Program Coordinators - New Enhanced Design */
+      .program-coordinators-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 40px;
+}
+
+@media (max-width: 992px) {
+  .program-coordinators-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .program-coordinators-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+      .program-coordinator-card {
+        background: rgba(30, 30, 40, 0.8);
+        backdrop-filter: blur(5px);
+        border-radius: 15px;
+        padding: 25px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(106, 90, 205, 0.3);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .program-coordinator-card::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, var(--emerald), var(--slate-blue));
+        z-index: -1;
+        border-radius: 15px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .program-coordinator-card:hover::before {
+        opacity: 0.5;
+      }
+
+      .program-coordinator-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        border-color: var(--emerald);
+      }
+
+      .program-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 15px;
+        display: block;
+        border: 3px solid var(--slate-blue);
+        box-shadow: var(--blue-glow);
+        transition: all 0.3s ease;
+      }
+
+      .program-coordinator-card:hover .program-avatar {
+        border-color: var(--emerald);
+        box-shadow: var(--neon-glow);
+        transform: scale(1.1);
+      }
+
+      .program-name {
+        font-size: 1.3rem;
+        text-align: center;
+        margin-bottom: 10px;
+        color: var(--cream);
+        position: relative;
+      }
+
+      .program-name::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 2px;
+        background: var(--slate-blue);
+        transition: all 0.3s ease;
+      }
+
+      .program-coordinator-card:hover .program-name::after {
+        width: 60px;
+        background: var(--emerald);
+      }
+
+      .program-role {
+        font-size: 0.9rem;
+        text-align: center;
+        color: var(--slate-blue);
+        margin-bottom: 15px;
+        transition: color 0.3s ease;
+        padding: 5px 15px;
+        border-radius: 20px;
+        background: rgba(106, 90, 205, 0.2);
+      }
+
+      .program-coordinator-card:hover .program-role {
+        color: var(--emerald);
+        background: rgba(46, 139, 87, 0.2);
+      }
+
+      .program-details {
+        font-size: 0.85rem;
+        text-align: center;
+        color: rgba(245, 245, 220, 0.8);
+        line-height: 1.5;
+        margin-top: 10px;
+      }
+
+      .program-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--gold);
+        box-shadow: var(--gold-glow);
+        animation: pulse 2s infinite;
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .modal.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .modal-content {
+        background: rgba(30, 30, 40, 0.95);
+        border-radius: 15px;
+        width: 90%;
+        max-width: 600px;
+        padding: 30px;
+        position: relative;
+        border: 1px solid var(--emerald);
+        box-shadow: var(--neon-glow);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+
+      .modal.active .modal-content {
+        transform: scale(1);
+      }
+
+      .close-modal {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 1.5rem;
+        color: var(--cream);
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .close-modal:hover {
+        color: var(--emerald);
+      }
+
+      .modal-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--emerald);
+        box-shadow: var(--neon-glow);
+        margin: 0 auto 20px;
+        display: block;
+      }
+
+      .modal-name {
+        font-size: 1.8rem;
+        text-align: center;
+        margin-bottom: 10px;
+        color: var(--cream);
+      }
+
+      .modal-role {
+        font-size: 1.2rem;
+        text-align: center;
+        margin-bottom: 20px;
+        color: var(--slate-blue);
+      }
+
+      .modal-bio {
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      .modal-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .modal-detail-item {
+        background: rgba(20, 20, 30, 0.7);
+        padding: 10px;
+        border-radius: 8px;
+        border-left: 3px solid var(--emerald);
+      }
+
+      .modal-detail-label {
+        font-size: 0.8rem;
+        color: var(--slate-blue);
+        margin-bottom: 5px;
+      }
+
+      .modal-detail-value {
+        font-size: 0.9rem;
+        color: var(--cream);
+      }
+
+      /* Responsive */
+      @media (max-width: 992px) {
+        .hero h1 {
+          font-size: 3rem;
+        }
+
+        .subject-pairs-container {
+          gap: 30px;
+        }
+
+        .subject-pair {
+          width: 280px;
+        }
+
+        .subject-cards {
+          gap: 15px;
+        }
+
+        .subject-card {
+          width: 130px;
+          height: 200px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .section-title {
+          font-size: 2rem;
+        }
+
+        .council-card {
+          width: 200px;
+          height: 300px;
+        }
+
+        .subject-pairs-container {
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+
+        .subject-pair {
+          width: 100%;
+        }
+
+        .subject-cards {
+          justify-content: center;
+        }
+
+        .subject-card {
+          width: 150px;
+        }
+
+        .program-coordinators-container {
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+
+        .modal-details {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+
+        .hero p {
+          font-size: 1.2rem;
+        }
+
+        .council-container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .subject-pair {
+          width: 100%;
+        }
+
+        .subject-cards {
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+        }
+
+        .subject-card {
+          width: 200px;
+        }
+
+        .subject-connector {
+          width: 4px;
+          height: 100px;
+          top: 70px;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        .subject-connector::after {
+          width: 4px;
+          height: 100px;
+          top: 0;
+          left: 0;
+          background: linear-gradient(0deg, transparent, currentColor);
+        }
+
+        .program-coordinators-container {
+          grid-template-columns: 1fr;
+        }
+      }
+      /* Media Team */
+      .media-team {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .media-member {
+        width: 200px;
+        padding: 20px;
+        background: rgba(30, 30, 40, 0.8);
+        backdrop-filter: blur(5px);
+        border-radius: 10px;
+        border: 1px solid rgba(106, 90, 205, 0.3);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .media-member::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, var(--emerald), var(--slate-blue));
+        z-index: -1;
+        border-radius: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .media-member:hover::before {
+        opacity: 0.5;
+      }
+
+      .media-member:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        border-color: var(--emerald);
+      }
+
+      .media-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 15px;
+        display: block;
+        border: 2px solid var(--slate-blue);
+        box-shadow: var(--blue-glow);
+        transition: all 0.3s ease;
+      }
+
+      .media-member:hover .media-avatar {
+        border-color: var(--emerald);
+        box-shadow: var(--neon-glow);
+      }
+
+      .media-name {
+        font-size: 1.2rem;
+        text-align: center;
+        margin-bottom: 10px;
+        color: var(--cream);
+        position: relative;
+      }
+
+      .media-name::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 2px;
+        background: var(--slate-blue);
+        transition: all 0.3s ease;
+      }
+
+      .media-member:hover .media-name::after {
+        width: 50px;
+        background: var(--emerald);
+      }
+
+      .media-role {
+        font-size: 0.8rem;
+        text-align: center;
+        color: var(--slate-blue);
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+      }
+
+      .media-member:hover .media-role {
+        color: var(--emerald);
+      }
+
+      .media-skills {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+        margin-top: 10px;
+      }
+
+      .skill-tag {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+        border-radius: 10px;
+        background: rgba(106, 90, 205, 0.2);
+        color: var(--cream);
+      }
+      .scroll-down {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 10;
+        opacity: 0;
+        animation: bounce 2s infinite 1s, pulse 2s infinite 1s,
+          fadeIn 0.5s ease-out 1s forwards;
+        transition: all 0.3s ease;
+      }
+
+      .scroll-down:hover {
+        color: var(--secondary-color);
+        transform: translateX(-50%) scale(1.2);
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-20px);
+        }
+        60% {
+          transform: translateY(-10px);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+
+      /* Administrative Team Styles */
+      .admin-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+        perspective: 1000px;
+      }
+
+      .admin-card {
+        width: 250px;
+        height: 350px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.8s;
+        cursor: pointer;
+      }
+
+      .admin-card:hover {
+        transform: rotateY(180deg);
+      }
+    </style>
+    <link rel="stylesheet" href="style2.css" />
+  </head>
+  <body>
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+    <header>
+      <nav class="navbar">
+        <div class="logo-container">
+          <img
+            src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/logo.png?v=1747136438719"
+            alt="BHSS Logo"
+            class="logo"
+          />
+          <span class="title">BHS Science Society</span>
+        </div>
+
+        <div class="nav-center-container">
+          <ul class="nav-links" id="navLinks">
+            <li><a href="index.html#hero">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="#research">Research</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="register.html">Register</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </nav>
+    </header>
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1>MEET THE INNOVATION NEXUS</h1>
+      <p>The minds behind the society</p>
+      <div class="scroll-down" id="scrollDown">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </section>
+
+<!-- Council Members -->
+<section id="council">
+  <h2 class="section-title">THE COUNCIL</h2>
+  <div class="council-container">
+      <!-- Council Member 1 - President (Biochemistry Green) -->
+      <div class="council-card">
+          <div class="card-face card-front">
+              <img 
+                  src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" 
+                  alt="Council Member" 
+                  class="member-avatar"
+                  style="border: 3px solid #4caf50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);"
+              >
+              <h3 class="member-name">Anayah Shahzad</h3>
+              <div class="member-role" style="
+                  background: rgba(76, 175, 80, 0.3);
+                  color: #4caf50;
+                  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+                  border: 1px solid rgba(76, 175, 80, 0.7);
+              ">
+                  President
+              </div>
+          </div>
+          <div class="card-face card-back">
+              <h3 class="member-name">Anayah Shahzad</h3>
+              <div class="member-role" style="
+                  background: rgba(76, 175, 80, 0.3);
+                  color: #4caf50;
+                  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+                  border: 1px solid rgba(76, 175, 80, 0.7);
+              ">
+                  President
+              </div>
+              <p class="member-bio">
+                  Quantum physicist specializing in entanglement applications. Leads
+                  our core research initiatives with 8 years of experience at CERN.
+              </p>
+          </div>
+      </div>
+
+      <!-- Council Member 2 - Vice President (Gold - unchanged) -->
+      <div class="council-card">
+          <div class="card-face card-front">
+              <img
+                  src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+                  alt="Council Member"
+                  class="member-avatar"
+                  style="border: 3px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);"
+              >
+              <h3 class="member-name" style="text-align: center">Mohammad Mohaimin</h3>
+              <div class="member-role" style="
+                  background: rgba(255, 215, 0, 0.3);
+                  color: #ffd700;
+                  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+              ">
+                  Vice President
+              </div>
+          </div>
+          <div class="card-face card-back">
+              <h3 class="member-name">Mohammad Mohaimin</h3>
+              <div class="member-role" style="
+                  background: rgba(255, 215, 0, 0.3);
+                  color: #ffd700;
+                  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+              ">
+                  Vice President
+              </div>
+              <p class="member-bio">
+                  AI and robotics expert developing next-gen humanoid systems.
+                  Former lead engineer at Boston Dynamics.
+              </p>
+          </div>
+      </div>
+
+      <!-- Council Member 3 - Secretary General (Slate Gray) -->
+      <div class="council-card">
+          <div class="card-face card-front">
+              <img
+                  src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+                  alt="Council Member"
+                  class="member-avatar"
+                  style="border: 3px solid #708090; box-shadow: 0 0 10px rgba(112, 128, 144, 0.5);"
+              >
+              <h3 class="member-name">Haseeb Shah</h3>
+              <div class="member-role" style="
+                  background: rgba(112, 128, 144, 0.3);
+                  color: #708090;
+                  box-shadow: 0 0 10px rgba(112, 128, 144, 0.5);
+              ">
+                  Secretary General
+              </div>
+          </div>
+          <div class="card-face card-back">
+              <h3 class="member-name">Haseeb Shah</h3>
+              <div class="member-role" style="
+                  background: rgba(112, 128, 144, 0.3);
+                  color: #708090;
+                  box-shadow: 0 0 10px rgba(112, 128, 144, 0.5);
+              ">
+                  Secretary General
+              </div>
+              <p class="member-bio">
+                  Pioneering synthetic biology applications for medical
+                  breakthroughs. Holds 12 patents in genetic engineering.
+              </p>
+          </div>
+      </div>
+
+      <!-- Council Member 4 - Chief Of Science Staff (Slate Blue) -->
+      <div class="council-card">
+          <div class="card-face card-front">
+              <img
+                  src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+                  alt="Council Member"
+                  class="member-avatar"
+                  style="border: 3px solid #6a5acd; box-shadow: 0 0 10px rgba(106, 90, 205, 0.5);"
+              >
+              <h3 class="member-name">Sulaiman Rehan</h3>
+              <div class="member-role" style="
+                  background: rgba(106, 90, 205, 0.3);
+                  color: #6a5acd;
+                  box-shadow: 0 0 10px rgba(106, 90, 205, 0.5);
+              ">
+                  Chief Of Science Staff
+              </div>
+          </div>
+          <div class="card-face card-back">
+              <h3 class="member-name">Sulaiman Rehan</h3>
+              <div class="member-role" style="
+                  background: rgba(106, 90, 205, 0.3);
+                  color: #6a5acd;
+                  box-shadow: 0 0 10px rgba(106, 90, 205, 0.5);
+              ">
+                  Chief Of Science Staff
+              </div>
+              <p class="member-bio">
+                  Theoretical physicist working on warp field mechanics. Published
+                  papers on Alcubierre drive modifications.
+              </p>
+          </div>
+      </div>
+  </div>
+</section>
+
+    <!-- Subject Teams -->
+    <section id="subject-teams">
+      <h2 class="section-title">ACADEMIC TEAM</h2>
+      <div class="subject-pairs-container">
+        <!-- Physics -->
+        <div class="subject-pair subject-1">
+          <div class="subject-icon-container">
+            <div class="subject-connector"></div>
+            <div class="subject-icon">
+              <img src="physics.png"  width="40" height="40">
+              
+            </div>
+          </div>
+          <div class="subject-cards">
+            <div class="subject-card subject-card-head">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Physics Specialist" class="subject-avatar" />
+              <h3 class="subject-name">Adam</h3>
+              <div class="subject-role">Physics Specialist</div>
+            </div>
+            <div class="subject-card subject-card-assistant">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Physics Assistant" class="subject-avatar" />
+              <h3 class="subject-name">Zainab Ijaz</h3>
+              <div class="subject-role">Physics Assistant</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biology -->
+        <div class="subject-pair subject-2">
+          <div class="subject-icon-container">
+            <div class="subject-connector"></div>
+            <div class="subject-icon">
+              <img src="biology.png"  width="40" height="40">
+
+            </div>
+          </div>
+          <div class="subject-cards">
+            <div class="subject-card subject-card-head">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Biology Specialist" class="subject-avatar" />
+              <h3 class="subject-name">Mustafa Khalid</h3>
+              <div class="subject-role">Biology Specialist</div>
+            </div>
+            <div class="subject-card subject-card-assistant">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Biology Assistant" class="subject-avatar" />
+              <h3 class="subject-name">Aaniya Lodhi</h3>
+              <div class="subject-role">Biology Assistant</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chemistry -->
+        <div class="subject-pair subject-3">
+          <div class="subject-icon-container">
+            <div class="subject-connector"></div>
+            <div class="subject-icon">
+              <img src="chemistry.png" width="40" height="40">
+            </div>
+          </div>
+          <div class="subject-cards">
+            <div class="subject-card subject-card-head">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Chemistry Specialist" class="subject-avatar" />
+              <h3 class="subject-name">Arbab Zaaland</h3>
+              <div class="subject-role">Chemistry Specialist</div>
+            </div>
+            <div class="subject-card subject-card-assistant">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Chemistry Assistant" class="subject-avatar" />
+              <h3 class="subject-name">Haseeb Shah</h3>
+              <div class="subject-role">Chemistry Assistant</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mathematics -->
+        <div class="subject-pair subject-4">
+          <div class="subject-icon-container">
+            <div class="subject-connector"></div>
+            <div class="subject-icon">
+              <img src="maths.png" width="40" height="40">
+
+            </div>
+          </div>
+          <div class="subject-cards">
+            <div class="subject-card subject-card-head">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Mathematics Specialist" class="subject-avatar" />
+              <h3 class="subject-name">Arsalan Khan</h3>
+              <div class="subject-role">Mathematics Specialist</div>
+            </div>
+            <div class="subject-card subject-card-assistant">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Mathematics Assistant" class="subject-avatar" />
+              <h3 class="subject-name">...........................</h3>
+              <div class="subject-role">Mathematics Assistant</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Computer Science -->
+        <div class="subject-pair subject-5">
+          <div class="subject-icon-container">
+            <div class="subject-connector"></div>
+            <div class="subject-icon">
+              <img src="CS.png" width="40" height="40">
+
+            </div>
+          </div>
+          <div class="subject-cards">
+            <div class="subject-card subject-card-head">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Computer Science Specialist" class="subject-avatar" />
+              <h3 class="subject-name">Sehar Nawai Sarosh</h3>
+              <div class="subject-role">Computer Science Specialist</div>
+            </div>
+            <div class="subject-card subject-card-assistant">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Computer Science Assistant" class="subject-avatar" />
+              <h3 class="subject-name">Mohammad Mohaimin</h3>
+              <div class="subject-role">Computer Science Assistant</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Earth and Space Sciences -->
+        <div class="subject-pair subject-6">
+          <div class="subject-icon-container">
+            <div class="subject-connector"></div>
+            <div class="subject-icon">
+              <img src="ESS.png" width="40" height="40">
+
+            </div>
+          </div>
+          <div class="subject-cards">
+            <div class="subject-card subject-card-head">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Earth and Space Specialist" class="subject-avatar" />
+              <h3 class="subject-name">Aaniya Lodhi</h3>
+              <div class="subject-role">Earth and Space Sciences Specialist</div>
+            </div>
+            <div class="subject-card subject-card-assistant">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Earth and Space Assistant" class="subject-avatar" />
+              <h3 class="subject-name">Subhan Ali</h3>
+              <div class="subject-role">Earth and Space Sciences Assistant</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Robotics -->
+        <div class="subject-pair subject-7">
+          <div class="subject-icon-container">
+            <div class="subject-connector"></div>
+            <div class="subject-icon">
+              <img src="robo.png" width="40" height="40">
+
+            </div>
+          </div>
+          <div class="subject-cards">
+            <div class="subject-card subject-card-head">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Robotics Specialist" class="subject-avatar" />
+              <h3 class="subject-name">Sulaiman Rehan</h3>
+              <div class="subject-role">Robotics Specialist</div>
+            </div>
+            <div class="subject-card subject-card-assistant">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Robotics Assistant" class="subject-avatar" />
+              <h3 class="subject-name">..................</h3>
+              <div class="subject-role">Robotics Assistant</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business -->
+        <div class="subject-pair subject-8">
+          <div class="subject-icon-container">
+            <div class="subject-connector"></div>
+            <div class="subject-icon">
+              <img src="business.png" width="40" height="40">
+
+            </div>
+          </div>
+          <div class="subject-cards">
+            <div class="subject-card subject-card-head">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Business Specialist" class="subject-avatar" />
+              <h3 class="subject-name">..........</h3>
+              <div class="subject-role">Business Specialist</div>
+            </div>
+            <div class="subject-card subject-card-assistant">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Business Assistant" class="subject-avatar" />
+              <h3 class="subject-name">Fatima Yousafzai</h3>
+              <div class="subject-role">Business Assistant</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Riddles and Puzzles -->
+        <div class="subject-pair subject-9">
+          <div class="subject-icon-container">
+            <div class="subject-connector"></div>
+            <div class="subject-icon">
+              <img src="puzzle.png" width="40" height="40">
+
+            </div>
+          </div>
+          <div class="subject-cards">
+            <div class="subject-card subject-card-head">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Puzzles Specialist" class="subject-avatar" />
+              <h3 class="subject-name">Muhammad Qasim</h3>
+              <div class="subject-role">Riddles and Puzzles Specialist</div>
+            </div>
+            <div class="subject-card subject-card-assistant">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="Puzzles Assistant" class="subject-avatar" />
+              <h3 class="subject-name">Subhan Ali</h3>
+              <div class="subject-role">Riddles and Puzzles Assistant</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- English -->
+<!-- English - This should be the 10th item in your subject-pairs-container -->
+        <div class="subject-pair subject-10" style="grid-column: 1 / -1; justify-self: center;">
+          <div class="subject-icon-container">
+            <div class="subject-connector"></div>
+            <div class="subject-icon">
+              <img src="eng.png" height="40" width="40">
+            </div>
+          </div>
+          <div class="subject-cards">
+            <div class="subject-card subject-card-head">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="English Specialist" class="subject-avatar" />
+              <h3 class="subject-name">Anayah Shahzad</h3>
+              <div class="subject-role">English Specialist</div>
+            </div>
+            <div class="subject-card subject-card-assistant">
+              <img src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg" alt="English Assistant" class="subject-avatar" />
+              <h3 class="subject-name">Bareera Banuri</h3>
+              <div class="subject-role">English Assistant</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Administrative Team -->
+    <section id="administrative-team">
+      <h2 class="section-title">ADMINISTRATIVE TEAM</h2>
+      <div class="admin-container">
+        <!-- PR Manager -->
+        <div class="admin-card">
+          <div class="card-face card-front">
+            <img
+              src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+              alt="PR Manager"
+              class="member-avatar"
+              style="border: 3px solid #d48a9a; box-shadow: 0 0 10px rgba(212, 138, 154, 0.5);"
+
+            />
+            <h3 class="member-name">Arbab Zaaland</h3>
+            <div
+              class="member-role"
+              style="
+              background: rgba(212, 138, 154, 0.3);
+              color: #d48a9a;
+              box-shadow: 0 0 10px rgba(212, 138, 154, 0.5);
+              border: 1px solid rgba(212, 138, 154, 0.5);
+            "
+            >
+              PR Manager
+            </div>
+          </div>
+          <div class="card-face card-back">
+            <h3 class="member-name">Arbab Zaaland</h3>
+            <div
+              class="member-role"
+              style="
+              background: rgba(212, 138, 154, 0.3);
+              color: #d48a9a;
+              box-shadow: 0 0 10px rgba(212, 138, 154, 0.5);
+              border: 1px solid rgba(212, 138, 154, 0.5);
+            "
+            >
+              PR Manager
+            </div>
+            <p class="member-bio">
+              Handles all public relations and media outreach. Former
+              communications director with 5+ years experience in science
+              communication.
+            </p>
+          </div>
+        </div>
+
+        <!-- Logistics Manager -->
+        <div class="admin-card">
+          <div class="card-face card-front">
+            <img
+              src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+              alt="Logistics Manager"
+              class="member-avatar"
+              style="
+                border: 3px solid #20b2aa;
+                box-shadow: 0 0 10px rgba(32, 178, 170, 0.5);
+              "
+            />
+            <h3 class="member-name">Mustafa Jamal</h3>
+            <div
+              class="member-role"
+              style="
+                background: rgba(32, 178, 170, 0.3);
+                color: #20b2aa;
+                box-shadow: 0 0 10px rgba(32, 178, 170, 0.5);
+              "
+            >
+              Logistics Manager
+            </div>
+          </div>
+          <div class="card-face card-back">
+            <h3 class="member-name">Mustafa Jamal</h3>
+            <div
+              class="member-role"
+              style="
+                background: rgba(32, 178, 170, 0.3);
+                color: #20b2aa;
+                box-shadow: 0 0 10px rgba(32, 178, 170, 0.5);
+              "
+            >
+              Logistics Manager
+            </div>
+            <p class="member-bio">
+              Oversees all operational logistics and resource management. Expert
+              in project coordination and event planning.
+            </p>
+          </div>
+        </div>
+
+<!-- Engagement Head -->
+<div class="admin-card">
+  <div class="card-face card-front">
+      <img
+          src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+          alt="Engagement Head"
+          class="member-avatar"
+          style="
+              border: 3px solid #1e3a8a;
+              box-shadow: 0 0 10px rgba(30, 58, 138, 0.5);
+          "
+      />
+      <h3 class="member-name">Shaheer Rizwan</h3>
+      <div
+          class="member-role"
+          style="
+              background: rgba(30, 58, 138, 0.3);
+              color: #1e3a8a;
+              box-shadow: 0 0 10px rgba(30, 58, 138, 0.5);
+          "
+      >
+          Engagement Head
+      </div>
+  </div>
+  <div class="card-face card-back">
+      <h3 class="member-name">Shaheer Rizwan</h3>
+      <div
+          class="member-role"
+          style="
+              background: rgba(30, 58, 138, 0.3);
+              color: #1e3a8a;
+              box-shadow: 0 0 10px rgba(30, 58, 138, 0.5);
+          "
+      >
+          Engagement Head
+      </div>
+      <p class="member-bio">
+          Leads community engagement and member relations. Specializes in
+          creating inclusive STEM participation programs.
+      </p>
+  </div>
+</div>
+      </div>
+    </section>
+
+<!-- Program Coordinators -->
+<section id="program-coordinators">
+  <h2 class="section-title">PROGRAM COORDINATORS</h2>
+  <div class="program-coordinators-container">
+    <!-- Coordinator 1 - Teal -->
+    <div class="program-coordinator-card" style="border-color: #4ECDC4;">
+      <div class="program-badge" style="background: #4ECDC4; box-shadow: 0 0 10px #4ECDC4;"></div>
+      <img
+        src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+        alt="Program Coordinator"
+        class="program-avatar"
+        style="border-color: #4ECDC4; box-shadow: 0 0 10px #4ECDC4;"
+      />
+      <h3 class="program-name">Jibran Bahadar</h3>
+      <div class="program-role" style="
+          background: rgba(78, 205, 196, 0.3);
+          color: #4ECDC4;
+          box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+      ">Program Coordinator</div>
+      <p class="program-details">Coordinates society programs and initiatives</p>
+    </div>
+
+    <!-- Coordinator 2 - Coral -->
+    <div class="program-coordinator-card" style="border-color: #FF6B6B;">
+      <div class="program-badge" style="background: #FF6B6B; box-shadow: 0 0 10px #FF6B6B;"></div>
+      <img
+        src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+        alt="Program Coordinator"
+        class="program-avatar"
+        style="border-color: #FF6B6B; box-shadow: 0 0 10px #FF6B6B;"
+      />
+      <h3 class="program-name">Hamza Gul</h3>
+      <div class="program-role" style="
+          background: rgba(255, 107, 107, 0.3);
+          color: #FF6B6B;
+          box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+      ">Program Coordinator</div>
+      <p class="program-details">Coordinates society programs and initiatives</p>
+    </div>
+
+    <!-- Coordinator 3 - Orange -->
+    <div class="program-coordinator-card" style="border-color: #FF9F43;">
+      <div class="program-badge" style="background: #FF9F43; box-shadow: 0 0 10px #FF9F43;"></div>
+      <img
+        src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+        alt="Program Coordinator"
+        class="program-avatar"
+        style="border-color: #FF9F43; box-shadow: 0 0 10px #FF9F43;"
+      />
+      <h3 class="program-name">Hawwa Nauman Khan</h3>
+      <div class="program-role" style="
+          background: rgba(255, 159, 67, 0.3);
+          color: #FF9F43;
+          box-shadow: 0 0 10px rgba(255, 159, 67, 0.5);
+      ">Program Coordinator</div>
+      <p class="program-details">Coordinates society programs and initiatives</p>
+    </div>
+
+    <!-- Coordinator 4 - Purple -->
+    <div class="program-coordinator-card" style="border-color: #A55EEA;">
+      <div class="program-badge" style="background: #A55EEA; box-shadow: 0 0 10px #A55EEA;"></div>
+      <img
+        src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+        alt="Program Coordinator"
+        class="program-avatar"
+        style="border-color: #A55EEA; box-shadow: 0 0 10px #A55EEA;"
+      />
+      <h3 class="program-name">Xenab Ali Khan</h3>
+      <div class="program-role" style="
+          background: rgba(165, 94, 234, 0.3);
+          color: #A55EEA;
+          box-shadow: 0 0 10px rgba(165, 94, 234, 0.5);
+      ">Program Coordinator</div>
+      <p class="program-details">Coordinates society programs and initiatives</p>
+    </div>
+
+    <!-- Coordinator 5 - Blue -->
+    <div class="program-coordinator-card" style="border-color: #45AAF2;">
+      <div class="program-badge" style="background: #45AAF2; box-shadow: 0 0 10px #45AAF2;"></div>
+      <img
+        src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+        alt="Program Coordinator"
+        class="program-avatar"
+        style="border-color: #45AAF2; box-shadow: 0 0 10px #45AAF2;"
+      />
+      <h3 class="program-name">Oushna Raza Khan</h3>
+      <div class="program-role" style="
+          background: rgba(69, 170, 242, 0.3);
+          color: #45AAF2;
+          box-shadow: 0 0 10px rgba(69, 170, 242, 0.5);
+      ">Program Coordinator</div>
+      <p class="program-details">Coordinates society programs and initiatives</p>
+    </div>
+
+    <!-- Coordinator 6 - Red -->
+    <div class="program-coordinator-card" style="border-color: #FC5C65;">
+      <div class="program-badge" style="background: #FC5C65; box-shadow: 0 0 10px #FC5C65;"></div>
+      <img
+        src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+        alt="Program Coordinator"
+        class="program-avatar"
+        style="border-color: #FC5C65; box-shadow: 0 0 10px #FC5C65;"
+      />
+      <h3 class="program-name">Syed Hakan</h3>
+      <div class="program-role" style="
+          background: rgba(252, 92, 101, 0.3);
+          color: #FC5C65;
+          box-shadow: 0 0 10px rgba(252, 92, 101, 0.5);
+      ">Program Coordinator</div>
+      <p class="program-details">Coordinates society programs and initiatives</p>
+    </div>
+
+    <!-- Coordinator 7 - Green -->
+    <div class="program-coordinator-card" style="border-color: #26DE81;">
+      <div class="program-badge" style="background: #26DE81; box-shadow: 0 0 10px #26DE81;"></div>
+      <img
+        src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+        alt="Program Coordinator"
+        class="program-avatar"
+        style="border-color: #26DE81; box-shadow: 0 0 10px #26DE81;"
+      />
+      <h3 class="program-name">Anisa Ali</h3>
+      <div class="program-role" style="
+          background: rgba(38, 222, 129, 0.3);
+          color: #26DE81;
+          box-shadow: 0 0 10px rgba(38, 222, 129, 0.5);
+      ">Program Coordinator</div>
+      <p class="program-details">Coordinates society programs and initiatives</p>
+    </div>
+
+    <!-- Coordinator 8 - Pink -->
+    <div class="program-coordinator-card" style="border-color: #D48A9A;">
+      <div class="program-badge" style="background: #D48A9A; box-shadow: 0 0 10px #D48A9A;"></div>
+      <img
+        src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+        alt="Program Coordinator"
+        class="program-avatar"
+        style="border-color: #D48A9A; box-shadow: 0 0 10px #D48A9A;"
+      />
+      <h3 class="program-name">Momina Gulmackay</h3>
+      <div class="program-role" style="
+          background: rgba(212, 138, 154, 0.3);
+          color: #D48A9A;
+          box-shadow: 0 0 10px rgba(212, 138, 154, 0.5);
+      ">Program Coordinator</div>
+      <p class="program-details">Coordinates society programs and initiatives</p>
+    </div>
+    
+    <!-- Coordinator 9 - Teal 2 -->
+    <div class="program-coordinator-card" style="border-color: #20B2AA;">
+      <div class="program-badge" style="background: #20B2AA; box-shadow: 0 0 10px #20B2AA;"></div>
+      <img
+        src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+        alt="Program Coordinator"
+        class="program-avatar"
+        style="border-color: #20B2AA; box-shadow: 0 0 10px #20B2AA;"
+      />
+      <h3 class="program-name">Zeenia Ali</h3>
+      <div class="program-role" style="
+          background: rgba(32, 178, 170, 0.3);
+          color: #20B2AA;
+          box-shadow: 0 0 10px rgba(32, 178, 170, 0.5);
+      ">Program Coordinator</div>
+      <p class="program-details">Coordinates society programs and initiatives</p>
+    </div>
+  </div>
+</section>
+    <section id="media">
+      <h2 class="section-title">MEDIA TEAM</h2>
+      <div class="media-team">
+        <!-- Media Member 1 -->
+        <div class="media-member">
+          <img
+            src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+            alt="Media Team"
+            class="media-avatar"
+          />
+          <h3 class="media-name">Sophia Chen</h3>
+          <div class="media-role">Lead Photographer</div>
+          <div class="media-skills">
+            <span class="skill-tag">Photography</span>
+            <span class="skill-tag">Photo Editing</span>
+            <span class="skill-tag">Visual Storytelling</span>
+          </div>
+        </div>
+
+        <!-- Media Member 2 -->
+        <div class="media-member">
+          <img
+            src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+            alt="Media Team"
+            class="media-avatar"
+          />
+          <h3 class="media-name">David Park</h3>
+          <div class="media-role">Video Producer</div>
+          <div class="media-skills">
+            <span class="skill-tag">Videography</span>
+            <span class="skill-tag">Editing</span>
+            <span class="skill-tag">Motion Graphics</span>
+          </div>
+        </div>
+
+        <!-- Media Member 3 -->
+        <div class="media-member">
+          <img
+            src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+            alt="Media Team"
+            class="media-avatar"
+          />
+          <h3 class="media-name">Emma Rodriguez</h3>
+          <div class="media-role">Graphic Designer</div>
+          <div class="media-skills">
+            <span class="skill-tag">Illustration</span>
+            <span class="skill-tag">Branding</span>
+            <span class="skill-tag">UI/UX</span>
+          </div>
+        </div>
+
+        <!-- Media Member 4 -->
+        <div class="media-member">
+          <img
+            src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+            alt="Media Team"
+            class="media-avatar"
+          />
+          <h3 class="media-name">James Wilson</h3>
+          <div class="media-role">Web Developer</div>
+          <div class="media-skills">
+            <span class="skill-tag">Frontend</span>
+            <span class="skill-tag">Backend</span>
+            <span class="skill-tag">3D Web</span>
+          </div>
+        </div>
+
+        <!-- Media Member 5 -->
+        <div class="media-member">
+          <img
+            src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+            alt="Media Team"
+            class="media-avatar"
+          />
+          <h3 class="media-name">Olivia Kim</h3>
+          <div class="media-role">Social Media Manager</div>
+          <div class="media-skills">
+            <span class="skill-tag">Content Strategy</span>
+            <span class="skill-tag">Analytics</span>
+            <span class="skill-tag">Community</span>
+          </div>
+        </div>
+
+        <!-- Media Member 6 -->
+        <div class="media-member">
+          <img
+            src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+            alt="Media Team"
+            class="media-avatar"
+          />
+          <h3 class="media-name">Michael Brown</h3>
+          <div class="media-role">Science Writer</div>
+          <div class="media-skills">
+            <span class="skill-tag">Technical Writing</span>
+            <span class="skill-tag">Journalism</span>
+            <span class="skill-tag">Blogging</span>
+          </div>
+        </div>
+
+        <!-- Media Member 7 -->
+        <div class="media-member">
+          <img
+            src="https://i.pinimg.com/736x/9f/16/72/9f1672710cba6bcb0dfd93201c6d4c00.jpg"
+            alt="Media Team"
+            class="media-avatar"
+          />
+          <h3 class="media-name">Ava Johnson</h3>
+          <div class="media-role">Podcast Host</div>
+          <div class="media-skills">
+            <span class="skill-tag">Audio Production</span>
+            <span class="skill-tag">Interviewing</span>
+            <span class="skill-tag">Scriptwriting</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Modal -->
+    <div class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <img src="" alt="Member Avatar" class="modal-avatar" />
+      <h2 class="modal-name">Member Name</h2>
+      <div class="modal-role">Member Role</div>
+      <p class="modal-bio">Member bio goes here...</p>
+    </div>
+  </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+    // Initialize particles.js
+    document.addEventListener('DOMContentLoaded', function () {
+      particlesJS('particles-js', {
+        particles: {
+          number: {
+            value: 80,
+            density: {
+              enable: true,
+              value_area: 800,
+            },
+          },
+          color: {
+            value: '#2E8B57',
+          },
+          shape: {
+            type: 'circle',
+            stroke: {
+              width: 0,
+              color: '#000000',
+            },
+            polygon: {
+              nb_sides: 5,
+            },
+          },
+          opacity: {
+            value: 0.5,
+            random: false,
+            anim: {
+              enable: false,
+              speed: 1,
+              opacity_min: 0.1,
+              sync: false,
+            },
+          },
+          size: {
+            value: 3,
+            random: true,
+            anim: {
+              enable: false,
+              speed: 40,
+              size_min: 0.1,
+              sync: false,
+            },
+          },
+          line_linked: {
+            enable: true,
+            distance: 150,
+            color: '#6A5ACD',
+            opacity: 0.4,
+            width: 1,
+          },
+          move: {
+            enable: true,
+            speed: 2,
+            direction: 'none',
+            random: false,
+            straight: false,
+            out_mode: 'out',
+            bounce: false,
+            attract: {
+              enable: false,
+              rotateX: 600,
+              rotateY: 1200,
+            },
+          },
+        },
+        interactivity: {
+          detect_on: 'canvas',
+          events: {
+            onhover: {
+              enable: true,
+              mode: 'grab',
+            },
+            onclick: {
+              enable: true,
+              mode: 'push',
+            },
+            resize: true,
+          },
+          modes: {
+            grab: {
+              distance: 140,
+              line_linked: {
+                opacity: 1,
+              },
+            },
+            bubble: {
+              distance: 400,
+              size: 40,
+              duration: 2,
+              opacity: 8,
+              speed: 3,
+            },
+            repulse: {
+              distance: 200,
+              duration: 0.4,
+            },
+            push: {
+              particles_nb: 4,
+            },
+            remove: {
+              particles_nb: 2,
+            },
+          },
+        },
+        retina_detect: true,
+      });
+
+      // GSAP Animations
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Animate sections on scroll
+      gsap.utils.toArray('section').forEach((section) => {
+        gsap.from(section, {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+          opacity: 0,
+          y: 50,
+          duration: 1,
+        });
+      });
+
+      // Animate subject pairs
+      gsap.utils.toArray('.subject-pair').forEach((pair, i) => {
+        gsap.from(pair, {
+          scrollTrigger: {
+            trigger: '#subject-teams',
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+          opacity: 0,
+          y: 30,
+          duration: 0.8,
+          delay: i * 0.1,
+        });
+      });
+
+      // Animate program coordinators
+      gsap.utils.toArray('.program-coordinator-card').forEach((card, i) => {
+        gsap.from(card, {
+          scrollTrigger: {
+            trigger: '#program-coordinators',
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+          opacity: 0,
+          y: 30,
+          duration: 0.5,
+          delay: i * 0.1,
+        });
+      });
+
+      // Subject pair hover effects
+      document.querySelectorAll('.subject-pair').forEach((pair) => {
+        pair.addEventListener('mouseenter', () => {
+          pair.querySelector('.subject-connector').style.opacity = '0.8';
+        });
+
+        pair.addEventListener('mouseleave', () => {
+          pair.querySelector('.subject-connector').style.opacity = '0.3';
+        });
+      });
+
+      // Simplified modal handler for all card types
+      const modal = document.querySelector('.modal');
+      const closeModal = document.querySelector('.close-modal');
+      const modalAvatar = modal.querySelector('.modal-avatar');
+      const modalName = modal.querySelector('.modal-name');
+      const modalRole = modal.querySelector('.modal-role');
+      const modalBio = modal.querySelector('.modal-bio');
+
+      // Council cards
+      document.querySelectorAll('.council-card').forEach((card) => {
+        card.addEventListener('click', function() {
+          const back = this.querySelector('.card-back');
+          modalAvatar.src = this.querySelector('.member-avatar').src;
+          modalName.textContent = back.querySelector('.member-name').textContent;
+          modalRole.textContent = back.querySelector('.member-role').textContent;
+          modalBio.textContent = back.querySelector('.member-bio').textContent;
+          modal.classList.add('active');
+        });
+      });
+
+      // Subject team cards
+      document.querySelectorAll('.subject-card').forEach((card) => {
+        card.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const pair = this.closest('.subject-pair');
+          const subjectIcon = pair.querySelector('.subject-icon').textContent;
+          const isHead = this.classList.contains('subject-card-head');
+          
+          modalAvatar.src = this.querySelector('.subject-avatar').src;
+          modalName.textContent = this.querySelector('.subject-name').textContent;
+          modalRole.textContent = `${this.querySelector('.subject-role').textContent} (${subjectIcon})`;
+          
+          if (isHead) {
+            modalBio.textContent = `Head of ${this.querySelector('.subject-role').textContent.split(' Head')[0]} department with specialized expertise in this field.`;
+          } else {
+            modalBio.textContent = `Assistant supporting the ${pair.querySelector('.subject-card-head .subject-role').textContent.split(' Head')[0]} department.`;
+          }
+          
+          modal.classList.add('active');
+        });
+      });
+
+      // Administrative team cards
+      document.querySelectorAll('.admin-card').forEach((card) => {
+        card.addEventListener('click', function() {
+          const back = this.querySelector('.card-back');
+          modalAvatar.src = this.querySelector('.member-avatar').src;
+          modalName.textContent = back.querySelector('.member-name').textContent;
+          modalRole.textContent = back.querySelector('.member-role').textContent;
+          modalBio.textContent = back.querySelector('.member-bio').textContent;
+          modal.classList.add('active');
+        });
+      });
+
+      // Program coordinator cards
+      document.querySelectorAll('.program-coordinator-card').forEach((card) => {
+        card.addEventListener('click', function() {
+          modalAvatar.src = this.querySelector('.program-avatar').src;
+          modalName.textContent = this.querySelector('.program-name').textContent;
+          modalRole.textContent = this.querySelector('.program-role').textContent;
+          modalBio.textContent = this.querySelector('.program-details').textContent;
+          modal.classList.add('active');
+        });
+      });
+
+      // Media team cards
+      document.querySelectorAll('.media-member').forEach((card) => {
+        card.addEventListener('click', function() {
+          modalAvatar.src = this.querySelector('.media-avatar').src;
+          modalName.textContent = this.querySelector('.media-name').textContent;
+          modalRole.textContent = this.querySelector('.media-role').textContent;
+          modalBio.textContent = `Specializes in ${this.querySelector('.media-role').textContent.toLowerCase()} for the society.`;
+          modal.classList.add('active');
+        });
+      });
+
+      // Close modal
+      closeModal.addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+
+      // Scroll down button
+      const scrollDownBtn = document.getElementById('scrollDown');
+      scrollDownBtn.addEventListener('click', function() {
+        const nextSection = document.querySelector('#council');
+        if (nextSection) {
+          window.scrollTo({
+            top: nextSection.offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const scrollDownBtn = document.getElementById('scrollDown');
+
+        scrollDownBtn.addEventListener('click', function () {
+          // Calculate the position of the next section (hero section height)
+          const heroSection = document.querySelector('.hero');
+          const nextSection = document.querySelector('#council'); // or the first section after hero
+
+          if (nextSection) {
+            // Smooth scroll to the next section
+            window.scrollTo({
+              top: nextSection.offsetTop,
+              behavior: 'smooth',
+            });
+          } else {
+            // Fallback: scroll by viewport height
+            window.scrollBy({
+              top: window.innerHeight,
+              behavior: 'smooth',
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
