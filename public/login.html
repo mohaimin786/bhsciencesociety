@@ -649,11 +649,7 @@
         </ul>
       </div>
       
-      <!--Theme Toggle-->
-      <button id="theme-toggle" aria-label="Toggle theme">
-        <i class="fas fa-moon"></i>
-      </button>
-      
+
       <!--Hamburger-->
       <button class="hamburger" id="hamburger-btn" aria-label="Menu">
         <span class="hamburger-line"></span>
@@ -812,28 +808,7 @@
         togglePassword.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
       });
 
-      // Theme toggle functionality
-      const themeToggle = document.getElementById('theme-toggle');
-      const body = document.body;
-      
-      // Check for saved theme preference or use preferred color scheme
-      const currentTheme = localStorage.getItem('theme') || 
-                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      body.classList.add(currentTheme);
-      updateThemeIcon(currentTheme);
-      
-      themeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark');
-        body.classList.toggle('light');
-        
-        const newTheme = body.classList.contains('dark') ? 'dark' : 'light';
-        localStorage.setItem('theme', newTheme);
-        updateThemeIcon(newTheme);
-      });
-      
-      function updateThemeIcon(theme) {
-        themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
-      }
+
       
       // Form submission
       const loginForm = document.querySelector('.login-form');
@@ -845,5 +820,6 @@
       });
     });
   </script>
+  <script src="theme-toggle.js"></script>
 </body>
 </html>
