@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Bloomfield Hall Science Society</title>
+  <link rel="icon" href="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/logo.png?v=1747136438719" type="image/png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset with futuristic variables */
+    :root {
+      --primary: #00ffae;
+      --primary-light: #7bd859;
+      --secondary: #0dc0de;
+      --accent: #6A5ACD;
+      --dark-bg: #0f111a;
+      --darker-bg: #090b12;
+      --light-bg: #f8f9fa;
+      --lighter-bg: #ffffff;
+      --text-dark: #ffffff;
+      --text-light: #2d3748;
+      --glow: 0 0 15px;
+      --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--dark-bg);
+      color: var(--text-dark);
+      line-height: 1.7;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Futuristic Typography */
+    h1, h2, h3, h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    
+    p {
+      font-weight: 300;
+    }
+    
+    /* Sci-fi Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      background: var(--darker-bg);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 5px;
+      box-shadow: var(--glow) rgba(0, 255, 174, 0.5);
+    }
+    
+    /* Particle Background */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .particle {
+      position: absolute;
+      background: rgba(0, 255, 174, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    
+    /* Navigation Bar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 15px 5%;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 255, 174, 0.2);
+      transition: var(--transition);
+    }
+    
+    .navbar.scrolled {
+      padding: 10px 5%;
+      background-color: rgba(0, 0, 0, 0.9);
+      box-shadow: 0 5px 30px rgba(0, 255, 174, 0.2);
+    }
+    
+    .nav-center-container {
+      position: absolute;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 1;
+    }
+    
+    .navbar .logo {
+      height: 45px;
+      width: auto;
+      transition: var(--transition);
+    }
+    
+    .navbar .logo:hover {
+      transform: rotate(15deg);
+    }
+    
+    .navbar .title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      white-space: nowrap;
+      text-shadow: 0 0 10px rgba(0, 255, 174, 0.5);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      list-style: none;
+      transition: var(--transition);
+      pointer-events: auto;
+    }
+    
+    .nav-links li a {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 4px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .nav-links li a::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--primary);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+    
+    .nav-links li a:hover {
+      color: var(--primary);
+      background-color: transparent;
+    }
+    
+    .nav-links li a:hover::before {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    
+    /* Theme Toggle Button */
+    #theme-toggle {
+      background: none;
+      border: none;
+      color: var(--text-dark);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 10px;
+      transition: var(--transition);
+      margin-left: auto;
+      z-index: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    #theme-toggle::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      background: linear-gradient(45deg, 
+        var(--primary), 
+        var(--secondary), 
+        var(--accent));
+      z-index: -1;
+      opacity: 0;
+      transition: var(--transition);
+      border-radius: 50%;
+    }
+    
+    #theme-toggle:hover {
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+    
+    #theme-toggle:hover::before {
+      opacity: 0.3;
+    }
+    
+    /* Hamburger Menu */
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      z-index: 1001;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      position: relative;
+    }
+    
+    .hamburger-line {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background-color: white;
+      border-radius: 3px;
+      transition: var(--transition);
+    }
+    
+    .hamburger.active .hamburger-line:nth-child(1) {
+      transform: translateY(9px) rotate(45deg);
+      background: var(--primary);
+    }
+    
+    .hamburger.active .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger.active .hamburger-line:nth-child(3) {
+      transform: translateY(-9px) rotate(-45deg);
+      background: var(--primary);
+    }
+    
+    /* Login Container */
+    .login-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .login-content {
+      background: rgba(27, 30, 47, 0.8);
+      padding: 50px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 8px 30px rgba(0, 255, 174, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 255, 174, 0.1);
+      transform-style: preserve-3d;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    .login-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 16px;
+      border: 1px solid transparent;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(0, 255, 174, 0.3),
+        transparent
+      ) border-box;
+      mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0;
+      transition: var(--transition);
+    }
+    
+    .login-content:hover::before {
+      opacity: 1;
+    }
+    
+    .login-title {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--primary);
+      font-size: 2.5rem;
+      position: relative;
+    }
+    
+    .login-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: var(--primary);
+      box-shadow: 0 0 15px var(--primary);
+    }
+    
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+    
+    .form-group {
+      position: relative;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 15px 20px;
+      background: rgba(15, 17, 26, 0.7);
+      border: 1px solid rgba(0, 255, 174, 0.2);
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 255, 174, 0.2);
+    }
+    
+    .password-container {
+      position: relative;
+    }
+    
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .toggle-password:hover {
+      color: var(--primary);
+    }
+    
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: -15px;
+    }
+    
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .remember-me input {
+      accent-color: var(--primary);
+    }
+    
+    .forgot-password {
+      color: var(--secondary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .forgot-password:hover {
+      color: var(--primary-light);
+      text-decoration: underline;
+    }
+    
+    .login-button {
+      background-color: var(--primary);
+      color: var(--dark-bg);
+      padding: 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: var(--transition);
+      border: none;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 255, 174, 0.5);
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+    
+    .login-button:hover {
+      background-color: var(--primary-light);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 255, 174, 0.7);
+    }
+    
+    .login-button:active {
+      transform: translateY(0);
+    }
+    
+    .login-footer {
+      text-align: center;
+      margin-top: 30px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .login-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    
+    .login-footer a:hover {
+      color: var(--primary-light);
+      text-decoration: underline;
+    }
+    
+    /* Scientific Icons Floating Animation */
+    .floating-icons {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.25;
+    }
+    
+    .icon {
+      position: absolute;
+      font-size: 2.5rem;
+      animation: float 12s linear infinite;
+      transform-style: preserve-3d;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg) translateZ(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg) translateZ(100px);
+        opacity: 0;
+      }
+    }
+    
+    /* Footer */
+    .footer {
+      background-color: #000;
+      color: #888;
+      text-align: center;
+      padding: 30px 0;
+      font-size: 0.9rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+    
+    .footer::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(to right, rgba(0, 255, 174, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 255, 174, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.3;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .nav-links {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.95);
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 0;
+        gap: 20px;
+        transform: translateY(-150%);
+        opacity: 0;
+        z-index: 999;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 255, 174, 0.2);
+      }
+      
+      .nav-links.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    
+      .hamburger {
+        display: flex;
+        order: 3;
+      }
+    
+      #theme-toggle {
+        order: 2;
+        margin-left: auto;
+        margin-right: 20px;
+      }
+      
+      .login-content {
+        padding: 40px 30px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .login-title {
+        font-size: 2rem;
+      }
+      
+      .login-content {
+        padding: 30px 20px;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .navbar .title {
+        display: none;
+      }
+    
+      .navbar {
+        padding: 15px 20px;
+      }
+      
+      .login-title {
+        font-size: 1.8rem;
+      }
+      
+      .remember-forgot {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .forgot-password {
+        margin-left: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body class="dark">
+  <!-- Particle Background -->
+  <div class="particles" id="particles-js"></div>
+  
+  <header>
+    <!--Navigation bar-->
+    <nav class="navbar">
+      <!--Logo and Title Container-->
+      <div class="logo-container">
+        <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/logo.png?v=1747136438719" alt="BHSS Logo" class="logo" loading="lazy" />
+        <span class="title">BHS Science Society</span>
+      </div>
+
+      <!--Nav Links-->
+      <div class="nav-center-container">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="#research">Research</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="register.html">Register</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="login.html" class="active">Login</a></li>
+        </ul>
+      </div>
+      
+      <!--Theme Toggle-->
+      <button id="theme-toggle" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+      </button>
+      
+      <!--Hamburger-->
+      <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Login Section -->
+  <main class="login-container">
+    <div class="login-content">
+      <h1 class="login-title">Member Login</h1>
+      <form class="login-form" action="#" method="POST">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-container">
+            <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+            <button type="button" class="toggle-password" aria-label="Show password">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="remember-forgot">
+          <div class="remember-me">
+            <input type="checkbox" id="remember">
+            <label for="remember">Remember me</label>
+          </div>
+          <a href="forgot-password.html" class="forgot-password">Forgot password?</a>
+        </div>
+        
+        <button type="submit" class="login-button">Login</button>
+      </form>
+      
+      <div class="login-footer">
+        <p>Don't have an account? <a href="register.html">Register here</a></p>
+      </div>
+    </div>
+    
+    <!-- Scientific floating icons -->
+    <div class="floating-icons">
+      <!-- ⚛️ Atom -->
+      <div class="icon" style="left: 10%; animation-delay: 0s;">
+        <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/269b%20(1).svg?v=1749211198629" alt="Atom" width="32" height="32" />
+      </div>
+      <!-- 🧬 DNA -->
+      <div class="icon" style="left: 25%; animation-delay: 2s;">
+        <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/public%2F1f9ec.svg?1749211312450" alt="DNA" style="height: 1.5em;">
+      </div>
+      <!-- 🧪 Flask -->
+      <div class="icon" style="left: 40%; animation-delay: 4s;">
+        <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/1f9ea.svg?1749211363327" alt="Flask" style="height: 1.5em;">
+      </div>
+      <!-- 💡 Lightbulb -->
+      <div class="icon" style="left: 60%; animation-delay: 6s;">
+        <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/1f4a1.svg?1749211398004" alt="Lightbulb" style="height: 1.5em;">
+      </div>
+      <!-- 🔬 Microscope -->
+      <div class="icon" style="left: 75%; animation-delay: 1s;">
+        <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/1f52c.svg?1749211446491" alt="Microscope" style="height: 1.5em;">
+      </div>
+      <!-- 🪐 Planet -->
+      <div class="icon" style="left: 90%; animation-delay: 3s;">
+        <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/1fa90.svg?v=1749229672404" alt="planet" style="height: 1.5em;">
+      </div>
+      <!-- 🔭 Telescope -->
+      <div class="icon" style="left: 15%; animation-delay: 5s;">
+        <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/1f52d.svg?v=1749229317703" alt="telescope" style="height: 1.5em;">
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Made by BHSS Council | &copy; 2025 Bloomfield Hall Science Society</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Hamburger menu functionality
+      const hamburgerBtn = document.getElementById('hamburger-btn');
+      const navLinks = document.getElementById('navLinks');
+
+      hamburgerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hamburgerBtn.classList.toggle('active');
+        navLinks.classList.toggle('show');
+      });
+      
+      // Close menu when clicking on a link
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+          hamburgerBtn.classList.remove('active');
+          navLinks.classList.remove('show');
+        });
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.navbar') && window.innerWidth <= 992) {
+          hamburgerBtn.classList.remove('active');
+          navLinks.classList.remove('show');
+        }
+      });
+
+      // Navbar scroll effect
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          document.querySelector('.navbar').classList.add('scrolled');
+        } else {
+          document.querySelector('.navbar').classList.remove('scrolled');
+        }
+      });
+
+      // Particle background
+      function createParticles() {
+        const particlesContainer = document.getElementById('particles-js');
+        const particleCount = Math.floor(window.innerWidth / 10);
+        
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement('div');
+          particle.classList.add('particle');
+          
+          // Random size between 1px and 3px
+          const size = Math.random() * 2 + 1;
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          
+          // Random position
+          particle.style.left = `${Math.random() * 100}%`;
+          particle.style.top = `${Math.random() * 100}%`;
+          
+          // Random animation
+          const duration = Math.random() * 20 + 10;
+          const delay = Math.random() * 5;
+          particle.style.animation = `float ${duration}s linear ${delay}s infinite`;
+          
+          particlesContainer.appendChild(particle);
+        }
+      }
+
+      createParticles();
+
+      // Toggle password visibility
+      const togglePassword = document.querySelector('.toggle-password');
+      const passwordInput = document.getElementById('password');
+      
+      togglePassword.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        togglePassword.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+      });
+
+      // Theme toggle functionality
+      const themeToggle = document.getElementById('theme-toggle');
+      const body = document.body;
+      
+      // Check for saved theme preference or use preferred color scheme
+      const currentTheme = localStorage.getItem('theme') || 
+                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      body.classList.add(currentTheme);
+      updateThemeIcon(currentTheme);
+      
+      themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark');
+        body.classList.toggle('light');
+        
+        const newTheme = body.classList.contains('dark') ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+      });
+      
+      function updateThemeIcon(theme) {
+        themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+      }
+      
+      // Form submission
+      const loginForm = document.querySelector('.login-form');
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Here you would normally handle the login logic
+        // For demo purposes, we'll just show an alert
+        alert('Login functionality would be implemented here in a real application');
+      });
+    });
+  </script>
+</body>
+</html>
