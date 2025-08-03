@@ -89,13 +89,21 @@ const ipinfoLimiter = rateLimit({
   message: 'Too many IP info requests, please try again later',
 });
 
-// Email transporter setup
+// Improved Email transporter setup
 const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE || 'gmail',
+  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+  port: process.env.EMAIL_PORT || 587,
+  secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  }
+  },
+  tls: {
+    rejectUnauthorized: false
+  },
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 10000,   // 10 seconds
+  socketTimeout: 10000      // 10 seconds
 });
 
 // Password generator
@@ -107,6 +115,44 @@ function generatePassword() {
     password += charset.charAt(Math.floor(Math.random() * charset.length));
   }
   return password;
+}
+
+// Improved email sending function
+async function sendApprovalEmail(email, fullName, password) {
+  const mailOptions = {
+    from: `"BHSS Admin" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: 'Your BHSS Application Has Been Approved',
+    html: `
+      <h2>Welcome to Bloomfield Hall Science Society!</h2>
+      <p>We're pleased to inform you that your application has been approved.</p>
+      <p>Your account has been created with the following credentials:</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Password:</strong> ${password}</p>
+      <p>Please log in at <a href="https://yourwebsite.com/login">our website</a> and change your password immediately.</p>
+      <p>If you didn't request this, please contact us immediately.</p>
+      <p>Best regards,<br>BHSS Council</p>
+    `
+  };
+
+  try {
+    // Verify connection configuration
+    await transporter.verify();
+    console.log('Server is ready to take our messages');
+
+    // Send the email
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Message sent: %s', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Error sending email:', error);
+    if (error.code === 'EAUTH') {
+      console.error('Authentication failed - check your email credentials');
+    } else if (error.code === 'ECONNECTION') {
+      console.error('Connection error - check your network or SMTP settings');
+    }
+    return false;
+  }
 }
 
 // Admin credentials
@@ -462,25 +508,9 @@ app.put('/api/submissions/:id', requireAuth, async function (req, res) {
                     return res.json({ success: true, updated: numReplaced });
                   }
 
-                  try {
-                    await transporter.sendMail({
-                      from: `"BHSS Admin" <${process.env.EMAIL_USER}>`,
-                      to: submission.email,
-                      subject: 'Your BHSS Application Has Been Approved',
-                      html: `
-                        <h2>Welcome to Bloomfield Hall Science Society!</h2>
-                        <p>We're pleased to inform you that your application has been approved.</p>
-                        <p>Your account has been created with the following credentials:</p>
-                        <p><strong>Email:</strong> ${submission.email}</p>
-                        <p><strong>Password:</strong> ${password}</p>
-                        <p>Please log in at <a href="https://yourwebsite.com/login">our website</a> and change your password immediately.</p>
-                        <p>If you didn't request this, please contact us immediately.</p>
-                        <p>Best regards,<br>BHSS Council</p>
-                      `
-                    });
-                    console.log('Approval email sent to:', submission.email);
-                  } catch (emailErr) {
-                    console.error('Error sending approval email:', emailErr);
+                  const emailSent = await sendApprovalEmail(submission.email, submission.fullName, password);
+                  if (!emailSent) {
+                    console.error('Failed to send approval email to:', submission.email);
                   }
                 });
               }
@@ -554,25 +584,9 @@ app.put('/api/submissions/bulk-update', requireAuth, express.json(), async (req,
                 });
               });
 
-              try {
-                await transporter.sendMail({
-                  from: `"BHSS Admin" <${process.env.EMAIL_USER}>`,
-                  to: submission.email,
-                  subject: 'Your BHSS Application Has Been Approved',
-                  html: `
-                    <h2>Welcome to Bloomfield Hall Science Society!</h2>
-                    <p>We're pleased to inform you that your application has been approved.</p>
-                    <p>Your account has been created with the following credentials:</p>
-                    <p><strong>Email:</strong> ${submission.email}</p>
-                    <p><strong>Password:</strong> ${password}</p>
-                    <p>Please log in at <a href="https://yourwebsite.com/login">our website</a> and change your password immediately.</p>
-                    <p>If you didn't request this, please contact us immediately.</p>
-                    <p>Best regards,<br>BHSS Council</p>
-                  `
-                });
-                console.log('Approval email sent to:', submission.email);
-              } catch (emailErr) {
-                console.error('Error sending approval email:', emailErr);
+              const emailSent = await sendApprovalEmail(submission.email, submission.fullName, password);
+              if (!emailSent) {
+                console.error('Failed to send approval email to:', submission.email);
               }
             }
           }
@@ -641,5 +655,6 @@ app.get('/admin-login', function (req, res) {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, function () {
   console.log('Server running on port', PORT);
-  console.log('Email service:', process.env.EMAIL_SERVICE || 'Gmail');
+  console.log('Email service configured for:', process.env.EMAIL_HOST || 'Gmail');
+  console.log('Admin username:', ADMIN_CREDENTIALS.username);
 });
