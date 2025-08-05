@@ -409,7 +409,15 @@ app.post('/api/submit', submissionLimiter, express.json(), async (req, res) => {
 
 app.get('/api/submissions', requireAuth, async (req, res) => {
   try {
-    const docs = await dbFind({}).sort({ timestamp: -1 }).exec();
+    // Use callback style for NeDB operations that need chaining
+    const docs = await new Promise((resolve, reject) => {
+      db.find({})
+        .sort({ timestamp: -1 })
+        .exec((err, docs) => {
+          if (err) return reject(err);
+          resolve(docs);
+        });
+    });
     res.json({ success: true, data: docs });
   } catch (err) {
     console.error('Database error:', err);
@@ -418,7 +426,15 @@ app.get('/api/submissions', requireAuth, async (req, res) => {
 });
 app.get('/api/submissions/export', requireAuth, async (req, res) => {
   try {
-    const docs = await dbFind({}).sort({ timestamp: -1 }).exec();
+    // Use callback style for NeDB operations that need chaining
+    const docs = await new Promise((resolve, reject) => {
+      db.find({})
+        .sort({ timestamp: -1 })
+        .exec((err, docs) => {
+          if (err) return reject(err);
+          resolve(docs);
+        });
+    });
 
     let csv = 'Full Name,Email,Country Code,Phone Number,Date of Birth,Grade,Is BH Student,Country,School Name,Subjects,Motivation\n';
 
