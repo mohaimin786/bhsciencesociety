@@ -8,12 +8,23 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const fetch = require('node-fetch');
 const nodemailer = require('nodemailer');
+const { promisify } = require('util');
 
 const app = express();
 
 // Initialize databases
 const db = new Datastore({ filename: 'submissions.db', autoload: true });
 const usersDb = new Datastore({ filename: 'users.db', autoload: true });
+
+// Promisify database methods
+const dbFind = promisify(db.find.bind(db));
+const dbFindOne = promisify(db.findOne.bind(db));
+const dbUpdate = promisify(db.update.bind(db));
+const dbRemove = promisify(db.remove.bind(db));
+const dbInsert = promisify(db.insert.bind(db));
+
+const usersDbFindOne = promisify(usersDb.findOne.bind(usersDb));
+const usersDbInsert = promisify(usersDb.insert.bind(usersDb));
 
 // Generate or use environment secret key
 const secretKey = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
@@ -88,15 +99,17 @@ const ipinfoLimiter = rateLimit({
   max: 100,
   message: 'Too many IP info requests, please try again later',
 });
-// At the top of your server.js
+
+// Email configuration check
 if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
   console.warn('WARNING: Email credentials not configured. Email functionality will be disabled.');
 }
-// Improved Email transporter setup
+
+// Email transporter setup
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || 'smtp.gmail.com',
   port: process.env.EMAIL_PORT || 587,
-  secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
+  secure: process.env.EMAIL_SECURE === 'true',
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
@@ -104,9 +117,9 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false
   },
-  connectionTimeout: 10000, // 10 seconds
-  greetingTimeout: 10000,   // 10 seconds
-  socketTimeout: 10000      // 10 seconds
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000
 });
 
 // Password generator
@@ -120,10 +133,8 @@ function generatePassword() {
   return password;
 }
 
-// Improved email sending function
-// Modify your sendApprovalEmail function to be more robust
+// Email sending functions
 async function sendApprovalEmail(email, fullName, password) {
-  // Skip if email not configured
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.log('Email not sent - no email configuration');
     return false;
@@ -134,48 +145,53 @@ async function sendApprovalEmail(email, fullName, password) {
       from: `"BHSS Admin" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: 'Your BHSS Application Has Been Approved',
-      html:`
-      <h2>Welcome to Bloomfield Hall Science Society!</h2>
-      <p>We're pleased to inform you that your application has been approved.</p>
-      <p>Your account has been created with the following credentials:</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Password:</strong> ${password}</p>
-      <p>Please log in at <a href="https://yourwebsite.com/login">our website</a> and change your password immediately.</p>
-      <p>If you didn't request this, please contact us immediately.</p>
-      <p>Best regards,<br>BHSS Council</p>
-    `
+      html: `
+        <h2>Welcome to Bloomfield Hall Science Society!</h2>
+        <p>We're pleased to inform you that your application has been approved.</p>
+        <p>Your account has been created with the following credentials:</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Password:</strong> ${password}</p>
+        <p>Please log in at <a href="https://yourwebsite.com/login">our website</a> and change your password immediately.</p>
+        <p>If you didn't request this, please contact us immediately.</p>
+        <p>Best regards,<br>BHSS Council</p>
+      `
     };
 
-    // Verify connection first
     await transporter.verify();
-    console.log('SMTP connection verified');
-
-    // Send the email
     const info = await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${email}: ${info.messageId}`);
+    console.log('Approval email sent to:', email);
     return true;
   } catch (error) {
-    console.error(`Failed to send email to ${email}:`, error);
+    console.error('Error sending approval email:', error);
     return false;
   }
 }
 
-  try {
-    // Verify connection configuration
-    await transporter.verify();
-    console.log('Server is ready to take our messages');
+async function sendRejectionEmail(email, fullName) {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.log('Email not sent - no email configuration');
+    return false;
+  }
 
-    // Send the email
+  try {
+    const mailOptions = {
+      from: `"BHSS Admin" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: 'Your BHSS Application Status',
+      html: `
+        <h2>Dear ${fullName},</h2>
+        <p>We regret to inform you that your application to the Bloomfield Hall Science Society has not been successful.</p>
+        <p>We appreciate your interest and encourage you to apply again in the future.</p>
+        <p>Best regards,<br>BHSS Council</p>
+      `
+    };
+
+    await transporter.verify();
     const info = await transporter.sendMail(mailOptions);
-    console.log('Message sent: %s', info.messageId);
+    console.log('Rejection email sent to:', email);
     return true;
   } catch (error) {
-    console.error('Error sending email:', error);
-    if (error.code === 'EAUTH') {
-      console.error('Authentication failed - check your email credentials');
-    } else if (error.code === 'ECONNECTION') {
-      console.error('Connection error - check your network or SMTP settings');
-    }
+    console.error('Error sending rejection email:', error);
     return false;
   }
 }
@@ -204,7 +220,7 @@ function requireUserAuth(req, res, next) {
 }
 
 // Routes
-app.post('/api/admin/login', loginLimiter, express.json(), function (req, res) {
+app.post('/api/admin/login', loginLimiter, express.json(), async (req, res) => {
   const { username, password } = req.body;
 
   if (username === ADMIN_CREDENTIALS.username && bcrypt.compareSync(password, ADMIN_CREDENTIALS.password)) {
@@ -216,8 +232,8 @@ app.post('/api/admin/login', loginLimiter, express.json(), function (req, res) {
   res.status(401).json({ success: false, error: 'Invalid credentials' });
 });
 
-app.post('/api/admin/logout', function (req, res) {
-  req.session.destroy(function (err) {
+app.post('/api/admin/logout', (req, res) => {
+  req.session.destroy((err) => {
     if (err) {
       console.error('Session destruction error:', err);
     }
@@ -225,15 +241,16 @@ app.post('/api/admin/logout', function (req, res) {
   });
 });
 
-app.get('/api/admin/status', function (req, res) {
+app.get('/api/admin/status', (req, res) => {
   res.json({ authenticated: !!req.session.authenticated });
 });
 
-app.post('/api/user/login', express.json(), function (req, res) {
+app.post('/api/user/login', express.json(), async (req, res) => {
   const { email, password } = req.body;
 
-  usersDb.findOne({ email }, function (err, user) {
-    if (err || !user) {
+  try {
+    const user = await usersDbFindOne({ email });
+    if (!user) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
 
@@ -253,11 +270,14 @@ app.post('/api/user/login', express.json(), function (req, res) {
     }
 
     res.status(401).json({ success: false, error: 'Invalid credentials' });
-  });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
 });
 
-app.post('/api/user/logout', function (req, res) {
-  req.session.destroy(function (err) {
+app.post('/api/user/logout', (req, res) => {
+  req.session.destroy((err) => {
     if (err) {
       console.error('Session destruction error:', err);
     }
@@ -304,147 +324,143 @@ app.get('/api/ipinfo', ipinfoLimiter, async (req, res) => {
   }
 });
 
-app.post('/api/submit', submissionLimiter, express.json(), function (req, res) {
-  if (
-    !req.body.fullName ||
-    !req.body.email ||
-    !req.body.phone ||
-    !req.body.dob ||
-    !req.body.grade ||
-    !req.body.isBhStudent
-  ) {
-    return res
-      .status(400)
-      .json({ success: false, error: 'All required fields must be filled' });
-  }
+app.post('/api/submit', submissionLimiter, express.json(), async (req, res) => {
+  try {
+    if (
+      !req.body.fullName ||
+      !req.body.email ||
+      !req.body.phone ||
+      !req.body.dob ||
+      !req.body.grade ||
+      !req.body.isBhStudent
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, error: 'All required fields must be filled' });
+    }
 
-  if (!req.body.subjects || req.body.subjects.length === 0) {
-    return res
-      .status(400)
-      .json({ success: false, error: 'Please select at least one subject' });
-  }
+    if (!req.body.subjects || req.body.subjects.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, error: 'Please select at least one subject' });
+    }
 
-  if (!req.body.motivation || req.body.motivation.length < 50) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        error: 'Motivation must be at least 50 characters long',
-      });
-  }
+    if (!req.body.motivation || req.body.motivation.length < 50) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          error: 'Motivation must be at least 50 characters long',
+        });
+    }
 
-  if (req.body.isBhStudent === 'yes' && !req.body.section) {
-    return res
-      .status(400)
-      .json({ success: false, error: 'Section is required for BH students' });
-  }
+    if (req.body.isBhStudent === 'yes' && !req.body.section) {
+      return res
+        .status(400)
+        .json({ success: false, error: 'Section is required for BH students' });
+    }
 
-  if (
-    req.body.isBhStudent === 'no' &&
-    (!req.body.country || !req.body.school)
-  ) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        error: 'Country and School are required for non-BH students',
-      });
-  }
+    if (
+      req.body.isBhStudent === 'no' &&
+      (!req.body.country || !req.body.school)
+    ) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          error: 'Country and School are required for non-BH students',
+        });
+    }
 
-  const submission = {
-    fullName: req.body.fullName,
-    email: req.body.email,
-    countryCode: req.body.countryCode,
-    phone: req.body.phone,
-    dob: req.body.dob,
-    grade: req.body.grade,
-    isBhStudent: req.body.isBhStudent === 'yes',
-    bhBranch: req.body.bhBranch || null,
-    section: req.body.section || null,
-    city: req.body.city || null,
-    school: req.body.school || null,
-    country: req.body.country || null,
-    subjects: req.body.subjects,
-    category: req.body.category || null,
-    motivation: req.body.motivation,
-    whyChosenSubjects: req.body.whyChosenSubjects || null,
-    heardAbout: req.body.heardAbout || null,
-    social: req.body.social || null,
-    prevCompetitions: req.body.prevCompetitions || null,
-    skills: req.body.skills || null,
-    ideas: req.body.ideas || null,
-    status: 'pending',
-    timestamp: new Date(),
-  };
+    const submission = {
+      fullName: req.body.fullName,
+      email: req.body.email,
+      countryCode: req.body.countryCode,
+      phone: req.body.phone,
+      dob: req.body.dob,
+      grade: req.body.grade,
+      isBhStudent: req.body.isBhStudent === 'yes',
+      bhBranch: req.body.bhBranch || null,
+      section: req.body.section || null,
+      city: req.body.city || null,
+      school: req.body.school || null,
+      country: req.body.country || null,
+      subjects: req.body.subjects,
+      category: req.body.category || null,
+      motivation: req.body.motivation,
+      whyChosenSubjects: req.body.whyChosenSubjects || null,
+      heardAbout: req.body.heardAbout || null,
+      social: req.body.social || null,
+      prevCompetitions: req.body.prevCompetitions || null,
+      skills: req.body.skills || null,
+      ideas: req.body.ideas || null,
+      status: 'pending',
+      timestamp: new Date(),
+    };
 
-  db.insert(submission, function (err, doc) {
-    if (err)
-      return res.status(500).json({ success: false, error: 'Database error' });
-    console.log(
-      'New submission from IP:',
-      req.ip,
-      'at',
-      new Date()
-    );
+    const doc = await dbInsert(submission);
+    console.log('New submission from IP:', req.ip, 'at', new Date());
     res.json({ success: true, id: doc._id });
-  });
+  } catch (err) {
+    console.error('Submission error:', err);
+    res.status(500).json({ success: false, error: 'Database error' });
+  }
 });
 
-app.get('/api/submissions', requireAuth, function (req, res) {
-  db.find({})
-    .sort({ timestamp: -1 })
-    .exec(function (err, docs) {
-      if (err) return res.status(500).json({ error: 'Database error' });
-      res.json({ success: true, data: docs });
+app.get('/api/submissions', requireAuth, async (req, res) => {
+  try {
+    const docs = await dbFind({}).sort({ timestamp: -1 }).exec();
+    res.json({ success: true, data: docs });
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+app.get('/api/submissions/export', requireAuth, async (req, res) => {
+  try {
+    const docs = await dbFind({}).sort({ timestamp: -1 }).exec();
+
+    let csv = 'Full Name,Email,Country Code,Phone Number,Date of Birth,Grade,Is BH Student,Country,School Name,Subjects,Motivation\n';
+
+    docs.forEach(function (sub) {
+      const escapeCsv = (str) => {
+        if (!str) return '';
+        return `"${String(str).replace(/"/g, '""')}"`;
+      };
+
+      const subjects = sub.subjects ? sub.subjects.join('; ') : '';
+
+      csv += [
+        escapeCsv(sub.fullName),
+        escapeCsv(sub.email),
+        escapeCsv(sub.countryCode),
+        escapeCsv(sub.phone),
+        escapeCsv(sub.dob),
+        escapeCsv(sub.grade),
+        escapeCsv(sub.isBhStudent ? 'Yes' : 'No'),
+        escapeCsv(sub.country),
+        escapeCsv(sub.school),
+        escapeCsv(subjects),
+        escapeCsv(sub.motivation)
+      ].join(',') + '\n';
     });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=submissions-' +
+        new Date().toISOString().slice(0, 10) +
+        '.csv'
+    );
+    res.send(csv);
+  } catch (err) {
+    console.error('Export error:', err);
+    res.status(500).json({ success: false, error: 'Export failed' });
+  }
 });
 
-app.get('/api/submissions/export', requireAuth, function (req, res) {
-  db.find({})
-    .sort({ timestamp: -1 })
-    .exec(function (err, docs) {
-      if (err) {
-        console.error('Export error:', err);
-        return res.status(500).json({ success: false, error: 'Export failed' });
-      }
-
-      let csv = 'Full Name,Email,Country Code,Phone Number,Date of Birth,Grade,Is BH Student,Country,School Name,Subjects,Motivation\n';
-
-      docs.forEach(function (sub) {
-        const escapeCsv = (str) => {
-          if (!str) return '';
-          return `"${String(str).replace(/"/g, '""')}"`;
-        };
-
-        const subjects = sub.subjects ? sub.subjects.join('; ') : '';
-
-        csv += [
-          escapeCsv(sub.fullName),
-          escapeCsv(sub.email),
-          escapeCsv(sub.countryCode),
-          escapeCsv(sub.phone),
-          escapeCsv(sub.dob),
-          escapeCsv(sub.grade),
-          escapeCsv(sub.isBhStudent ? 'Yes' : 'No'),
-          escapeCsv(sub.country),
-          escapeCsv(sub.school),
-          escapeCsv(subjects),
-          escapeCsv(sub.motivation)
-        ].join(',') + '\n';
-      });
-
-      res.setHeader('Content-Type', 'text/csv');
-      res.setHeader(
-        'Content-Disposition',
-        'attachment; filename=submissions-' +
-          new Date().toISOString().slice(0, 10) +
-          '.csv'
-      );
-      res.send(csv);
-    });
-});
-
-app.delete('/api/submissions/bulk-delete', requireAuth, express.json(), (req, res) => {
+app.delete('/api/submissions/bulk-delete', requireAuth, express.json(), async (req, res) => {
   try {
     const { ids } = req.body;
 
@@ -464,20 +480,12 @@ app.delete('/api/submissions/bulk-delete', requireAuth, express.json(), (req, re
       });
     }
 
-    db.remove({ _id: { $in: validIds } }, { multi: true }, (err, numRemoved) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ 
-          success: false, 
-          error: 'Database operation failed' 
-        });
-      }
-
-      res.json({ 
-        success: true, 
-        deleted: numRemoved,
-        message: `Deleted ${numRemoved} submissions`
-      });
+    const numRemoved = await dbRemove({ _id: { $in: validIds } }, { multi: true });
+    
+    res.json({ 
+      success: true, 
+      deleted: numRemoved,
+      message: `Deleted ${numRemoved} submissions`
     });
   } catch (err) {
     console.error('Server error:', err);
@@ -488,8 +496,7 @@ app.delete('/api/submissions/bulk-delete', requireAuth, express.json(), (req, re
   }
 });
 
-// In your PUT /api/submissions/:id endpoint
-app.put('/api/submissions/:id', requireAuth, async function (req, res) {
+app.put('/api/submissions/:id', requireAuth, async (req, res) => {
   try {
     const { status, notes } = req.body;
     
@@ -506,49 +513,31 @@ app.put('/api/submissions/:id', requireAuth, async function (req, res) {
       );
     });
 
-    // Only proceed with email if status changed to approved
+    // Handle email sending based on status
     if (status === 'approved') {
-      try {
-        // Check if user exists
-        const existingUser = await new Promise((resolve) => {
-          usersDb.findOne({ email: submission.email }, (err, user) => {
-            if (err) return resolve(null);
-            resolve(user);
-          });
+      const existingUser = await usersDbFindOne({ email: submission.email });
+      
+      if (!existingUser) {
+        const password = generatePassword();
+        const hashedPassword = bcrypt.hashSync(password, 10);
+
+        await usersDbInsert({
+          email: submission.email,
+          password: hashedPassword,
+          fullName: submission.fullName,
+          role: 'member',
+          createdAt: new Date(),
+          verified: false
         });
 
-        if (!existingUser) {
-          const password = generatePassword();
-          const hashedPassword = bcrypt.hashSync(password, 10);
-
-          await new Promise((resolve, reject) => {
-            usersDb.insert({
-              email: submission.email,
-              password: hashedPassword,
-              fullName: submission.fullName,
-              role: 'member',
-              createdAt: new Date(),
-              verified: false
-            }, (err) => {
-              if (err) return reject(err);
-              resolve();
-            });
-          });
-
-          // Send email and don't wait for it to complete
-          sendApprovalEmail(submission.email, submission.fullName, password)
-            .then(success => {
-              if (!success) {
-                console.error(`Failed to send email to ${submission.email}`);
-              }
-            })
-            .catch(err => {
-              console.error(`Email error for ${submission.email}:`, err);
-            });
-        }
-      } catch (userErr) {
-        console.error('User creation error:', userErr);
+        // Send email without waiting for completion
+        sendApprovalEmail(submission.email, submission.fullName, password)
+          .catch(err => console.error('Email error:', err));
       }
+    } else if (status === 'rejected') {
+      // Send rejection email without waiting for completion
+      sendRejectionEmail(submission.email, submission.fullName)
+        .catch(err => console.error('Email error:', err));
     }
 
     res.json({ success: true });
@@ -570,79 +559,66 @@ app.put('/api/submissions/bulk-update', requireAuth, express.json(), async (req,
       return res.status(400).json({ success: false, error: 'Invalid status' });
     }
 
-    db.update(
-      { _id: { $in: ids } },
-      { $set: { status } },
-      { multi: true },
-      async (err, numUpdated) => {
-        if (err) {
-          return res.status(500).json({ success: false, error: 'Database error' });
+    // Update all submissions
+    const numUpdated = await new Promise((resolve, reject) => {
+      db.update(
+        { _id: { $in: ids } },
+        { $set: { status } },
+        { multi: true },
+        (err, numUpdated) => {
+          if (err) return reject(err);
+          resolve(numUpdated);
         }
+      );
+    });
 
-        if (status === 'approved') {
-          const submissions = await new Promise((resolve) => {
-            db.find({ _id: { $in: ids } }, (err, docs) => {
-              if (err) return resolve([]);
-              resolve(docs);
-            });
+    // If approved, create accounts and send emails
+    if (status === 'approved') {
+      const submissions = await dbFind({ _id: { $in: ids } });
+
+      // Process each submission in parallel
+      await Promise.all(submissions.map(async (submission) => {
+        const existingUser = await usersDbFindOne({ email: submission.email });
+
+        if (!existingUser) {
+          const password = generatePassword();
+          const hashedPassword = bcrypt.hashSync(password, 10);
+
+          await usersDbInsert({
+            email: submission.email,
+            password: hashedPassword,
+            fullName: submission.fullName,
+            role: 'member',
+            createdAt: new Date(),
+            verified: false
           });
 
-          for (const submission of submissions) {
-            const existingUser = await new Promise((resolve) => {
-              usersDb.findOne({ email: submission.email }, (err, user) => {
-                if (err) return resolve(null);
-                resolve(user);
-              });
-            });
-
-            if (!existingUser) {
-              const password = generatePassword();
-              const hashedPassword = bcrypt.hashSync(password, 10);
-
-              const newUser = {
-                email: submission.email,
-                password: hashedPassword,
-                fullName: submission.fullName,
-                role: 'member',
-                createdAt: new Date(),
-                verified: false
-              };
-
-              await new Promise((resolve) => {
-                usersDb.insert(newUser, (err) => {
-                  if (err) console.error('Error creating user:', err);
-                  resolve();
-                });
-              });
-
-              const emailSent = await sendApprovalEmail(submission.email, submission.fullName, password);
-              if (!emailSent) {
-                console.error('Failed to send approval email to:', submission.email);
-              }
-            }
-          }
+          // Send email without waiting for completion
+          sendApprovalEmail(submission.email, submission.fullName, password)
+            .catch(err => console.error('Email error:', err));
         }
+      }));
+    } else if (status === 'rejected') {
+      const submissions = await dbFind({ _id: { $in: ids } });
+      
+      // Send rejection emails without waiting for completion
+      submissions.forEach(submission => {
+        sendRejectionEmail(submission.email, submission.fullName)
+          .catch(err => console.error('Email error:', err));
+      });
+    }
 
-        res.json({ success: true, updated: numUpdated });
-      }
-    );
+    res.json({ success: true, updated: numUpdated });
   } catch (err) {
     console.error('Error in bulk update:', err);
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
 
-app.delete('/api/submissions/:id', requireAuth, (req, res) => {
-  const id = req.params.id;
-  
-  db.remove({ _id: id }, {}, (err, numRemoved) => {
-    if (err) {
-      console.error('Delete error:', err);
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Database error' 
-      });
-    }
+app.delete('/api/submissions/:id', requireAuth, async (req, res) => {
+  try {
+    const id = req.params.id;
+    const numRemoved = await dbRemove({ _id: id });
     
     if (numRemoved === 0) {
       return res.status(404).json({ 
@@ -655,8 +631,16 @@ app.delete('/api/submissions/:id', requireAuth, (req, res) => {
       success: true,
       deleted: numRemoved
     });
-  });
+  } catch (err) {
+    console.error('Delete error:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Database error' 
+    });
+  }
 });
+
+// Test email endpoint
 app.get('/api/test-email', requireAuth, async (req, res) => {
   try {
     const success = await sendApprovalEmail(
@@ -679,33 +663,34 @@ app.get('/api/test-email', requireAuth, async (req, res) => {
     });
   }
 });
+
 // Static file routes
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/register', function (req, res) {
+app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
 
-app.get('/login', function (req, res) {
+app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-app.get('/admin', function (req, res) {
+app.get('/admin', (req, res) => {
   if (!req.session.authenticated) {
     return res.redirect('/admin-login');
   }
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-app.get('/admin-login', function (req, res) {
+app.get('/admin-login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
 });
 
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, function () {
+app.listen(PORT, () => {
   console.log('Server running on port', PORT);
   console.log('Email service configured for:', process.env.EMAIL_HOST || 'Gmail');
   console.log('Admin username:', ADMIN_CREDENTIALS.username);
