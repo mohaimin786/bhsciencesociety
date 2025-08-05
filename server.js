@@ -88,7 +88,10 @@ const ipinfoLimiter = rateLimit({
   max: 100,
   message: 'Too many IP info requests, please try again later',
 });
-
+// At the top of your server.js
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+  console.warn('WARNING: Email credentials not configured. Email functionality will be disabled.');
+}
 // Improved Email transporter setup
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || 'smtp.gmail.com',
@@ -118,12 +121,20 @@ function generatePassword() {
 }
 
 // Improved email sending function
+// Modify your sendApprovalEmail function to be more robust
 async function sendApprovalEmail(email, fullName, password) {
-  const mailOptions = {
-    from: `"BHSS Admin" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: 'Your BHSS Application Has Been Approved',
-    html: `
+  // Skip if email not configured
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.log('Email not sent - no email configuration');
+    return false;
+  }
+
+  try {
+    const mailOptions = {
+      from: `"BHSS Admin" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: 'Your BHSS Application Has Been Approved',
+      html:`
       <h2>Welcome to Bloomfield Hall Science Society!</h2>
       <p>We're pleased to inform you that your application has been approved.</p>
       <p>Your account has been created with the following credentials:</p>
@@ -133,7 +144,21 @@ async function sendApprovalEmail(email, fullName, password) {
       <p>If you didn't request this, please contact us immediately.</p>
       <p>Best regards,<br>BHSS Council</p>
     `
-  };
+    };
+
+    // Verify connection first
+    await transporter.verify();
+    console.log('SMTP connection verified');
+
+    // Send the email
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`Email sent to ${email}: ${info.messageId}`);
+    return true;
+  } catch (error) {
+    console.error(`Failed to send email to ${email}:`, error);
+    return false;
+  }
+}
 
   try {
     // Verify connection configuration
@@ -463,66 +488,72 @@ app.delete('/api/submissions/bulk-delete', requireAuth, express.json(), (req, re
   }
 });
 
+// In your PUT /api/submissions/:id endpoint
 app.put('/api/submissions/:id', requireAuth, async function (req, res) {
   try {
     const { status, notes } = req.body;
     
-    db.update(
-      { _id: req.params.id },
-      { $set: { status, notes: notes || '' } },
-      {},
-      async function (err, numReplaced) {
-        if (err) {
-          return res.status(500).json({ success: false, error: 'Database error' });
+    // First update the submission
+    const submission = await new Promise((resolve, reject) => {
+      db.update(
+        { _id: req.params.id },
+        { $set: { status, notes: notes || '' } },
+        { returnUpdatedDocs: true },
+        function (err, numReplaced, affectedDocument) {
+          if (err) return reject(err);
+          resolve(affectedDocument);
         }
+      );
+    });
 
-        if (status === 'approved') {
-          db.findOne({ _id: req.params.id }, async (err, submission) => {
-            if (err || !submission) {
-              console.error('Error finding submission:', err);
-              return res.json({ success: true, updated: numReplaced });
-            }
+    // Only proceed with email if status changed to approved
+    if (status === 'approved') {
+      try {
+        // Check if user exists
+        const existingUser = await new Promise((resolve) => {
+          usersDb.findOne({ email: submission.email }, (err, user) => {
+            if (err) return resolve(null);
+            resolve(user);
+          });
+        });
 
-            usersDb.findOne({ email: submission.email }, async (err, existingUser) => {
-              if (err) {
-                console.error('Error checking for existing user:', err);
-                return res.json({ success: true, updated: numReplaced });
-              }
+        if (!existingUser) {
+          const password = generatePassword();
+          const hashedPassword = bcrypt.hashSync(password, 10);
 
-              if (!existingUser) {
-                const password = generatePassword();
-                const hashedPassword = bcrypt.hashSync(password, 10);
-
-                const newUser = {
-                  email: submission.email,
-                  password: hashedPassword,
-                  fullName: submission.fullName,
-                  role: 'member',
-                  createdAt: new Date(),
-                  verified: false
-                };
-
-                usersDb.insert(newUser, async (err) => {
-                  if (err) {
-                    console.error('Error creating user account:', err);
-                    return res.json({ success: true, updated: numReplaced });
-                  }
-
-                  const emailSent = await sendApprovalEmail(submission.email, submission.fullName, password);
-                  if (!emailSent) {
-                    console.error('Failed to send approval email to:', submission.email);
-                  }
-                });
-              }
+          await new Promise((resolve, reject) => {
+            usersDb.insert({
+              email: submission.email,
+              password: hashedPassword,
+              fullName: submission.fullName,
+              role: 'member',
+              createdAt: new Date(),
+              verified: false
+            }, (err) => {
+              if (err) return reject(err);
+              resolve();
             });
           });
-        }
 
-        res.json({ success: true, updated: numReplaced });
+          // Send email and don't wait for it to complete
+          sendApprovalEmail(submission.email, submission.fullName, password)
+            .then(success => {
+              if (!success) {
+                console.error(`Failed to send email to ${submission.email}`);
+              }
+            })
+            .catch(err => {
+              console.error(`Email error for ${submission.email}:`, err);
+            });
+        }
+      } catch (userErr) {
+        console.error('User creation error:', userErr);
       }
-    );
+    }
+
+    res.json({ success: true });
   } catch (err) {
-    console.error('Error in submission update:', err);
+    console.error('Submission update error:', err);
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
@@ -626,7 +657,28 @@ app.delete('/api/submissions/:id', requireAuth, (req, res) => {
     });
   });
 });
-
+app.get('/api/test-email', requireAuth, async (req, res) => {
+  try {
+    const success = await sendApprovalEmail(
+      'test@example.com', 
+      'Test User', 
+      'testpassword'
+    );
+    
+    res.json({
+      success,
+      message: success 
+        ? 'Test email sent successfully' 
+        : 'Failed to send test email'
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: 'Email test failed',
+      details: err.message
+    });
+  }
+});
 // Static file routes
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
