@@ -416,7 +416,6 @@ app.get('/api/submissions', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 });
-
 app.get('/api/submissions/export', requireAuth, async (req, res) => {
   try {
     const docs = await dbFind({}).sort({ timestamp: -1 }).exec();
