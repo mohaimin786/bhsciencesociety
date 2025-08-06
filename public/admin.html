@@ -1236,52 +1236,47 @@ async function performBulkAction() {
 
   // Process each ID sequentially
   for (const id of validIds) {
-    try {
-      let response, data;
-      
-      if (currentBulkAction === 'delete') {
-        // Single delete request
-        response = await fetch(`/api/submissions/${id}`, {
-          method: 'DELETE',
-          headers: { 'Accept': 'application/json' }
-        });
-        data = await response.json();
-        
-        if (response.ok && data.success) {
-          // Remove from local data
-          allSubmissions = allSubmissions.filter(sub => sub._id !== id);
-          successCount++;
-        } else {
-          throw new Error(data.error || 'Delete failed');
-        }
-      } else {
-        // Single status update
-        const newStatus = currentBulkAction === 'approve' ? 'approved' : 'rejected';
-        response = await fetch(`/api/submissions/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ status: newStatus })
-        });
-        data = await response.json();
-        
-        if (response.ok && data.success) {
-          // Update local data
-          const submission = allSubmissions.find(sub => sub._id === id);
-          if (submission) submission.status = newStatus;
-          successCount++;
-        } else {
-          throw new Error(data.error || 'Status update failed');
-        }
-      }
-    } catch (error) {
-      console.error(`Failed to process ID ${id}:`, error);
-      failCount++;
-      failedIds.push(id);
+  try {
+    let response, data;
+
+    if (currentBulkAction === 'delete') {
+      response = await fetch(`/api/submissions/${id}`, {
+        method: 'DELETE',
+        headers: { 'Accept': 'application/json' }
+      });
+    } 
+    else if (currentBulkAction === 'approve') {
+      response = await fetch(`/api/submissions/${id}/approve`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
+      });
+    } 
+    else if (currentBulkAction === 'reject') {
+      response = await fetch(`/api/submissions/${id}/reject`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
+      });
     }
+
+    data = await response.json();
+
+    if (response.ok && data.success) {
+      if (currentBulkAction !== 'delete') {
+        const submission = allSubmissions.find(sub => sub._id === id);
+        if (submission) submission.status = currentBulkAction;
+      } else {
+        allSubmissions = allSubmissions.filter(sub => sub._id !== id);
+      }
+      successCount++;
+    } else {
+      throw new Error(data.error || 'Action failed');
+    }
+  } catch (error) {
+    console.error(`Failed to process ID ${id}:`, error);
+    failCount++;
+    failedIds.push(id);
   }
+}
 
   // Update UI
   selectedSubmissions.clear();

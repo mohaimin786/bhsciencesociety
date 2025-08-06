@@ -7,9 +7,13 @@ const crypto = require('crypto');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const fetch = require('node-fetch');
+const nodemailer = require('nodemailer');
+
+
 
 const app = express();
 const db = new Datastore({ filename: 'submissions.db', autoload: true });
+const usersDb = new Datastore({ filename: 'users.db', autoload: true });
 
 const secretKey =
   process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
@@ -495,6 +499,99 @@ app.get('/api/submissions', requireAuth, function (req, res) {
       res.json({ success: true, data: docs });
     });
 });
+// Approve submission: generates password, stores user, sends email
+app.post('/api/submissions/:id/approve', requireAuth, async (req, res) => {
+  try {
+    // Find submission
+    const submission = await new Promise((resolve, reject) => {
+      db.findOne({ _id: req.params.id }, (err, doc) => {
+        if (err) reject(err);
+        else resolve(doc);
+      });
+    });
+
+    if (!submission) {
+      return res.status(404).json({ success: false, error: 'Submission not found' });
+    }
+
+    // Generate random password
+    const plainPassword = crypto.randomBytes(8).toString('hex');
+    const hashedPassword = await bcrypt.hash(plainPassword, 10);
+
+    // Save to users database
+    usersDb.insert({
+      fullName: submission.fullName,
+      email: submission.email,
+      password: hashedPassword,
+      createdAt: new Date()
+    });
+
+    // Update submission status
+    db.update({ _id: req.params.id }, { $set: { status: 'approved' } }, {}, async () => {
+      // Send acceptance email
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS
+        }
+      });
+
+      await transporter.sendMail({
+        from: `"BHSS" <${process.env.SMTP_USER}>`,
+        to: submission.email,
+        subject: "BHSS Registration Approved",
+        text: `Hello ${submission.fullName},\n\nCongratulations! Your registration has been approved.\n\nYour login password is: ${plainPassword}\n\nPlease keep it safe.\n\nBest regards,\nBHSS Council`
+      });
+
+      res.json({ success: true, message: 'User approved and email sent' });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+// Reject submission: updates status, sends rejection email
+app.post('/api/submissions/:id/reject', requireAuth, async (req, res) => {
+  try {
+    // Find submission
+    const submission = await new Promise((resolve, reject) => {
+      db.findOne({ _id: req.params.id }, (err, doc) => {
+        if (err) reject(err);
+        else resolve(doc);
+      });
+    });
+
+    if (!submission) {
+      return res.status(404).json({ success: false, error: 'Submission not found' });
+    }
+
+    // Update submission status
+    db.update({ _id: req.params.id }, { $set: { status: 'rejected' } }, {}, async () => {
+      // Send rejection email
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS
+        }
+      });
+
+      await transporter.sendMail({
+        from: `"BHSS" <${process.env.SMTP_USER}>`,
+        to: submission.email,
+        subject: "BHSS Registration Decision",
+        text: `Hello ${submission.fullName},\n\nWe appreciate your interest in joining BHSS, but unfortunately your registration has not been approved at this time.\n\nWe encourage you to apply again in the future.\n\nBest regards,\nBHSS Council`
+      });
+
+      res.json({ success: true, message: 'User rejected and email sent' });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
 
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
