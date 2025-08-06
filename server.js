@@ -477,7 +477,7 @@ app.post('/api/submit', submissionLimiter, express.json(), function (req, res) {
     status: 'pending',
     timestamp: new Date(),
   };
-
+  console.log("Incoming submission data:", req.body);
   db.insert(submission, function (err, doc) {
     if (err)
       return res.status(500).json({ success: false, error: 'Database error' });
