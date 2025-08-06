@@ -32,11 +32,6 @@ app.use(
 
 app.set('trust proxy', true);
 
-app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
-
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', 'https://stackblitz-starters-uogm5vlf.vercel.app');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
