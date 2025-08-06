@@ -2102,7 +2102,7 @@
             document.getElementById('footerpara').style.display = 'none';
 
             // 1. First submit to your server's API
-            const serverResponse = await fetch('https://stackblitzstartersuogm5vlf-qqug--3000--96435430.local-credentialless.webcontainer.io/api/submit', {
+            const serverResponse = await fetch('https://bhss-backend.vercel.app/api/submit', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -2197,7 +2197,7 @@
           successMessage.classList.add('active');
 
           // 1. First submit to your server's API
-          const serverResponse = await fetch('https://stackblitzstartersuogm5vlf-qqug--3000--96435430.local-credentialless.webcontainer.io/api/submit', {
+          const serverResponse = await fetch('https://bhss-backend.vercel.app/api/submit', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -2249,7 +2249,7 @@
   e.preventDefault();
 
   try {
-    const res = await fetch('https://stackblitzstartersuogm5vlf-qqug--3000--96435430.local-credentialless.webcontainer.io/api/submit', {
+    const res = await fetch('https://bhss-backend.vercel.app/api/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(Object.fromEntries(new FormData(this)))
