@@ -38,12 +38,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*'); // For testing, allow all
-
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Origin', 'https://stackblitz-starters-uogm5vlf.vercel.app');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Respond immediately to preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
   next();
 });
+
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
