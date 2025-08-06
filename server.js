@@ -38,10 +38,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.use(function (req, res, next) {
-  res.header(
-    'Access-Control-Allow-Origin',
-    'https://stackblitz-starters-uogm5vlf.vercel.app/'
-  );
+  res.header('Access-Control-Allow-Origin', '*'); // For testing, allow all
+
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
@@ -374,36 +372,26 @@ app.delete('/api/submissions/:id', requireAuth, (req, res) => {
 });
 
 // Single status update endpoint
+// Single status update (merged with notes update)
 app.put('/api/submissions/:id', requireAuth, express.json(), (req, res) => {
   const id = req.params.id;
-  const { status } = req.body;
-  
+  const { status, notes } = req.body;
+
   if (!['pending', 'approved', 'rejected'].includes(status)) {
-    return res.status(400).json({ 
-      success: false, 
-      error: 'Invalid status' 
-    });
+    return res.status(400).json({ success: false, error: 'Invalid status' });
   }
-  
+
   db.update(
     { _id: id },
-    { $set: { status } },
+    { $set: { status, notes: notes || '' } },
     {},
     (err, numReplaced) => {
-      if (err) {
-        return res.status(500).json({ 
-          success: false, 
-          error: 'Database error' 
-        });
-      }
-      
-      res.json({ 
-        success: true,
-        updated: numReplaced
-      });
+      if (err) return res.status(500).json({ success: false, error: 'Database error' });
+      res.json({ success: true, updated: numReplaced });
     }
   );
 });
+
 
 app.post('/api/submit', submissionLimiter, express.json(), function (req, res) {
   if (

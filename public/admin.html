@@ -1445,7 +1445,7 @@ async function performBulkAction() {
         exportBtn.disabled = true;
         exportBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Exporting...';
         
-        const response = await fetch('/api/submissions/export');
+        const response = await fetch('/api/submissions/export-filtered');
         
         if (!response.ok) {
           throw new Error('Export failed with status: ' + response.status);
