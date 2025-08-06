@@ -2246,6 +2246,22 @@
           successMessage.style.display = 'none';
         }
       });
+      document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  try {
+    const res = await fetch('/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.fromEntries(new FormData(this)))
+    });
+    if (!res.ok) throw new Error('Failed to save to database');
+  } catch (err) {
+    console.error('Error:', err);
+  }
+
+  this.submit();
+});
     </script>
   </body>
 </html>
