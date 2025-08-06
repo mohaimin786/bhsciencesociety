@@ -40,7 +40,7 @@ app.use(express.static('public'));
 app.use(function (req, res, next) {
   res.header(
     'Access-Control-Allow-Origin',
-    'https://stackblitzstartersuogm5vlf-qlly--3000--b5a27d10.local-credentialless.webcontainer.io/'
+    'https://stackblitz-starters-uogm5vlf.vercel.app/'
   );
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
