@@ -1516,11 +1516,11 @@ async function performBulkAction() {
         const response = await fetch('https://bhss-backend.up.railway.app/api/admin/status');
         const data = await response.json();
         if (!data.authenticated) {
-          window.location.href = '/admin-login';
+          window.location.href = '/admin-login.html';
         }
       } catch (err) {
         console.error('Authentication check failed:', err);
-        window.location.href = '/admin-login';
+        window.location.href = '/admin-login.html';
       }
     })();
 
