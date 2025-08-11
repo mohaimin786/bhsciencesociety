@@ -1018,7 +1018,7 @@
             <p>Please provide your personal details</p>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="form-group">
             <label for="fullName">Full Name</label>
             <input
               type="text"
@@ -1029,7 +1029,7 @@
             />
           </div>
 
-          <div class="form-group">
+          <div class="form-group"id="form-group">
             <label for="email">Email Address</label>
             <input
               type="email"
@@ -1040,7 +1040,7 @@
             />
           </div>
 
-          <div class="form-group">
+          <div class="form-group"id="form-group">
             <label for="phone">Phone Number</label>
             <div class="phone-input-group">
               <!-- Country Code Searchable Dropdown -->
@@ -1070,7 +1070,7 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group"id="form-group">
             <label for="dob">Date Of Birth</label>
             <div class="datepicker-container">
               <input
@@ -1139,7 +1139,7 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group"id="form-group">
             <label for="grade">Grade/Year</label>
             <input
               type="text"
@@ -1150,7 +1150,7 @@
             />
           </div>
 
-          <div class="form-group">
+          <div class="form-group"id="form-group">
             <label>Are you from Bloomfield Hall Peshawar?</label>
             <div class="radio-group">
               <label class="radio-option">
@@ -1195,7 +1195,7 @@
           <div id="bhStudentDetails">
             <!-- For BH students -->
             <div id="bhStudentFields" style="display: none">
-              <div class="form-group">
+              <div class="form-group"id="form-group">
                 <label for="section">Your Section</label>
                 <input
                   type="text"
@@ -1208,7 +1208,7 @@
 
             <!-- For non-BH students -->
             <div id="nonBhStudentFields" style="display: none">
-              <div class="form-group">
+              <div class="form-group"id="form-group">
                 <label for="country">Country</label>
                 <input
                   type="text"
@@ -1218,7 +1218,7 @@
                 />
               </div>
 
-              <div class="form-group">
+              <div class="form-group"id="form-group">
                 <label for="school">School Name</label>
                 <input
                   type="text"
@@ -1230,10 +1230,10 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group"id="form-group">
             <label>Subjects of Interest (Select all that apply)</label>
             <div class="checkbox-group">
-              <label class="checkbox-option">
+              <label class="checkbox-option"id="form-group">
                 <input
                   type="checkbox"
                   id="physics"
@@ -1244,7 +1244,7 @@
                 <span class="checkbox-label">Physics</span>
               </label>
 
-              <label class="checkbox-option">
+              <label class="checkbox-option"id="form-group">
                 <input
                   type="checkbox"
                   id="chemistry"
@@ -1255,7 +1255,7 @@
                 <span class="checkbox-label">Chemistry</span>
               </label>
 
-              <label class="checkbox-option">
+              <label class="checkbox-option"id="form-group">
                 <input
                   type="checkbox"
                   id="biology"
@@ -1266,7 +1266,7 @@
                 <span class="checkbox-label">Biology</span>
               </label>
 
-              <label class="checkbox-option">
+              <label class="checkbox-option"id="form-group">
                 <input
                   type="checkbox"
                   id="math"
@@ -1277,7 +1277,7 @@
                 <span class="checkbox-label">Mathematics</span>
               </label>
 
-              <label class="checkbox-option">
+              <label class="checkbox-option"id="form-group">
                 <input
                   type="checkbox"
                   id="cs"
@@ -1288,7 +1288,7 @@
                 <span class="checkbox-label">Computer Science</span>
               </label>
 
-              <label class="checkbox-option">
+              <label class="checkbox-option" id="form-group">
                 <input
                   type="checkbox"
                   id="english"
@@ -1299,7 +1299,7 @@
                 <span class="checkbox-label">English</span>
               </label>
 
-              <label class="checkbox-option">
+              <label class="checkbox-option"id="form-group">
                 <input
                   type="checkbox"
                   id="earthandspacesciences"
@@ -1343,7 +1343,7 @@
             </div>
           </div>
 
-          <div class="form-group" style="position: relative">
+          <div class="form-group" style="position: relative" id="form-group">
             <label for="motivation"
               >Why do you want to join the society? (Minimum 50
               characters)</label
@@ -1458,7 +1458,7 @@
         const progressFill = document.getElementById('progressFill');
         const phoneInput = document.getElementById('phone');
         const countryCodeInput = document.getElementById('countryCode');
-        const formgroup = document.querySelector('.form-group');
+        const formgroup = document.getElementById('.form-group');
 
         // Country codes data - comprehensive list
         form.addEventListener('submit', async function (e) {
