@@ -1014,6 +1014,7 @@
         <!-- Section 1: Basic Information -->
         <div class="form-section active" id="section1">
           <div class="form-header">
+            
             <h2>Basic Information</h2>
             <p>Please provide your personal details</p>
           </div>
@@ -1458,7 +1459,6 @@
         const progressFill = document.getElementById('progressFill');
         const phoneInput = document.getElementById('phone');
         const countryCodeInput = document.getElementById('countryCode');
-        const formgroup = document.getElementById('form-group');
 
         // Country codes data - comprehensive list
         form.addEventListener('submit', async function (e) {
@@ -2097,7 +2097,10 @@
 
     // Show loading state
     form.style.display = 'none';
-    formgroup.style.display = 'none';
+    section1.style.display = 'none';
+    section2.style.display = 'none';
+
+    
 
     document.getElementById('footer').style.position = 'fixed';
     successMessage.style.display = 'block';
