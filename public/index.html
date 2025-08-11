@@ -1353,7 +1353,7 @@
       </button>
     </nav>
   </header>
-
+<div id="error-notification" style="display:none; color:red; margin: 10px 0;"></div>
   <!--Hero-->
   <section class="hero" id="hero" data-aos="fade-in">
     <div class="hero-content">
@@ -1747,6 +1747,24 @@
       easing: 'ease-in-out-quad',
       once: true
     });
+  </script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const error = params.get('error');
+
+  if (error === 'rateLimitReached') {
+    const errorNotification = document.getElementById('error-notification');
+    if (errorNotification) {
+      errorNotification.textContent = "You have reached the maximum number of submissions allowed per day (3). Please try again tomorrow.";
+      errorNotification.style.color = "red";
+      errorNotification.style.display = "block";
+    }
+    // Optionally, clear the URL so the message doesn't show on refresh
+    history.replaceState(null, '', window.location.pathname);
+  }
+});
+
   </script>
 </body>
 </html>
