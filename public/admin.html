@@ -939,7 +939,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     if (!token) {
       console.error("No token found — redirecting to login.");
-     // window.location.href = '/admin-login.html';
+      window.location.href = '/admin-login.html';
       return;
     }
 
@@ -1509,12 +1509,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const data = await response.json();
       if (!data.authenticated) {
-      //  window.location.href = '/admin-login.html';
+        window.location.href = '/admin-login.html';
       }
     } catch (err) {
       console.error('Authentication check failed:', err);
       // Optionally redirect
-      // window.location.href = '/admin-login.html';
+       window.location.href = '/admin-login.html';
     }
   })();
 
