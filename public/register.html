@@ -2098,7 +2098,10 @@
     form.style.display = 'none';
     document.getElementById('footer').style.position = 'fixed';
     successMessage.style.display = 'block';
-    document.getElementById('footerpara').style.display = 'none';
+    const footerPara = document.getElementById('footerpara');
+    if (footerPara) {
+      footerPara.style.display = 'none';
+    }
 
     // Create a new form element to submit
     const formSubmitForm = document.createElement('form');
