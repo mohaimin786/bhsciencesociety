@@ -936,7 +936,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load submissions
   async function loadSubmissions() {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('adminToken');
     if (!token) {
       console.error("No token found — redirecting to login.");
       window.location.href = '/admin-login.html';
