@@ -1458,6 +1458,7 @@
         const progressFill = document.getElementById('progressFill');
         const phoneInput = document.getElementById('phone');
         const countryCodeInput = document.getElementById('countryCode');
+        const formgroup = document.querySelector('.form-group');
 
         // Country codes data - comprehensive list
         form.addEventListener('submit', async function (e) {
@@ -2096,6 +2097,8 @@
 
     // Show loading state
     form.style.display = 'none';
+    formgroup.style.display = 'none';
+
     document.getElementById('footer').style.position = 'fixed';
     successMessage.style.display = 'block';
 
