@@ -1519,7 +1519,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const data = await response.json();
       if (!data.authenticated) {
-        window.location.href = '/admin-login.html';
+      //  window.location.href = '/admin-login.html';
       }
     } catch (err) {
       console.error('Authentication check failed:', err);
