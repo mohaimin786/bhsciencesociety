@@ -1004,7 +1004,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const data = await response.json();
-    allSubmissions = data.submissions || [];
+    allSubmissions = data.data || [];
     renderSubmissions();
     updateSubmissionCount();
   } catch (err) {
@@ -1081,17 +1081,17 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="col-md-9">
                 <div><strong>Name:</strong> ${sub.fullName || 'Not provided'}</div>
                <div><strong>Email:</strong> ${sub.email || 'Not provided'}</div>
-                <div><strong>Phone:</strong> 
+               <div><strong>Phone:</strong> 
                   ${sub.phone ? `
                     <span class="phone-number">
                       ${sub.countryCode ? `
                         <span class="country-code">${sub.countryCode}</span>
                         <span class="separator"> - </span>
                       ` : ''}
-                      <span class="local-number">${sub.countryCode ? sub.phone.replace(sub.countryCode, '') : sub.phone}</span>
+                      <span class="local-number">${sub.countryCode ? sub.phone.replace(sub.countryCode.replace(/[^\d+]/g, ''), '') : sub.phone}</span>
                     </span>
                   ` : 'Not provided'}
-                </div>             
+                </div>
                 <div><strong>Date of Birth:</strong> ${sub.dob || 'Not provided'}</div>
               <div><strong>Grade:</strong> ${sub.grade || 'Not provided'}</div>
             </div>
@@ -1287,7 +1287,7 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'DELETE',
             headers: {
               'Accept': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
+              'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
             }
           });
         } else if (currentBulkAction === 'approve') {
@@ -1295,7 +1295,7 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             headers: {
               'Accept': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
+              'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
             }
           });
         } else if (currentBulkAction === 'reject') {
@@ -1303,7 +1303,7 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             headers: {
               'Accept': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
+              'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
             }
           });
         }
@@ -1380,7 +1380,7 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
       },
       body: JSON.stringify({
         status: newStatus,
@@ -1440,7 +1440,7 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
       }
     })
       .then(response => {
