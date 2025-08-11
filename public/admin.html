@@ -938,7 +938,10 @@ document.addEventListener('DOMContentLoaded', () => {
       loadingSpinner.classList.remove('d-none');
       refreshBtn.disabled = true;
       
-      fetch('https://bhss-backend.up.railway.app/api/submissions')
+      fetch('https://bhss-backend.up.railway.app/api/submissions', {
+          method: 'GET',
+  credentials: 'include'
+      })
         .then(res => res.json())
         .then(data => {
           if (data.success) {
