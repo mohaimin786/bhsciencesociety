@@ -85,62 +85,60 @@
       </form>
     </div>
   </div>
-
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const loginBtn = document.getElementById('loginBtn');
-      const loginSpinner = document.getElementById('loginSpinner');
-      const errorDiv = document.getElementById('loginError');
-      
-      loginBtn.disabled = true;
-      loginSpinner.classList.remove('d-none');
-      errorDiv.classList.add('d-none');
-      
-      try {
-        const response = await fetch('https://bhss-backend.up.railway.app/api/admin/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: true
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
     
-          body: JSON.stringify({ username, password })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          window.location.href = '/admin.html';
-        } else {
-          errorDiv.textContent = data.error || 'Login failed';
-          errorDiv.classList.remove('d-none');
-        }
-      } catch (err) {
-        errorDiv.textContent = 'Network error. Please try again.';
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const loginBtn = document.getElementById('loginBtn');
+    const loginSpinner = document.getElementById('loginSpinner');
+    const errorDiv = document.getElementById('loginError');
+    
+    loginBtn.disabled = true;
+    loginSpinner.classList.remove('d-none');
+    errorDiv.classList.add('d-none');
+    
+    try {
+      const response = await fetch('https://bhss-backend.up.railway.app/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // ✅ must be include for cookies
+        body: JSON.stringify({ username, password })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        window.location.href = '/admin.html';
+      } else {
+        errorDiv.textContent = data.error || 'Login failed';
         errorDiv.classList.remove('d-none');
-      } finally {
-        loginBtn.disabled = false;
-        loginSpinner.classList.add('d-none');
       }
-    });
-    
-    // Check if already logged in
-    (async () => {
-      try {
-        const response = await fetch('https://bhss-backend.up.railway.app/api/admin/status');
-        const data = await response.json();
-        if (data.authenticated) {
-          window.location.href = '/admin.html';
-          credentials: true;
-          credentials: 'include'
-          
-        }
-      } catch (err) {
-        console.error('Error checking auth status:', err);
+    } catch (err) {
+      errorDiv.textContent = 'Network error. Please try again.';
+      errorDiv.classList.remove('d-none');
+    } finally {
+      loginBtn.disabled = false;
+      loginSpinner.classList.add('d-none');
+    }
+  });
+  
+  // Check if already logged in
+  (async () => {
+    try {
+      const response = await fetch('https://bhss-backend.up.railway.app/api/admin/status', {
+        credentials: 'include' // ✅ must also be here
+      });
+      const data = await response.json();
+      if (data.authenticated) {
+        window.location.href = '/admin.html';
       }
-    })();
-  </script>
+    } catch (err) {
+      console.error('Error checking auth status:', err);
+    }
+  })();
+</script>
+
 </body>
 </html>
