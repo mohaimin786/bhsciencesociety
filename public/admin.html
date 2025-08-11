@@ -719,32 +719,55 @@ body.light-mode .nav-tabs .nav-link[data-status="all"]:hover {
       font-weight: 600;
       letter-spacing: 0.5px;
     }
-      .logout-btn {
-    background: #2E8B57; /* Emerald Green */
-    color: #fff;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(46, 139, 87, 0.4);
-    transition: all 0.3s ease;
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    z-index: 1000;
-  }
-    .logout-btn:hover {
-    background: #6A5ACD; /* Slate Blue */
-    box-shadow: 0 6px 15px rgba(106, 90, 205, 0.5);
-    transform: scale(1.05);
-  }
+.logout-btn {
+  background: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
 
-  .logout-btn:active {
-    transform: scale(0.95);
-    box-shadow: 0 3px 8px rgba(46, 139, 87, 0.3);
-  }
+.logout-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-color);
+  transition: all 0.4s ease;
+  z-index: 0;
+}
+
+.logout-btn:hover::before {
+  left: 0;
+}
+
+.logout-btn i {
+  z-index: 1;
+}
+
+.logout-btn span,
+.logout-btn i {
+  position: relative;
+  z-index: 1;
+}
+
+.logout-btn:hover {
+  color: var(--dark-text);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 255, 174, 0.3);
+}
+
   </style>
 </head>
 <body class="dark">
