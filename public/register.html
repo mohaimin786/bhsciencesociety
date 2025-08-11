@@ -2102,8 +2102,8 @@
     
 
     document.getElementById('footer').style.position = 'fixed';
-    section1.style.display = 'none';
-    section2.style.display = 'none';
+    section1.style.setProperty('display', 'none', 'important');
+    section2.style.setProperty('display', 'none', 'important');
     successMessage.style.display = 'block';
 
 
