@@ -1574,7 +1574,18 @@
   });
 
 
+ const params = new URLSearchParams(window.location.search);
+  const error = params.get('error');
 
+  if (error === 'rateLimitReached') {
+    const errorNotification = document.getElementById('error-notification');
+    if (errorNotification) {
+      errorNotification.textContent = "You have reached the maximum number of submissions allowed per day (3). Please try again tomorrow.";
+      errorNotification.style.display = "block";
+    }
+    // Clear URL param so message doesn't show on refresh
+    history.replaceState(null, '', window.location.pathname);
+  }
   // Particle background
   function createParticles() {
     const particlesContainer = document.getElementById('particles-js');
@@ -1748,23 +1759,6 @@
       once: true
     });
   </script>
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-  const params = new URLSearchParams(window.location.search);
-  const error = params.get('error');
 
-  if (error === 'rateLimitReached') {
-    const errorNotification = document.getElementById('error-notification');
-    if (errorNotification) {
-      errorNotification.textContent = "You have reached the maximum number of submissions allowed per day (3). Please try again tomorrow.";
-      errorNotification.style.color = "red";
-      errorNotification.style.display = "block";
-    }
-    // Optionally, clear the URL so the message doesn't show on refresh
-    history.replaceState(null, '', window.location.pathname);
-  }
-});
-
-  </script>
 </body>
 </html>
