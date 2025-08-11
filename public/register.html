@@ -1981,182 +1981,162 @@
       const form = document.getElementById('registrationForm');
 
       // Form submission - validate all fields
-      form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        let isValid = true;
-        // Validate all required fields in section 1
-        const requiredFieldsSection1 = section1.querySelectorAll('[required]');
-        requiredFieldsSection1.forEach((field) => {
-          if (!field.value) {
-            isValid = false;
-            field.style.borderColor = '#ff4444';
-          }
-        });
+    form.addEventListener('submit', async function (e) {
+  e.preventDefault();
 
-        // Validate phone number
-        if (!validatePhoneNumber()) {
-          isValid = false;
-        }
+  let isValid = true;
 
-        // Validate country code
-        if (!countryCodeInput.dataset.code && countryCodeInput.value) {
-          isValid = false;
-          countryCodeInput.classList.add('invalid');
-        }
+  // Validate all required fields in section 1
+  const requiredFieldsSection1 = section1.querySelectorAll('[required]');
+  requiredFieldsSection1.forEach((field) => {
+    if (!field.value) {
+      isValid = false;
+      field.style.borderColor = '#ff4444';
+    }
+  });
 
-        // Validate radio button selection
-        const bhStudentSelected = document.querySelector(
-          'input[name="isBhStudent"]:checked'
-        );
-        if (!bhStudentSelected) {
-          isValid = false;
-          document.querySelector('.radio-group').style.border =
-            '1px solid #ff4444';
-          document.querySelector('.radio-group').style.borderRadius = '8px';
-          document.querySelector('.radio-group').style.padding = '10px';
-        }
+  // Validate phone number
+  if (!validatePhoneNumber()) {
+    isValid = false;
+  }
 
-        const selectedSubjects = Array.from(
-          document.querySelectorAll('input[name="subjects[]"]:checked')
-        );
-        if (selectedSubjects.length === 0) {
-          isValid = false;
-          document.querySelector('.checkbox-group').style.border =
-            '1px solid #ff4444';
-          document.querySelector('.checkbox-group').style.borderRadius = '8px';
-          document.querySelector('.checkbox-group').style.padding = '10px';
-        } else {
-          document.querySelector('.checkbox-group').style.border = '';
-          document.querySelector('.checkbox-group').style.padding = '';
-        }
+  // Validate country code
+  if (!countryCodeInput.dataset.code && countryCodeInput.value) {
+    isValid = false;
+    countryCodeInput.classList.add('invalid');
+  }
 
-        // Validate conditional fields based on radio selection
-        if (bhStudentSelected) {
-          if (
-            bhStudentSelected.value === 'yes' &&
-            !document.getElementById('section').value
-          ) {
-            isValid = false;
-            document.getElementById('section').style.borderColor = '#ff4444';
-          } else if (bhStudentSelected.value === 'no') {
-            if (!document.getElementById('country').value) {
-              isValid = false;
-              document.getElementById('country').style.borderColor = '#ff4444';
-            }
-            if (!document.getElementById('school').value) {
-              isValid = false;
-              document.getElementById('school').style.borderColor = '#ff4444';
-            }
-          }
-        }
+  // Validate radio button selection
+  const bhStudentSelected = document.querySelector(
+    'input[name="isBhStudent"]:checked'
+  );
+  if (!bhStudentSelected) {
+    isValid = false;
+    const radioGroup = document.querySelector('.radio-group');
+    radioGroup.style.border = '1px solid #ff4444';
+    radioGroup.style.borderRadius = '8px';
+    radioGroup.style.padding = '10px';
+  }
 
-        // Validate motivation text length
-        const motivation = document.getElementById('motivation');
-        if (motivation.value.length < 50) {
-          isValid = false;
-          motivation.style.borderColor = '#ff4444';
-        }
+  // Validate selected subjects
+  const selectedSubjects = Array.from(
+    document.querySelectorAll('input[name="subjects[]"]:checked')
+  );
+  const checkboxGroup = document.querySelector('.checkbox-group');
+  if (selectedSubjects.length === 0) {
+    isValid = false;
+    checkboxGroup.style.border = '1px solid #ff4444';
+    checkboxGroup.style.borderRadius = '8px';
+    checkboxGroup.style.padding = '10px';
+  } else {
+    checkboxGroup.style.border = '';
+    checkboxGroup.style.padding = '';
+  }
 
-        if (!isValid) {
-          showNotification(
-            'Form Incomplete',
-            'Please fill out all required fields correctly.',
-            'error'
-          );
-          return;
-        }
-        // Update the form submission handler in register.html
-        form.addEventListener('submit', async function (e) {
-          e.preventDefault();
+  // Validate conditional fields based on radio selection
+  if (bhStudentSelected) {
+    if (
+      bhStudentSelected.value === 'yes' &&
+      !document.getElementById('section').value
+    ) {
+      isValid = false;
+      document.getElementById('section').style.borderColor = '#ff4444';
+    } else if (bhStudentSelected.value === 'no') {
+      if (!document.getElementById('country').value) {
+        isValid = false;
+        document.getElementById('country').style.borderColor = '#ff4444';
+      }
+      if (!document.getElementById('school').value) {
+        isValid = false;
+        document.getElementById('school').style.borderColor = '#ff4444';
+      }
+    }
+  }
 
-          // Disable the submit button to prevent multiple clicks
-          const submitBtn = document.querySelector('.btn-submit');
-          submitBtn.disabled = true;
-          submitBtn.innerHTML =
-            '<span class="spinner-border spinner-border-sm"></span> Submitting...';
+  // Validate motivation text length
+  const motivation = document.getElementById('motivation');
+  if (motivation.value.length < 50) {
+    isValid = false;
+    motivation.style.borderColor = '#ff4444';
+  }
 
-          try {
-            // Prepare form data
-            const formData = {
-              fullName: document.getElementById('fullName').value,
-              email: document.getElementById('email').value,
-              phone: countryCodeInput.dataset.code
-                ? countryCodeInput.dataset.code +
-                  phoneInput.value.replace(/\D/g, '')
-                : phoneInput.value.replace(/\D/g, ''),
-              countryCode: countryCodeInput.dataset.code || '',
-              dob: document.getElementById('dob').value,
-              grade: document.getElementById('grade').value,
-              isBhStudent: bhStudentSelected.value,
-              section: document.getElementById('section').value,
-              country: document.getElementById('country').value,
-              school: document.getElementById('school').value,
-              subjects: Array.from(
-                document.querySelectorAll('input[name="subjects[]"]:checked')
-              ).map((checkbox) => checkbox.value),
-              motivation: motivation.value,
-            };
+  if (!isValid) {
+    showNotification(
+      'Form Incomplete',
+      'Please fill out all required fields correctly.',
+      'error'
+    );
+    return;
+  }
 
-            // Show loading state
-            form.style.display = 'none';
-            document.getElementById('footer').style.position = 'fixed';
-            successMessage.style.display = 'block';
-            document.getElementById('footerpara').style.display = 'none';
+  // Disable the submit button to prevent multiple clicks
+  const submitBtn = document.querySelector('.btn-submit');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML =
+    '<span class="spinner-border spinner-border-sm"></span> Submitting...';
 
+  try {
+    // Prepare form data
+    const formData = {
+      fullName: document.getElementById('fullName').value,
+      email: document.getElementById('email').value,
+      phone: countryCodeInput.dataset.code
+        ? countryCodeInput.dataset.code + phoneInput.value.replace(/\D/g, '')
+        : phoneInput.value.replace(/\D/g, ''),
+      countryCode: countryCodeInput.dataset.code || '',
+      dob: document.getElementById('dob').value,
+      grade: document.getElementById('grade').value,
+      isBhStudent: bhStudentSelected.value,
+      section: document.getElementById('section').value,
+      country: document.getElementById('country').value,
+      school: document.getElementById('school').value,
+      subjects: selectedSubjects.map((checkbox) => checkbox.value),
+      motivation: motivation.value,
+    };
 
-            // Copy all form inputs
-            const inputs = form.querySelectorAll('input, textarea, select');
-            inputs.forEach((input) => {
-              const clone = input.cloneNode(true);
-              formSubmitForm.appendChild(clone);
-            });
+    // Show loading state
+    form.style.display = 'none';
+    document.getElementById('footer').style.position = 'fixed';
+    successMessage.style.display = 'block';
+    document.getElementById('footerpara').style.display = 'none';
 
-            // Add hidden input for full phone number
-            const phoneHiddenInput = document.createElement('input');
-            phoneHiddenInput.type = 'hidden';
-            phoneHiddenInput.name = 'fullPhone';
-            phoneHiddenInput.value = formData.phone;
-            formSubmitForm.appendChild(phoneHiddenInput);
+    // Create a new form element to submit
+    const formSubmitForm = document.createElement('form');
+    formSubmitForm.method = 'POST';
+    formSubmitForm.action = form.action; // make sure form has proper action attribute
 
-            // Add to body and submit
-            document.body.appendChild(formSubmitForm);
-            formSubmitForm.submit();
-          } catch (err) {
-            console.error('Error:', err);
-            showNotification(
-              'Submission Error',
-              'An error occurred: ' + err.message,
-              'error'
-            );
-            // Show form again if error occurs
-            form.style.display = 'block';
-            successMessage.style.display = 'none';
-            // Re-enable submit button
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Submit Application';
-          }
-        });
-        // Prepare form data
-        const formData = {
-          fullName: document.getElementById('fullName').value,
-          email: document.getElementById('email').value,
-          phone: countryCodeInput.dataset.code
-            ? countryCodeInput.dataset.code +
-              phoneInput.value.replace(/\D/g, '')
-            : phoneInput.value.replace(/\D/g, ''),
-          countryCode: countryCodeInput.dataset.code || '',
-          dob: document.getElementById('dob').value,
-          grade: document.getElementById('grade').value,
-          isBhStudent: bhStudentSelected.value,
-          section: document.getElementById('section').value,
-          country: document.getElementById('country').value,
-          school: document.getElementById('school').value,
-          subjects: Array.from(
-            document.querySelectorAll('input[name="subjects[]"]:checked')
-          ).map((checkbox) => checkbox.value),
-          motivation: motivation.value,
-        }});
+    // Copy all form inputs
+    const inputs = form.querySelectorAll('input, textarea, select');
+    inputs.forEach((input) => {
+      const clone = input.cloneNode(true);
+      formSubmitForm.appendChild(clone);
+    });
 
+    // Add hidden input for full phone number
+    const phoneHiddenInput = document.createElement('input');
+    phoneHiddenInput.type = 'hidden';
+    phoneHiddenInput.name = 'fullPhone';
+    phoneHiddenInput.value = formData.phone;
+    formSubmitForm.appendChild(phoneHiddenInput);
+
+    // Add form to body and submit
+    document.body.appendChild(formSubmitForm);
+    formSubmitForm.submit();
+  } catch (err) {
+    console.error('Error:', err);
+    showNotification(
+      'Submission Error',
+      'An error occurred: ' + err.message,
+      'error'
+    );
+    // Show form again if error occurs
+    form.style.display = 'block';
+    successMessage.style.display = 'none';
+    // Re-enable submit button
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = 'Submit Application';
+  }
+});
 
 
  
