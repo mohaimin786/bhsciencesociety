@@ -732,8 +732,9 @@ body.light-mode .nav-tabs .nav-link[data-status="all"]:hover {
   gap: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  position: relative;
+  position: relative; /* Creates stacking context */
   overflow: hidden;
+  z-index: 0; /* Makes sure text can be above pseudo-element */
 }
 
 .logout-btn::before {
@@ -745,28 +746,25 @@ body.light-mode .nav-tabs .nav-link[data-status="all"]:hover {
   height: 100%;
   background: var(--primary-color);
   transition: all 0.4s ease;
-  z-index: 0;
+  z-index: -1; /* Puts background under text */
 }
 
 .logout-btn:hover::before {
   left: 0;
 }
 
-.logout-btn i {
-  z-index: 1;
-}
-
 .logout-btn span,
 .logout-btn i {
   position: relative;
-  z-index: 1;
+  z-index: 1; /* Keep text/icons above background */
 }
 
 .logout-btn:hover {
-  color: black;
+  color: black; /* Text color on hover */
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 255, 174, 0.3);
 }
+
 
   </style>
 </head>
