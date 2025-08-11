@@ -125,6 +125,7 @@ const displayDates = () => {
 
 const createButton = (text, isDisabled = false) => {
   const button = document.createElement("button");
+  button.type = "button";  // <--- Added this line
   button.textContent = text;
   button.disabled = isDisabled;
   if (!isDisabled) {
