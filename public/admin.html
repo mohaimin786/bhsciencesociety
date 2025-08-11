@@ -1366,56 +1366,85 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Update status
-  confirmBtn.addEventListener('click', () => {
-    const newStatus = statusSelect.value;
-    const notes = statusNotes.value;
-
-    if (!currentSubmissionId) return;
-
-    loadingSpinner.classList.remove('d-none');
-    confirmBtn.disabled = true;
-
-    fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-      },
-      body: JSON.stringify({
-        status: newStatus,
-        notes: notes
-      })
-    })
-      .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
-        return response.json();
-      })
-      .then(data => {
-        if (data.success) {
-          const index = allSubmissions.findIndex(s => s._id === currentSubmissionId);
-          if (index !== -1) {
-            allSubmissions[index].status = newStatus;
-            allSubmissions[index].notes = notes;
-          }
-          statusModal.hide();
-          showToast('Success', `Application status updated to ${newStatus}`, 'success');
-          renderSubmissions();
-          updateSubmissionCount();
-        } else {
-          throw new Error(data.error || 'Failed to update status');
+  confirmBtn.addEventListener('click', async () => {
+  const newStatus = statusSelect.value;
+  const notes = statusNotes.value;
+  
+  if (!currentSubmissionId) return;
+  
+  loadingSpinner.classList.remove('d-none');
+  confirmBtn.disabled = true;
+  
+  try {
+    let response, data;
+    
+    if (newStatus === 'approved') {
+      // Use the approve endpoint that sends emails
+      response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}/approve`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
-      })
-      .catch(err => {
-        console.error('Error:', err);
-        showToast('Error', 'Failed to update status: ' + err.message, 'error');
-      })
-      .finally(() => {
-        loadingSpinner.classList.add('d-none');
-        confirmBtn.disabled = false;
       });
-  });
-
+    } else if (newStatus === 'rejected') {
+      // Use the reject endpoint that sends emails
+      response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}/reject`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        }
+      });
+    } else {
+      // For pending status, use the regular update endpoint
+      response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        },
+        body: JSON.stringify({
+          status: newStatus,
+          notes: notes
+        })
+      });
+    }
+    
+    if (!response.ok) throw new Error('Network response was not ok');
+    data = await response.json();
+    
+    if (data.success) {
+      const index = allSubmissions.findIndex(s => s._id === currentSubmissionId);
+      if (index !== -1) {
+        allSubmissions[index].status = newStatus;
+        allSubmissions[index].notes = notes;
+      }
+      statusModal.hide();
+      
+      // Show different messages based on action
+      let message = `Application status updated to ${newStatus}`;
+      if (newStatus === 'approved') {
+        message += ' and approval email sent to applicant';
+      } else if (newStatus === 'rejected') {
+        message += ' and rejection email sent to applicant';
+      }
+      
+      showToast('Success', message, 'success');
+      renderSubmissions();
+      updateSubmissionCount();
+    } else {
+      throw new Error(data.error || 'Failed to update status');
+    }
+  } catch (err) {
+    console.error('Error:', err);
+    showToast('Error', 'Failed to update status: ' + err.message, 'error');
+  } finally {
+    loadingSpinner.classList.add('d-none');
+    confirmBtn.disabled = false;
+  }
+});
   // Delete submission
   document.addEventListener('click', function (e) {
     if (e.target.classList.contains('delete-submission') || e.target.closest('.delete-submission')) {
