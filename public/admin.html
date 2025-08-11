@@ -719,6 +719,32 @@ body.light-mode .nav-tabs .nav-link[data-status="all"]:hover {
       font-weight: 600;
       letter-spacing: 0.5px;
     }
+      .logout-btn {
+    background: #2E8B57; /* Emerald Green */
+    color: #fff;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(46, 139, 87, 0.4);
+    transition: all 0.3s ease;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+  }
+    .logout-btn:hover {
+    background: #6A5ACD; /* Slate Blue */
+    box-shadow: 0 6px 15px rgba(106, 90, 205, 0.5);
+    transform: scale(1.05);
+  }
+
+  .logout-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 3px 8px rgba(46, 139, 87, 0.3);
+  }
   </style>
 </head>
 <body class="dark">
@@ -728,6 +754,7 @@ body.light-mode .nav-tabs .nav-link[data-status="all"]:hover {
         <div class="logo-container">
           <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/logo.png?v=1747136438719" alt="BHSS Logo" class="logo" loading="lazy" />
           <span class="title">BHSS Admin</span>
+          <button id="logoutBtn" class="logout-btn">Logout</button>
         </div>
 
         <div class="ms-auto d-flex align-items-center">
@@ -1529,6 +1556,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial load
   loadSubmissions();
 });
+   document.getElementById('logoutBtn').addEventListener('click', () => {
+    // Button click animation before logout
+    document.getElementById('logoutBtn').textContent = "Logging out...";
+    setTimeout(() => {
+      localStorage.removeItem('adminToken');
+      window.location.href = '/admin-login.html';
+    }, 500);
+  });
 
 </script>
 
