@@ -896,680 +896,650 @@ body.light-mode .nav-tabs .nav-link[data-status="all"]:hover {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const submissionsContainer = document.getElementById('submissionsContainer');
-    const refreshBtn = document.getElementById('refreshBtn');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const submissionCount = document.getElementById('submissionCount');
-    const statusTabs = document.getElementById('statusTabs');
-    const statusModal = new bootstrap.Modal('#statusModal');
-    const deleteModal = new bootstrap.Modal('#deleteModal');
-    const bulkActionModal = new bootstrap.Modal('#bulkActionModal');
-    const deleteToast = new bootstrap.Toast(document.getElementById('deleteToast'));
-    const statusSelect = document.getElementById('statusSelect');
-    const confirmBtn = document.getElementById('confirmStatusUpdate');
-    const confirmDeleteBtn = document.getElementById('confirmDelete');
-    const statusNotes = document.getElementById('statusNotes');
-    const modalSubmissionName = document.getElementById('modalSubmissionName');
-    const deleteSubmissionName = document.getElementById('deleteSubmissionName');
-    const selectionModeBtn = document.getElementById('selectionModeBtn');
-    const selectionModeBar = document.getElementById('selectionModeBar');
-    const cancelSelectionBtn = document.getElementById('cancelSelectionBtn');
-    const selectedCount = document.getElementById('selectedCount');
-    const bulkApproveBtn = document.getElementById('bulkApproveBtn');
-    const bulkRejectBtn = document.getElementById('bulkRejectBtn');
-    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
-    const confirmBulkAction = document.getElementById('confirmBulkAction');
-    const bulkActionModalTitle = document.getElementById('bulkActionModalTitle');
-    const bulkActionModalBody = document.getElementById('bulkActionModalBody');
-    const bulkActionCount = document.getElementById('bulkActionCount');
-    const bulkStatusSelectContainer = document.getElementById('bulkStatusSelectContainer');
-    const bulkStatusSelect = document.getElementById('bulkStatusSelect');
-    const toastMessage = document.getElementById('toastMessage');
-    
-    let currentSubmissionId = null;
-    let currentFilter = 'all';
-    let allSubmissions = [];
-    let selectedSubmissions = new Set();
-    let isSelectionMode = false;
-    let currentBulkAction = null;
+  const submissionsContainer = document.getElementById('submissionsContainer');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  const submissionCount = document.getElementById('submissionCount');
+  const statusTabs = document.getElementById('statusTabs');
+  const statusModal = new bootstrap.Modal('#statusModal');
+  const deleteModal = new bootstrap.Modal('#deleteModal');
+  const bulkActionModal = new bootstrap.Modal('#bulkActionModal');
+  const deleteToast = new bootstrap.Toast(document.getElementById('deleteToast'));
+  const statusSelect = document.getElementById('statusSelect');
+  const confirmBtn = document.getElementById('confirmStatusUpdate');
+  const confirmDeleteBtn = document.getElementById('confirmDelete');
+  const statusNotes = document.getElementById('statusNotes');
+  const modalSubmissionName = document.getElementById('modalSubmissionName');
+  const deleteSubmissionName = document.getElementById('deleteSubmissionName');
+  const selectionModeBtn = document.getElementById('selectionModeBtn');
+  const selectionModeBar = document.getElementById('selectionModeBar');
+  const cancelSelectionBtn = document.getElementById('cancelSelectionBtn');
+  const selectedCount = document.getElementById('selectedCount');
+  const bulkApproveBtn = document.getElementById('bulkApproveBtn');
+  const bulkRejectBtn = document.getElementById('bulkRejectBtn');
+  const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+  const confirmBulkAction = document.getElementById('confirmBulkAction');
+  const bulkActionModalTitle = document.getElementById('bulkActionModalTitle');
+  const bulkActionModalBody = document.getElementById('bulkActionModalBody');
+  const bulkActionCount = document.getElementById('bulkActionCount');
+  const bulkStatusSelectContainer = document.getElementById('bulkStatusSelectContainer');
+  const bulkStatusSelect = document.getElementById('bulkStatusSelect');
+  const toastMessage = document.getElementById('toastMessage');
 
-    // Load submissions
-    function loadSubmissions() {
-      loadingSpinner.classList.remove('d-none');
-      refreshBtn.disabled = true;
-      
-const token = localStorage.getItem('token');
+  let currentSubmissionId = null;
+  let currentFilter = 'all';
+  let allSubmissions = [];
+  let selectedSubmissions = new Set();
+  let isSelectionMode = false;
+  let currentBulkAction = null;
 
-(async () => {
-  try {
-    const response = await fetch('https://bhss-backend.up.railway.app/api/submissions', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
+  // Load submissions
+  function loadSubmissions() {
+    loadingSpinner.classList.remove('d-none');
+    refreshBtn.disabled = true;
 
-    const data = await response.json();
+    const token = localStorage.getItem('token');
 
-    if (data.success) {
-      allSubmissions = data.data;
-      updateSubmissionCount();
-      renderSubmissions();
-    } else {
-      throw new Error(data.message || 'Failed to load submissions.');
-    }
-  } catch (err) {
-    console.error('Error:', err);
-    submissionsContainer.innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-exclamation-triangle"></i>
-        <h4>Error Loading Submissions</h4>
-        <p>Failed to load submissions. Please try again later.</p>
-        <button class="btn btn-primary mt-3" onclick="location.reload()">
-          <i class="fas fa-sync-alt me-2"></i>Reload Page
-        </button>
-      </div>
-    `;
-  } finally {
-    loadingSpinner.classList.add('d-none');
-    refreshBtn.disabled = false;
-  }
-})();
-
-
-    // Update submission count display
-    function updateSubmissionCount() {
-      const pendingCount = allSubmissions.filter(s => s.status === 'pending').length;
-      const approvedCount = allSubmissions.filter(s => s.status === 'approved').length;
-      const rejectedCount = allSubmissions.filter(s => s.status === 'rejected').length;
-      
-      submissionCount.innerHTML = `
-        <span class="badge bg-dark">Total: ${allSubmissions.length}</span>
-        <span class="badge status-pending ms-2">Pending: ${pendingCount}</span>
-        <span class="badge status-approved ms-2">Approved: ${approvedCount}</span>
-        <span class="badge status-rejected ms-2">Rejected: ${rejectedCount}</span>
-      `;
-    }
-
-    // Render submissions based on current filter
-    function renderSubmissions() {
-      let filteredSubmissions = allSubmissions;
-      
-      if (currentFilter !== 'all') {
-        filteredSubmissions = allSubmissions.filter(s => s.status === currentFilter);
-      }
-      
-      if (filteredSubmissions.length === 0) {
-        submissionsContainer.innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-inbox"></i>
-            <h4>No ${currentFilter === 'all' ? '' : currentFilter} applications found</h4>
-            <p>When new applications are submitted, they will appear here.</p>
-          </div>
-        `;
-        return;
-      }
-      
-      submissionsContainer.innerHTML = filteredSubmissions.map(sub => `
-        <div class="card submission-card mb-3 ${selectedSubmissions.has(sub._id) ? 'selected' : ''}" id="submission-${sub._id}">
-          <div class="card-header">
-            <div class="d-flex align-items-center">
-              ${isSelectionMode ? `
-                <input type="checkbox" class="selection-checkbox" data-id="${sub._id}" 
-                  ${selectedSubmissions.has(sub._id) ? 'checked' : ''}>
-              ` : ''}
-              <span class="status-badge status-${sub.status} me-2">${sub.status.toUpperCase()}</span>
-              <strong>${sub.fullName}</strong>
-                <span class="separator"> - </span>
-
-              <span class="text-muted ms-2" style="color:white;">${sub.email}</span>
-            </div>
-            <div class="mt-2 mt-md-0">
-              <small class="text-muted me-3">
-                <i class="far fa-clock me-1"></i>
-                ${new Date(sub.timestamp).toLocaleString()}
-              </small>
-              ${!isSelectionMode ? `
-                <button class="btn btn-sm btn-outline-primary action-btn update-status" data-id="${sub._id}">
-                  <i class="fas fa-edit me-1"></i> Update
-                </button>
-                <button class="btn btn-sm btn-delete action-btn delete-submission" data-id="${sub._id}">
-                  <i class="fas fa-trash me-1"></i> Delete
-                </button>
-              ` : ''}
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="row detail-row">
-              <div class="col-md-3 detail-label"><i class="fas fa-user me-2"></i>Basic Info</div>
-              <div class="col-md-9">
-                  <div><strong>Name:</strong> ${sub.fullName || 'Not provided'}</div>
-
-                 <div><strong>Email:</strong> ${sub.email || 'Not provided'}</div>
-
-                  <div><strong>Phone:</strong> 
-                    ${sub.phone ? `
-                      <span class="phone-number">
-                        ${sub.countryCode ? `
-                          <span class="country-code">${sub.countryCode}</span>
-                          <span class="separator"> - </span>
-                        ` : ''}
-                        <span class="local-number">${sub.countryCode ? sub.phone.replace(sub.countryCode, '') : sub.phone}</span>
-                      </span>
-                    ` : 'Not provided'}
-                  </div>             
-                  <div><strong>Date of Birth:</strong> ${sub.dob || 'Not provided'}</div>
-                <div><strong>Grade:</strong> ${sub.grade || 'Not provided'}</div>
-              </div>
-            </div>
-            
-            <div class="row detail-row">
-              <div class="col-md-3 detail-label"><i class="fas fa-school me-2"></i>School Info</div>
-              <div class="col-md-9">
-                  ${sub.isBhStudent === true || sub.isBhStudent === 'yes' ? `
-                    <div><strong>Bloomfield Hall Student:</strong> Yes</div>
-                    ${sub.section ? `<div><strong>Section:</strong> ${sub.section}</div>` : ''}
-                  ` : `
-                    <div><strong>Bloomfield Hall Student:</strong> No</div>
-                    ${sub.country ? `<div><strong>Country:</strong> ${sub.country}</div>` : ''}
-                    ${sub.school ? `<div><strong>School:</strong> ${sub.school}</div>` : ''}
-                  `}
-              </div>
-            </div>
-            
-            <div class="row detail-row">
-              <div class="col-md-3 detail-label"><i class="fas fa-book me-2"></i>Subjects of Interest</div>
-              <div class="col-md-9">
-                ${sub.subjects && sub.subjects.length > 0 ? 
-                  sub.subjects.map(subj => `<span class="subject-badge">${subj}</span>`).join('') : 
-                  '<span class="text-muted">None selected</span>'}
-              </div>
-            </div>
-            
-            <div class="row">
-              <div class="col-md-3 detail-label"><i class="fas fa-comment me-2"></i>Motivation</div>
-              <div class="col-md-9">
-                <div class="bg-dark p-3 rounded">${sub.motivation || 'No motivation provided'}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `).join('');
-      
-      // Add event listeners to update buttons if not in selection mode
-      if (!isSelectionMode) {
-        document.querySelectorAll('.update-status').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            currentSubmissionId = e.target.closest('button').dataset.id;
-            const submission = allSubmissions.find(s => s._id === currentSubmissionId);
-            if (submission) {
-              modalSubmissionName.textContent = submission.fullName;
-              statusSelect.value = submission.status;
-              statusNotes.value = submission.notes || '';
-              statusModal.show();
-            }
-          });
-        });
-      } else {
-        // Add event listeners to checkboxes in selection mode
-        document.querySelectorAll('.selection-checkbox').forEach(checkbox => {
-          checkbox.addEventListener('change', (e) => {
-            const submissionId = e.target.dataset.id;
-            if (e.target.checked) {
-              selectedSubmissions.add(submissionId);
-              document.getElementById(`submission-${submissionId}`).classList.add('selected');
-            } else {
-              selectedSubmissions.delete(submissionId);
-              document.getElementById(`submission-${submissionId}`).classList.remove('selected');
-            }
-            updateSelectedCount();
-          });
-        });
-
-        // Add click event to entire card for selection
-        document.querySelectorAll('.submission-card').forEach(card => {
-          card.addEventListener('click', (e) => {
-            // Don't trigger if clicking on checkbox directly
-            if (e.target.classList.contains('selection-checkbox')) return;
-            
-            const checkbox = card.querySelector('.selection-checkbox');
-            if (!checkbox) return;
-            
-            const submissionId = checkbox.dataset.id;
-            checkbox.checked = !checkbox.checked;
-            
-            if (checkbox.checked) {
-              selectedSubmissions.add(submissionId);
-              card.classList.add('selected');
-            } else {
-              selectedSubmissions.delete(submissionId);
-              card.classList.remove('selected');
-            }
-            updateSelectedCount();
-          });
-          
-          // Prevent text selection when clicking rapidly
-          card.addEventListener('mousedown', (e) => {
-            if (e.target.classList.contains('selection-checkbox')) return;
-            e.preventDefault();
-          });
-        });
-      }
-    }
-
-    // Update selected count display
-    function updateSelectedCount() {
-      selectedCount.textContent = selectedSubmissions.size;
-      
-      // Enable/disable bulk action buttons based on selection
-      const hasSelection = selectedSubmissions.size > 0;
-      bulkApproveBtn.disabled = !hasSelection;
-      bulkRejectBtn.disabled = !hasSelection;
-      bulkDeleteBtn.disabled = !hasSelection;
-    }
-
-    // Toggle selection mode
-    function toggleSelectionMode() {
-      isSelectionMode = !isSelectionMode;
-      
-      if (isSelectionMode) {
-        selectionModeBtn.innerHTML = '<i class="fas fa-check-square"></i> Selection Mode';
-        selectionModeBtn.classList.add('active');
-        selectionModeBar.classList.remove('d-none');
-      } else {
-        selectionModeBtn.innerHTML = '<i class="fas fa-check-square"></i> Select Mode';
-        selectionModeBtn.classList.remove('active');
-        selectionModeBar.classList.add('d-none');
-        selectedSubmissions.clear();
-        updateSelectedCount();
-      }
-      
-      renderSubmissions();
-    }
-
-    // Handle bulk actions
-    function handleBulkAction(action) {
-      if (selectedSubmissions.size === 0) return;
-      
-      currentBulkAction = action;
-      bulkActionCount.textContent = selectedSubmissions.size;
-      
-      if (action === 'delete') {
-        bulkActionModalTitle.textContent = 'Confirm Bulk Deletion';
-        bulkActionModalBody.innerHTML = `
-          <p>You are about to delete <strong>${selectedSubmissions.size}</strong> applications.</p>
-          <div class="alert alert-danger">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            <strong>Warning:</strong> This action cannot be undone. All data will be permanently removed.
-          </div>
-        `;
-        bulkStatusSelectContainer.classList.add('d-none');
-      } else {
-        bulkActionModalTitle.textContent = action === 'approve' ? 'Bulk Approve Applications' : 'Bulk Reject Applications';
-        bulkStatusSelectContainer.classList.remove('d-none');
-        bulkStatusSelect.value = action === 'approve' ? 'approved' : 'rejected';
-      }
-      
-      bulkActionModal.show();
-    }
-    function isValidId(id) {
-  return typeof id === 'string' && id.trim().length > 0;
-}    // Perform bulk action
-    // Perform bulk action
-// Perform bulk action
-async function performBulkAction() {
-  if (selectedSubmissions.size === 0) {
-    showToast('Warning', 'No submissions selected', 'warning');
-    return;
-  }
-
-  // Convert to array and validate IDs
-  const submissionIds = Array.from(selectedSubmissions);
-  const validIds = submissionIds.map(id => String(id)).filter(id => id.trim().length > 0);
-
-  if (validIds.length === 0) {
-    showToast('Error', 'No valid submission IDs found', 'error');
-    return;
-  }
-
-  // UI Loading State
-  const originalButtonText = confirmBulkAction.innerHTML;
-  confirmBulkAction.disabled = true;
-  confirmBulkAction.innerHTML = `
-    <span class="spinner-border spinner-border-sm me-2"></span>
-    Processing ${validIds.length} submissions...
-  `;
-
-  // Track results
-  let successCount = 0;
-  let failCount = 0;
-  const failedIds = [];
-
-  // Process each ID sequentially
-  for (const id of validIds) {
-try {
-  let response, data;
-
-  if (currentBulkAction === 'delete') {
-    response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}`, {
-      method: 'DELETE',
-      headers: { 
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-  } 
-  else if (currentBulkAction === 'approve') {
-    response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}/approve`, {
-      method: 'POST',
-      headers: { 
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-  } 
-  else if (currentBulkAction === 'reject') {
-    response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}/reject`, {
-      method: 'POST',
-      headers: { 
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-  }
-
-
-    data = await response.json();
-
-    if (response.ok && data.success) {
-      if (currentBulkAction !== 'delete') {
-        const submission = allSubmissions.find(sub => sub._id === id);
-        if (submission) submission.status = currentBulkAction;
-      } else {
-        allSubmissions = allSubmissions.filter(sub => sub._id !== id);
-      }
-      successCount++;
-    } else {
-      throw new Error(data.error || 'Action failed');
-    }
-  } catch (error) {
-    console.error(`Failed to process ID ${id}:`, error);
-    failCount++;
-    failedIds.push(id);
-  }
-}
-
-  // Update UI
-  selectedSubmissions.clear();
-  renderSubmissions();
-  updateSubmissionCount();
-
-  // Show results
-  if (failCount === 0) {
-    showToast(
-      'Success', 
-      `Completed all ${successCount} operations successfully`,
-      'success'
-    );
-  } else {
-    showToast(
-      'Partial Success',
-      `Completed ${successCount} operations, failed on ${failCount} submissions`,
-      'warning'
-    );
-    
-    // Optionally log failed IDs for debugging
-    console.log('Failed IDs:', failedIds);
-  }
-
-  bulkActionModal.hide();
-  confirmBulkAction.disabled = false;
-  confirmBulkAction.innerHTML = originalButtonText;
-}
-  
-
-    // Tab filtering
-    statusTabs.addEventListener('click', (e) => {
-      e.preventDefault();
-      const tab = e.target.closest('a');
-      if (!tab) return;
-      
-      // Update active tab
-      statusTabs.querySelectorAll('.nav-link').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      
-      // Update filter and render
-      currentFilter = tab.dataset.status;
-      renderSubmissions();
-    });
-
-    // Update status
-       confirmBtn.addEventListener('click', () => {
-      const newStatus = statusSelect.value;
-      const notes = statusNotes.value;
-      
-      if (!currentSubmissionId) return;
-
-      loadingSpinner.classList.remove('d-none');
-      confirmBtn.disabled = true;
-
- fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
-  method: 'PUT',
-  headers: { 
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  },
-  body: JSON.stringify({ 
-    status: newStatus,
-    notes: notes 
-  })
-})
-
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data.success) {
-            // Update the local submission data
-            const index = allSubmissions.findIndex(s => s._id === currentSubmissionId);
-            if (index !== -1) {
-              allSubmissions[index].status = newStatus;
-              allSubmissions[index].notes = notes;
-            }
-            statusModal.hide();
-            showToast('Success', `Application status updated to ${newStatus}`, 'success');
-            renderSubmissions();
-            updateSubmissionCount();
-          } else {
-            throw new Error(data.error || 'Failed to update status');
-          }
-        })
-        .catch(err => {
-          console.error('Error:', err);
-          showToast('Error', 'Failed to update status: ' + err.message, 'error');
-        })
-        .finally(() => {
-          loadingSpinner.classList.add('d-none');
-          confirmBtn.disabled = false;
-        });
-    });
-
-
-    // Delete submission
-   document.addEventListener('click', function(e) {
-      // Handle delete button clicks
-      if (e.target.classList.contains('delete-submission') || 
-          e.target.closest('.delete-submission')) {
-        const btn = e.target.classList.contains('delete-submission') ? 
-                   e.target : e.target.closest('.delete-submission');
-        currentSubmissionId = btn.dataset.id;
-        const submission = allSubmissions.find(s => s._id === currentSubmissionId);
-        if (submission) {
-          deleteSubmissionName.textContent = submission.fullName;
-          deleteModal.show();
-        }
-        e.stopPropagation(); // Prevent card selection when clicking delete button
-      }
-    });
-
-    confirmDeleteBtn.addEventListener('click', () => {
-  if (!currentSubmissionId) return;
-
-  confirmDeleteBtn.disabled = true;
-  confirmDeleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Deleting...';
-
-  fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
-  method: 'DELETE',
-  headers: { 
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  }
-})
-
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json();
-  })
-  .then(data => {
-    if (data.success) {
-      deleteModal.hide();
-      allSubmissions = allSubmissions.filter(s => s._id !== currentSubmissionId);
-      toastMessage.textContent = 'Application was deleted successfully.';
-      deleteToast.show();
-      renderSubmissions();
-      updateSubmissionCount();
-    } else {
-      throw new Error(data.error || 'Failed to delete submission');
-    }
-  })
-  .catch(err => {
-    console.error('Error:', err);
-    toastMessage.textContent = 'Failed to delete application: ' + err.message;
-    deleteToast.show();
-  })
-  .finally(() => {
-    confirmDeleteBtn.disabled = false;
-    confirmDeleteBtn.innerHTML = '<i class="fas fa-trash me-1"></i> Delete Permanently';
-  });
-});
-    // Manual refresh
-    refreshBtn.addEventListener('click', () => {
-      loadSubmissions();
-    });
-
-    // CSV Export functionality - Fixed version
-    document.getElementById('exportBtn').addEventListener('click', async () => {
-      const exportBtn = document.getElementById('exportBtn');
-      const originalHtml = exportBtn.innerHTML;
-      
-      try {
-        exportBtn.disabled = true;
-        exportBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Exporting...';
-        
-        const response = await fetch('https://bhss-backend.up.railway.app/api/submissions/export-filtered');
-        
-        if (!response.ok) {
-          throw new Error('Export failed with status: ' + response.status);
-        }
-        
-        // Get the filename from content-disposition or create a default one
-        const contentDisposition = response.headers.get('content-disposition');
-        let filename = 'bhss-submissions.csv';
-        if (contentDisposition) {
-          const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
-          if (filenameMatch && filenameMatch[1]) {
-            filename = filenameMatch[1];
-          }
-        }
-        
-        // Convert response to blob and create download link
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        
-        // Cleanup
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        
-        showToast('Export Complete', 'CSV file downloaded successfully');
-      } catch (err) {
-        console.error('Export error:', err);
-        showToast('Export Failed', err.message, 'error');
-      } finally {
-        exportBtn.disabled = false;
-        exportBtn.innerHTML = originalHtml;
-      }
-    });
-
-    // Toast notification function
-    function showToast(title, message, type = 'success') {
-      // Remove any existing toasts to prevent stacking
-      document.querySelectorAll('.toast-container .toast').forEach(toast => {
-        if (toast.id !== 'deleteToast') {
-          toast.remove();
-        }
-      });
-      
-      const toast = document.createElement('div');
-      toast.className = `toast ${type === 'error' ? 'toast-error' : type === 'info' ? 'toast-info' : 'toast-success'}`;
-      toast.innerHTML = `
-        <div class="toast-header">
-          <strong class="me-auto">${title}</strong>
-          <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-        </div>
-        <div class="toast-body">${message}</div>
-      `;
-      
-      document.querySelector('.toast-container').appendChild(toast);
-      const bsToast = new bootstrap.Toast(toast);
-      bsToast.show();
-      
-      setTimeout(() => toast.remove(), 5000);
-    }
-
-    // Check authentication status
     (async () => {
-       try {
-        const token = localStorage.getItem('token'); // Retrieve JWT from local storage
-    
-        const response = await fetch('https://bhss-backend.up.railway.app/api/admin/status', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+      try {
+        const response = await fetch('https://bhss-backend.up.railway.app/api/submissions', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
 
         const data = await response.json();
-        if (!data.authenticated) {
-          window.location.href = '/admin-login.html';
+
+        if (data.success) {
+          allSubmissions = data.data;
+          updateSubmissionCount();
+          renderSubmissions();
+        } else {
+          throw new Error(data.message || 'Failed to load submissions.');
         }
       } catch (err) {
-        console.error('Authentication check failed:', err);
-      //  window.location.href = '/admin-login.html';
+        console.error('Error:', err);
+        submissionsContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h4>Error Loading Submissions</h4>
+            <p>Failed to load submissions. Please try again later.</p>
+            <button class="btn btn-primary mt-3" onclick="location.reload()">
+              <i class="fas fa-sync-alt me-2"></i>Reload Page
+            </button>
+          </div>
+        `;
+      } finally {
+        loadingSpinner.classList.add('d-none');
+        refreshBtn.disabled = false;
       }
     })();
+  }
 
-    // Event listeners for selection mode
-    selectionModeBtn.addEventListener('click', toggleSelectionMode);
-    cancelSelectionBtn.addEventListener('click', toggleSelectionMode);
-    
-    // Event listeners for bulk actions
-    bulkApproveBtn.addEventListener('click', () => handleBulkAction('approve'));
-    bulkRejectBtn.addEventListener('click', () => handleBulkAction('reject'));
-    bulkDeleteBtn.addEventListener('click', () => handleBulkAction('delete'));
-    confirmBulkAction.addEventListener('click', performBulkAction);
+  // Update submission count display
+  function updateSubmissionCount() {
+    const pendingCount = allSubmissions.filter(s => s.status === 'pending').length;
+    const approvedCount = allSubmissions.filter(s => s.status === 'approved').length;
+    const rejectedCount = allSubmissions.filter(s => s.status === 'rejected').length;
 
-    // Initial load
+    submissionCount.innerHTML = `
+      <span class="badge bg-dark">Total: ${allSubmissions.length}</span>
+      <span class="badge status-pending ms-2">Pending: ${pendingCount}</span>
+      <span class="badge status-approved ms-2">Approved: ${approvedCount}</span>
+      <span class="badge status-rejected ms-2">Rejected: ${rejectedCount}</span>
+    `;
+  }
+
+  // Render submissions based on current filter
+  function renderSubmissions() {
+    let filteredSubmissions = allSubmissions;
+
+    if (currentFilter !== 'all') {
+      filteredSubmissions = allSubmissions.filter(s => s.status === currentFilter);
+    }
+
+    if (filteredSubmissions.length === 0) {
+      submissionsContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-inbox"></i>
+          <h4>No ${currentFilter === 'all' ? '' : currentFilter} applications found</h4>
+          <p>When new applications are submitted, they will appear here.</p>
+        </div>
+      `;
+      return;
+    }
+
+    submissionsContainer.innerHTML = filteredSubmissions.map(sub => `
+      <div class="card submission-card mb-3 ${selectedSubmissions.has(sub._id) ? 'selected' : ''}" id="submission-${sub._id}">
+        <div class="card-header">
+          <div class="d-flex align-items-center">
+            ${isSelectionMode ? `
+              <input type="checkbox" class="selection-checkbox" data-id="${sub._id}" 
+                ${selectedSubmissions.has(sub._id) ? 'checked' : ''}>
+            ` : ''}
+            <span class="status-badge status-${sub.status} me-2">${sub.status.toUpperCase()}</span>
+            <strong>${sub.fullName}</strong>
+              <span class="separator"> - </span>
+            <span class="text-muted ms-2" style="color:white;">${sub.email}</span>
+          </div>
+          <div class="mt-2 mt-md-0">
+            <small class="text-muted me-3">
+              <i class="far fa-clock me-1"></i>
+              ${new Date(sub.timestamp).toLocaleString()}
+            </small>
+            ${!isSelectionMode ? `
+              <button class="btn btn-sm btn-outline-primary action-btn update-status" data-id="${sub._id}">
+                <i class="fas fa-edit me-1"></i> Update
+              </button>
+              <button class="btn btn-sm btn-delete action-btn delete-submission" data-id="${sub._id}">
+                <i class="fas fa-trash me-1"></i> Delete
+              </button>
+            ` : ''}
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row detail-row">
+            <div class="col-md-3 detail-label"><i class="fas fa-user me-2"></i>Basic Info</div>
+            <div class="col-md-9">
+                <div><strong>Name:</strong> ${sub.fullName || 'Not provided'}</div>
+               <div><strong>Email:</strong> ${sub.email || 'Not provided'}</div>
+                <div><strong>Phone:</strong> 
+                  ${sub.phone ? `
+                    <span class="phone-number">
+                      ${sub.countryCode ? `
+                        <span class="country-code">${sub.countryCode}</span>
+                        <span class="separator"> - </span>
+                      ` : ''}
+                      <span class="local-number">${sub.countryCode ? sub.phone.replace(sub.countryCode, '') : sub.phone}</span>
+                    </span>
+                  ` : 'Not provided'}
+                </div>             
+                <div><strong>Date of Birth:</strong> ${sub.dob || 'Not provided'}</div>
+              <div><strong>Grade:</strong> ${sub.grade || 'Not provided'}</div>
+            </div>
+          </div>
+          <div class="row detail-row">
+            <div class="col-md-3 detail-label"><i class="fas fa-school me-2"></i>School Info</div>
+            <div class="col-md-9">
+                ${sub.isBhStudent === true || sub.isBhStudent === 'yes' ? `
+                  <div><strong>Bloomfield Hall Student:</strong> Yes</div>
+                  ${sub.section ? `<div><strong>Section:</strong> ${sub.section}</div>` : ''}
+                ` : `
+                  <div><strong>Bloomfield Hall Student:</strong> No</div>
+                  ${sub.country ? `<div><strong>Country:</strong> ${sub.country}</div>` : ''}
+                  ${sub.school ? `<div><strong>School:</strong> ${sub.school}</div>` : ''}
+                `}
+            </div>
+          </div>
+          <div class="row detail-row">
+            <div class="col-md-3 detail-label"><i class="fas fa-book me-2"></i>Subjects of Interest</div>
+            <div class="col-md-9">
+              ${sub.subjects && sub.subjects.length > 0 ? 
+                sub.subjects.map(subj => `<span class="subject-badge">${subj}</span>`).join('') : 
+                '<span class="text-muted">None selected</span>'}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 detail-label"><i class="fas fa-comment me-2"></i>Motivation</div>
+            <div class="col-md-9">
+              <div class="bg-dark p-3 rounded">${sub.motivation || 'No motivation provided'}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    if (!isSelectionMode) {
+      document.querySelectorAll('.update-status').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          currentSubmissionId = e.target.closest('button').dataset.id;
+          const submission = allSubmissions.find(s => s._id === currentSubmissionId);
+          if (submission) {
+            modalSubmissionName.textContent = submission.fullName;
+            statusSelect.value = submission.status;
+            statusNotes.value = submission.notes || '';
+            statusModal.show();
+          }
+        });
+      });
+
+      document.querySelectorAll('.delete-submission').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          currentSubmissionId = e.target.closest('button').dataset.id;
+          const submission = allSubmissions.find(s => s._id === currentSubmissionId);
+          if (submission) {
+            deleteSubmissionName.textContent = submission.fullName;
+            deleteModal.show();
+          }
+        });
+      });
+    } else {
+      document.querySelectorAll('.selection-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+          const submissionId = e.target.dataset.id;
+          if (e.target.checked) {
+            selectedSubmissions.add(submissionId);
+            document.getElementById(`submission-${submissionId}`).classList.add('selected');
+          } else {
+            selectedSubmissions.delete(submissionId);
+            document.getElementById(`submission-${submissionId}`).classList.remove('selected');
+          }
+          updateSelectedCount();
+        });
+      });
+
+      document.querySelectorAll('.submission-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target.classList.contains('selection-checkbox')) return;
+
+          const checkbox = card.querySelector('.selection-checkbox');
+          if (!checkbox) return;
+
+          const submissionId = checkbox.dataset.id;
+          checkbox.checked = !checkbox.checked;
+
+          if (checkbox.checked) {
+            selectedSubmissions.add(submissionId);
+            card.classList.add('selected');
+          } else {
+            selectedSubmissions.delete(submissionId);
+            card.classList.remove('selected');
+          }
+          updateSelectedCount();
+        });
+
+        card.addEventListener('mousedown', (e) => {
+          if (e.target.classList.contains('selection-checkbox')) return;
+          e.preventDefault();
+        });
+      });
+    }
+  }
+
+  function updateSelectedCount() {
+    selectedCount.textContent = selectedSubmissions.size;
+
+    const hasSelection = selectedSubmissions.size > 0;
+    bulkApproveBtn.disabled = !hasSelection;
+    bulkRejectBtn.disabled = !hasSelection;
+    bulkDeleteBtn.disabled = !hasSelection;
+  }
+
+  function toggleSelectionMode() {
+    isSelectionMode = !isSelectionMode;
+
+    if (isSelectionMode) {
+      selectionModeBtn.innerHTML = '<i class="fas fa-check-square"></i> Selection Mode';
+      selectionModeBtn.classList.add('active');
+      selectionModeBar.classList.remove('d-none');
+    } else {
+      selectionModeBtn.innerHTML = '<i class="fas fa-check-square"></i> Select Mode';
+      selectionModeBtn.classList.remove('active');
+      selectionModeBar.classList.add('d-none');
+      selectedSubmissions.clear();
+      updateSelectedCount();
+    }
+
+    renderSubmissions();
+  }
+
+  // Handle bulk actions
+  function handleBulkAction(action) {
+    if (selectedSubmissions.size === 0) return;
+
+    currentBulkAction = action;
+    bulkActionCount.textContent = selectedSubmissions.size;
+
+    if (action === 'delete') {
+      bulkActionModalTitle.textContent = 'Confirm Bulk Deletion';
+      bulkActionModalBody.innerHTML = `
+        <p>You are about to delete <strong>${selectedSubmissions.size}</strong> applications.</p>
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <strong>Warning:</strong> This action cannot be undone. All data will be permanently removed.
+        </div>
+      `;
+      bulkStatusSelectContainer.classList.add('d-none');
+    } else {
+      bulkActionModalTitle.textContent = action === 'approve' ? 'Bulk Approve Applications' : 'Bulk Reject Applications';
+      bulkStatusSelectContainer.classList.remove('d-none');
+      bulkStatusSelect.value = action === 'approve' ? 'approved' : 'rejected';
+    }
+
+    bulkActionModal.show();
+  }
+
+  // Validate ID helper
+  function isValidId(id) {
+    return typeof id === 'string' && id.trim().length > 0;
+  }
+
+  // Perform bulk action
+  async function performBulkAction() {
+    if (selectedSubmissions.size === 0) {
+      showToast('Warning', 'No submissions selected', 'warning');
+      return;
+    }
+
+    const submissionIds = Array.from(selectedSubmissions);
+    const validIds = submissionIds.map(id => String(id)).filter(id => id.trim().length > 0);
+
+    if (validIds.length === 0) {
+      showToast('Error', 'No valid submission IDs found', 'error');
+      return;
+    }
+
+    const originalButtonText = confirmBulkAction.innerHTML;
+    confirmBulkAction.disabled = true;
+    confirmBulkAction.innerHTML = `
+      <span class="spinner-border spinner-border-sm me-2"></span>
+      Processing ${validIds.length} submissions...
+    `;
+
+    let successCount = 0;
+    let failCount = 0;
+    const failedIds = [];
+
+    for (const id of validIds) {
+      try {
+        let response, data;
+
+        if (currentBulkAction === 'delete') {
+          response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+        } else if (currentBulkAction === 'approve') {
+          response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}/approve`, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+        } else if (currentBulkAction === 'reject') {
+          response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}/reject`, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+        }
+
+        data = await response.json();
+
+        if (response.ok && data.success) {
+          if (currentBulkAction !== 'delete') {
+            const submission = allSubmissions.find(sub => sub._id === id);
+            if (submission) submission.status = currentBulkAction;
+          } else {
+            allSubmissions = allSubmissions.filter(sub => sub._id !== id);
+          }
+          successCount++;
+        } else {
+          throw new Error(data.error || 'Action failed');
+        }
+      } catch (error) {
+        console.error(`Failed to process ID ${id}:`, error);
+        failCount++;
+        failedIds.push(id);
+      }
+    }
+
+    selectedSubmissions.clear();
+    renderSubmissions();
+    updateSubmissionCount();
+
+    if (failCount === 0) {
+      showToast(
+        'Success',
+        `Completed all ${successCount} operations successfully`,
+        'success'
+      );
+    } else {
+      showToast(
+        'Partial Success',
+        `Completed ${successCount} operations, failed on ${failCount} submissions`,
+        'warning'
+      );
+      console.log('Failed IDs:', failedIds);
+    }
+
+    bulkActionModal.hide();
+    confirmBulkAction.disabled = false;
+    confirmBulkAction.innerHTML = originalButtonText;
+  }
+
+  // Tab filtering
+  statusTabs.addEventListener('click', (e) => {
+    e.preventDefault();
+    const tab = e.target.closest('a');
+    if (!tab) return;
+
+    statusTabs.querySelectorAll('.nav-link').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    currentFilter = tab.dataset.status;
+    renderSubmissions();
+  });
+
+  // Update status
+  confirmBtn.addEventListener('click', () => {
+    const newStatus = statusSelect.value;
+    const notes = statusNotes.value;
+
+    if (!currentSubmissionId) return;
+
+    loadingSpinner.classList.remove('d-none');
+    confirmBtn.disabled = true;
+
+    fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        status: newStatus,
+        notes: notes
+      })
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          const index = allSubmissions.findIndex(s => s._id === currentSubmissionId);
+          if (index !== -1) {
+            allSubmissions[index].status = newStatus;
+            allSubmissions[index].notes = notes;
+          }
+          statusModal.hide();
+          showToast('Success', `Application status updated to ${newStatus}`, 'success');
+          renderSubmissions();
+          updateSubmissionCount();
+        } else {
+          throw new Error(data.error || 'Failed to update status');
+        }
+      })
+      .catch(err => {
+        console.error('Error:', err);
+        showToast('Error', 'Failed to update status: ' + err.message, 'error');
+      })
+      .finally(() => {
+        loadingSpinner.classList.add('d-none');
+        confirmBtn.disabled = false;
+      });
+  });
+
+  // Delete submission
+  document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('delete-submission') || e.target.closest('.delete-submission')) {
+      const btn = e.target.classList.contains('delete-submission') ? e.target : e.target.closest('.delete-submission');
+      currentSubmissionId = btn.dataset.id;
+      const submission = allSubmissions.find(s => s._id === currentSubmissionId);
+      if (submission) {
+        deleteSubmissionName.textContent = submission.fullName;
+        deleteModal.show();
+      }
+      e.stopPropagation();
+    }
+  });
+
+  confirmDeleteBtn.addEventListener('click', () => {
+    if (!currentSubmissionId) return;
+
+    confirmDeleteBtn.disabled = true;
+    confirmDeleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Deleting...';
+
+    fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          deleteModal.hide();
+          allSubmissions = allSubmissions.filter(s => s._id !== currentSubmissionId);
+          toastMessage.textContent = 'Application was deleted successfully.';
+          deleteToast.show();
+          renderSubmissions();
+          updateSubmissionCount();
+        } else {
+          throw new Error(data.error || 'Failed to delete submission');
+        }
+      })
+      .catch(err => {
+        console.error('Error:', err);
+        toastMessage.textContent = 'Failed to delete application: ' + err.message;
+        deleteToast.show();
+      })
+      .finally(() => {
+        confirmDeleteBtn.disabled = false;
+        confirmDeleteBtn.innerHTML = '<i class="fas fa-trash me-1"></i> Delete Permanently';
+      });
+  });
+
+  // Refresh button event
+  refreshBtn.addEventListener('click', () => {
     loadSubmissions();
-  }});
+  });
+
+  // CSV Export
+  document.getElementById('exportBtn').addEventListener('click', async () => {
+    const exportBtn = document.getElementById('exportBtn');
+    const originalHtml = exportBtn.innerHTML;
+
+    try {
+      exportBtn.disabled = true;
+      exportBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Exporting...';
+
+      const response = await fetch('https://bhss-backend.up.railway.app/api/submissions/export-filtered');
+
+      if (!response.ok) {
+        throw new Error('Export failed with status: ' + response.status);
+      }
+
+      const contentDisposition = response.headers.get('content-disposition');
+      let filename = 'bhss-submissions.csv';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      showToast('Export Complete', 'CSV file downloaded successfully');
+    } catch (err) {
+      console.error('Export error:', err);
+      showToast('Export Failed', err.message, 'error');
+    } finally {
+      exportBtn.disabled = false;
+      exportBtn.innerHTML = originalHtml;
+    }
+  });
+
+  // Toast notification function
+  function showToast(title, message, type = 'success') {
+    document.querySelectorAll('.toast-container .toast').forEach(toast => {
+      if (toast.id !== 'deleteToast') {
+        toast.remove();
+      }
+    });
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type === 'error' ? 'toast-error' : type === 'info' ? 'toast-info' : 'toast-success'}`;
+    toast.innerHTML = `
+      <div class="toast-header">
+        <strong class="me-auto">${title}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+      </div>
+      <div class="toast-body">${message}</div>
+    `;
+
+    document.querySelector('.toast-container').appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+
+    setTimeout(() => toast.remove(), 5000);
+  }
+
+  // Authentication check
+  (async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://bhss-backend.up.railway.app/api/admin/status', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+      if (!data.authenticated) {
+        window.location.href = '/admin-login.html';
+      }
+    } catch (err) {
+      console.error('Authentication check failed:', err);
+      // Optionally redirect
+      // window.location.href = '/admin-login.html';
+    }
+  })();
+
+  // Attach event listeners
+  selectionModeBtn.addEventListener('click', toggleSelectionMode);
+  cancelSelectionBtn.addEventListener('click', toggleSelectionMode);
+  bulkApproveBtn.addEventListener('click', () => handleBulkAction('approve'));
+  bulkRejectBtn.addEventListener('click', () => handleBulkAction('reject'));
+  bulkDeleteBtn.addEventListener('click', () => handleBulkAction('delete'));
+  confirmBulkAction.addEventListener('click', performBulkAction);
+
+  // Initial load
+  loadSubmissions();
+});
+
 </script>
 
 </body>
