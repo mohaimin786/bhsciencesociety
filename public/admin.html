@@ -938,10 +938,13 @@ document.addEventListener('DOMContentLoaded', () => {
       loadingSpinner.classList.remove('d-none');
       refreshBtn.disabled = true;
       
-      fetch('https://bhss-backend.up.railway.app/api/submissions', {
-          method: 'GET',
-  credentials: 'include'
-      })
+  const token = localStorage.getItem('token');
+  const response = await fetch('https://bhss-backend.up.railway.app/api/submissions', {
+      headers: {
+          'Authorization': `Bearer ${token}`
+      }
+  });
+
         .then(res => res.json())
         .then(data => {
           if (data.success) {
@@ -1239,27 +1242,37 @@ async function performBulkAction() {
 
   // Process each ID sequentially
   for (const id of validIds) {
-  try {
-    let response, data;
+try {
+  let response, data;
 
-    if (currentBulkAction === 'delete') {
-      response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}`, {
-        method: 'DELETE',
-        headers: { 'Accept': 'application/json' }
-      });
-    } 
-    else if (currentBulkAction === 'approve') {
-      response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}/approve`, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' }
-      });
-    } 
-    else if (currentBulkAction === 'reject') {
-      response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}/reject`, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' }
-      });
-    }
+  if (currentBulkAction === 'delete') {
+    response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}`, {
+      method: 'DELETE',
+      headers: { 
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  } 
+  else if (currentBulkAction === 'approve') {
+    response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}/approve`, {
+      method: 'POST',
+      headers: { 
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  } 
+  else if (currentBulkAction === 'reject') {
+    response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}/reject`, {
+      method: 'POST',
+      headers: { 
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+  }
+
 
     data = await response.json();
 
@@ -1335,17 +1348,19 @@ async function performBulkAction() {
       loadingSpinner.classList.remove('d-none');
       confirmBtn.disabled = true;
 
-      fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
-        method: 'PUT',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({ 
-          status: newStatus,
-          notes: notes 
-        })
-      })
+ fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
+  method: 'PUT',
+  headers: { 
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  },
+  body: JSON.stringify({ 
+    status: newStatus,
+    notes: notes 
+  })
+})
+
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -1403,9 +1418,13 @@ async function performBulkAction() {
   confirmDeleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Deleting...';
 
   fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' }
-  })
+  method: 'DELETE',
+  headers: { 
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
+})
+
   .then(response => {
     if (!response.ok) {
       throw new Error('Network response was not ok');
@@ -1515,10 +1534,15 @@ async function performBulkAction() {
 
     // Check authentication status
     (async () => {
-      try {
-        const response = await fetch('https://bhss-backend.up.railway.app/api/admin/status',{
-            credentials: "include"
+       try {
+        const token = localStorage.getItem('token'); // Retrieve JWT from local storage
+    
+        const response = await fetch('https://bhss-backend.up.railway.app/api/admin/status', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
+
         const data = await response.json();
         if (!data.authenticated) {
           window.location.href = '/admin-login.html';
