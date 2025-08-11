@@ -110,7 +110,7 @@
       const data = await response.json();
       
       if (data.success) {
-        window.location.href = '/admin.html';
+      //  window.location.href = '/admin.html';
       } else {
         errorDiv.textContent = data.error || 'Login failed';
         errorDiv.classList.remove('d-none');
