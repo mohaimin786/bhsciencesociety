@@ -1356,7 +1356,26 @@
 
   <!--Hero-->
   <section class="hero" id="hero" data-aos="fade-in">
-   <div id="error-notification" style="display:none; color:red; margin: 10px 0;z-index:10;"></div>
+<div id="error-notification" style="
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  max-width: 320px;
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+  color: white;
+  font-weight: 600;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  z-index: 9999;
+  cursor: default;
+  user-select: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateX(100%);
+"></div>
     <div class="hero-content">
       <h1> Explore. Discover. Create.</h1>
       <p>Welcome to the Bloomfield Hall Science Society — where </p>
@@ -1578,15 +1597,22 @@
  const params = new URLSearchParams(window.location.search);
   const error = params.get('error');
 
-  if (error === 'rateLimitReached') {
-    const errorNotification = document.getElementById('error-notification');
-    if (errorNotification) {
-      errorNotification.textContent = "You have reached the maximum number of submissions allowed per day (3). Please try again tomorrow.";
-      errorNotification.style.display = "block";
-    }
-    // Clear URL param so message doesn't show on refresh
-    history.replaceState(null, '', window.location.pathname);
+ if (error === 'rateLimitReached') {
+  const errorNotification = document.getElementById('error-notification');
+  if (errorNotification) {
+    errorNotification.textContent = "You have reached the maximum number of submissions allowed per day (3). Please try again tomorrow.";
+    errorNotification.style.display = "block";
+    
+    // Trigger fade-in + slide-in
+    setTimeout(() => {
+      errorNotification.style.opacity = '1';
+      errorNotification.style.transform = 'translateX(0)';
+    }, 50);
   }
+  // Clear URL param so message doesn't show on refresh
+  history.replaceState(null, '', window.location.pathname);
+}
+
   // Particle background
   function createParticles() {
     const particlesContainer = document.getElementById('particles-js');
