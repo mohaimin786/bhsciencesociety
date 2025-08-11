@@ -2097,15 +2097,33 @@
 
     // Show loading state
     form.style.display = 'none';
-
-
-    
-
     document.getElementById('footer').style.position = 'fixed';
     section1.style.setProperty('display', 'none', 'important');
     section2.style.setProperty('display', 'none', 'important');
     successMessage.style.display = 'block';
-    inputs.style.display = 'none';
+    
+    // Add these lines to hide all form controls:
+    const allInputs = document.querySelectorAll('.form-control, input, textarea, select');
+    const allCheckboxes = document.querySelectorAll('.checkbox-option, .radio-option');
+    const allFormGroups = document.querySelectorAll('.form-group');
+    
+    allInputs.forEach(input => {
+      input.style.setProperty('display', 'none', 'important');
+    });
+    
+    allCheckboxes.forEach(checkbox => {
+      checkbox.style.setProperty('display', 'none', 'important');
+    });
+    
+    allFormGroups.forEach(group => {
+      group.style.setProperty('display', 'none', 'important');
+    });
+    
+    // Also hide the progress bar and form actions
+    document.querySelector('.form-progress').style.setProperty('display', 'none', 'important');
+    document.querySelectorAll('.form-actions').forEach(action => {
+      action.style.setProperty('display', 'none', 'important');
+    });
 
 
     // Create a new form element to submit
