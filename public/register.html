@@ -998,7 +998,7 @@
       <!-- Form Sections -->
       <form
         id="registrationForm"
-        action="https://formsubmit.co/233ae018a57690b5f87d0597fd6cdc65"
+        action="https://bhss-backend.up.railway.app/api/submit"
         method="POST"
       >
         <input type="hidden" name="_subject" value="New BHSS Registration" />
@@ -2101,41 +2101,6 @@
             successMessage.style.display = 'block';
             document.getElementById('footerpara').style.display = 'none';
 
-            // 1. First submit to your server's API
-            const serverResponse = await fetch('https://bhss-backend.up.railway.app/api/submit', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(formData),
-            });
-
-            const responseData = await serverResponse.json();
-
-            if (!serverResponse.ok) {
-              // Check if this is a rate limit error
-              if (responseData.limitReached) {
-                showNotification(
-                  'Daily Limit Reached',
-                  responseData.error,
-                  'error'
-                );
-                // Show form again
-                form.style.display = 'block';
-                successMessage.style.display = 'none';
-                return;
-              }
-              throw new Error(
-                responseData.error || 'Failed to save to database'
-              );
-            }
-
-            // 2. Then submit to FormSubmit for email
-            const formSubmitForm = document.createElement('form');
-            formSubmitForm.action =
-              'https://formsubmit.co/233ae018a57690b5f87d0597fd6cdc65';
-            formSubmitForm.method = 'POST';
-            formSubmitForm.style.display = 'none';
 
             // Copy all form inputs
             const inputs = form.querySelectorAll('input, textarea, select');
@@ -2190,77 +2155,9 @@
           motivation: motivation.value,
         };
 
-        try {
-          // Show loading state
-          form.style.display = 'none';
-          successMessage.style.display = 'block';
-          successMessage.classList.add('active');
 
-          // 1. First submit to your server's API
-          const serverResponse = await fetch('https://bhss-backend.up.railway.app/api/submit', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-          });
 
-          if (!serverResponse.ok) {
-            throw new Error('Failed to save to database');
-          }
-
-          // 2. Then submit to FormSubmit for email
-          const formSubmitForm = document.createElement('form');
-          formSubmitForm.action =
-            'https://formsubmit.co/233ae018a57690b5f87d0597fd6cdc65';
-          formSubmitForm.method = 'POST';
-          formSubmitForm.style.display = 'none';
-
-          // Copy all form inputs
-          const inputs = form.querySelectorAll('input, textarea, select');
-          inputs.forEach((input) => {
-            const clone = input.cloneNode(true);
-            formSubmitForm.appendChild(clone);
-          });
-
-          // Add hidden input for full phone number
-          const phoneHiddenInput = document.createElement('input');
-          phoneHiddenInput.type = 'hidden';
-          phoneHiddenInput.name = 'fullPhone';
-          phoneHiddenInput.value = formData.phone;
-          formSubmitForm.appendChild(phoneHiddenInput);
-
-          // Add to body and submit
-          document.body.appendChild(formSubmitForm);
-          formSubmitForm.submit();
-        } catch (err) {
-          console.error('Error:', err);
-          showNotification(
-            'Submission Error',
-            'An error occurred: ' + err.message,
-            'error'
-          );
-          // Show form again if error occurs
-          form.style.display = 'block';
-          successMessage.style.display = 'none';
-        }
-      });
-      document.getElementById('registrationForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  try {
-    const res = await fetch('https://bhss-backend.up.railway.app/api/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Object.fromEntries(new FormData(this)))
-    });
-    if (!res.ok) throw new Error('Failed to save to database');
-  } catch (err) {
-    console.error('Error:', err);
-  }
-
-  this.submit();
-});
+ 
     </script>
   </body>
 </html>
