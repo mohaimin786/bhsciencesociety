@@ -370,7 +370,121 @@ main {
         grid-template-columns: 1fr;
       }
     }
-    
+    .success-message {
+  text-align: center;
+  padding: 40px;
+  background-color: rgba(27, 30, 47, 0.9);
+  border-radius: 16px;
+  margin-top: 30px;
+  box-shadow: 0 8px 20px rgba(0, 255, 174, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 255, 174, 0.2);
+}
+
+.success-message i.fa-check-circle {
+  font-size: 4rem;
+  color: #00ffae;
+  margin-bottom: 20px;
+}
+
+.success-message h3 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #00ffae;
+}
+
+.success-details {
+  text-align: left;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.success-details p {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.success-details i {
+  color: #00ffae;
+  margin-top: 3px;
+}
+
+.notice-box {
+  background: rgba(0, 255, 174, 0.1);
+  border-left: 4px solid #00ffae;
+  padding: 15px;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.notice-box p {
+  margin-bottom: 10px;
+}
+
+.notice-box a {
+  color: #00ffae;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.notice-box a:hover {
+  color: #7bd859;
+  text-decoration: underline;
+}
+
+.btn-submit {
+  margin-top: 30px;
+  display: inline-block;
+  text-decoration: none;
+  color: #0f111a;
+  background-color: #00ffae;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #7bd859;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 255, 174, 0.3);
+}
+
+/* Light mode adjustments */
+.light-mode .success-message {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .success-message h3 {
+  color: #2E8B57;
+}
+
+.light-mode .success-details i {
+  color: #2E8B57;
+}
+
+.light-mode .notice-box {
+  background: rgba(46, 139, 87, 0.1);
+  border-left-color: #2E8B57;
+}
+
+.light-mode .notice-box a {
+  color: #2E8B57;
+}
+
+.light-mode .btn-submit {
+  background-color: #2E8B57;
+  color: white;
+}
+
+.light-mode .btn-submit:hover {
+  background-color: #3aa76d;
+}
   </style>
 </head>
 
@@ -407,12 +521,17 @@ main {
     <!-- Success Message (now always visible) -->
     <div class="success-message">
       <i class="fas fa-check-circle"></i>
-      <h3>Application Submitted!</h3>
-      <p>Your application has been sent for review. You'll receive an email notification about your acceptance status.</p>
-      <p>If accepted, your login credentials will be sent to the email you provided.</p>
+      <h3>Application Submitted Successfully!</h3>
+      <div class="success-details">
+        <p><i class="fas fa-check"></i> Your application has been sent to the admin for review.</p>
+        <p><i class="fas fa-clock"></i> You'll receive the result via email within <strong>48 hours</strong>.</p>
+        <div class="notice-box">
+          <p><i class="fas fa-exclamation-circle"></i> <strong>Please check your spam folder</strong> if you don't see our email in your inbox.</p>
+          <p><i class="fas fa-envelope"></i> For any issues, contact us at: <a href="mailto:bhsciencesociety@gmail.com">bhsciencesociety@gmail.com</a></p>
+        </div>
+      </div>
       <a href="index.html" class="btn btn-submit">Return to Homepage</a>
     </div>
-  </main>
  
   <footer class="footer">
     <p>© 2025 Bloomfield Hall Science Society | All Rights Reserved</p>
