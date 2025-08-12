@@ -2,7 +2,7 @@
 function updateNavigation() {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   const login = document.querySelectorAll('.nav-links li a[href="login.html"]');
-  const register = 
+  const register = document.querySelectorAll('.nav-links li a[href="register.html"]');
   
   navLinks.forEach(link => {
     const listItem = link.parentElement;
