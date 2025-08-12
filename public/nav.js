@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
             authContainer.id = 'auth-buttons';
             authContainer.style.cssText = `
                 position: fixed;
-                top: 10px;
+                top: 20px;
                 right: 20px;
                 display: flex;
                 gap: 10px;
@@ -148,34 +148,73 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Responsive behavior for mobile
         function handleResponsive() {
+            const navLinksEl = document.getElementById('navLinks');
+            
             if (window.innerWidth <= 768) {
+                // Mobile: Hide fixed container and add buttons to nav
                 if (authContainer) {
-                    authContainer.style.cssText = `
-                        position: fixed;
-                        top: 5px;
-                        right: 10px;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 5px;
-                        z-index: 1000;
-                        align-items: flex-end;
-                    `;
+                    authContainer.style.display = 'none';
                 }
                 
-                // Make buttons smaller on mobile
-                if (dashboardLink) {
-                    dashboardLink.style.padding = '8px 14px';
-                    dashboardLink.style.fontSize = '12px';
+                // Add dashboard to nav if logged in
+                if ((isLoggedIn || token) && dashboardLink) {
+                    let dashboardNavItem = document.getElementById('dashboard-nav-item');
+                    if (!dashboardNavItem && navLinksEl) {
+                        dashboardNavItem = document.createElement('li');
+                        dashboardNavItem.id = 'dashboard-nav-item';
+                        dashboardNavItem.innerHTML = '<a href="dashboard.html">Dashboard</a>';
+                        navLinksEl.appendChild(dashboardNavItem);
+                        
+                        // Apply normal nav link styles
+                        const dashboardNavLink = dashboardNavItem.querySelector('a');
+                        dashboardNavLink.style.cssText = `
+                            color: inherit;
+                            text-decoration: none;
+                            padding: 10px 0;
+                            display: block;
+                            border-bottom: 1px solid rgba(255,255,255,0.1);
+                        `;
+                    }
                 }
-                if (logoutLink) {
-                    logoutLink.style.padding = '8px 14px';
-                    logoutLink.style.fontSize = '12px';
+                
+                // Add logout to nav if logged in
+                if ((isLoggedIn || token) && logoutLink) {
+                    let logoutNavItem = document.getElementById('logout-nav-item');
+                    if (!logoutNavItem && navLinksEl) {
+                        logoutNavItem = document.createElement('li');
+                        logoutNavItem.id = 'logout-nav-item';
+                        logoutNavItem.innerHTML = '<a href="#logout">Logout</a>';
+                        navLinksEl.appendChild(logoutNavItem);
+                        
+                        // Apply normal nav link styles
+                        const logoutNavLink = logoutNavItem.querySelector('a');
+                        logoutNavLink.style.cssText = `
+                            color: inherit;
+                            text-decoration: none;
+                            padding: 10px 0;
+                            display: block;
+                            border-bottom: 1px solid rgba(255,255,255,0.1);
+                        `;
+                        
+                        // Add logout functionality
+                        logoutNavLink.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            console.log('Logout clicked');
+                            localStorage.removeItem('bhss_token');
+                            localStorage.removeItem('isLoggedIn');
+                            showNotification('success', 'Logged out successfully');
+                            setTimeout(() => {
+                                window.location.href = 'index.html';
+                            }, 1000);
+                        });
+                    }
                 }
             } else {
-                if (authContainer) {
+                // Desktop: Show fixed container and remove from nav
+                if (authContainer && (isLoggedIn || token)) {
                     authContainer.style.cssText = `
                         position: fixed;
-                        top: 10px;
+                        top: 20px;
                         right: 20px;
                         display: flex;
                         gap: 10px;
@@ -183,6 +222,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         align-items: center;
                     `;
                 }
+                
+                // Remove from nav menu
+                const dashboardNavItem = document.getElementById('dashboard-nav-item');
+                const logoutNavItem = document.getElementById('logout-nav-item');
+                if (dashboardNavItem) dashboardNavItem.remove();
+                if (logoutNavItem) logoutNavItem.remove();
                 
                 // Reset button sizes for desktop
                 if (dashboardLink) {
