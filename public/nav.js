@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
             authContainer.id = 'auth-buttons';
             authContainer.style.cssText = `
                 position: fixed;
+                top: 10px;
                 right: 20px;
                 display: flex;
                 gap: 10px;
@@ -151,6 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (authContainer) {
                     authContainer.style.cssText = `
                         position: fixed;
+                        top: 5px;
                         right: 10px;
                         display: flex;
                         flex-direction: column;
@@ -173,6 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (authContainer) {
                     authContainer.style.cssText = `
                         position: fixed;
+                        top: 10px;
                         right: 20px;
                         display: flex;
                         gap: 10px;
