@@ -39,13 +39,13 @@ document.addEventListener('DOMContentLoaded', function () {
             // Style dashboard button
             dashboardLink.style.cssText = `
                 background: linear-gradient(135deg, #00ffae, #0dc0de);
+                right:10px;
                 color: white;
                 padding: 10px 18px;
                 border-radius: 25px;
                 font-weight: bold;
                 box-shadow: 0 4px 12px rgba(0,255,174,0.4);
                 transition: all 0.3s ease;
-                 right:10px;
 
             `;
             dashboardLink.addEventListener('mouseover', () => {
@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
             logoutLink.style.cssText = `
                 background: linear-gradient(135deg, #ff5c5c, #ff2e2e);
                 color: white;
+                right:10px;
                 padding: 10px 18px;
                 border-radius: 25px;
                 font-weight: bold;
