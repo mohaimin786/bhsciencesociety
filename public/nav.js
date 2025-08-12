@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dashboardLink.style.cssText = `
                 background: linear-gradient(135deg, #00ffae, #0dc0de);
                 right:10px;
+                left: 90%;
                 color: white;
                 padding: 10px 18px;
                 border-radius: 25px;
@@ -71,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 background: linear-gradient(135deg, #ff5c5c, #ff2e2e);
                 color: white;
                 right:10px;
+                left:90%;
                 padding: 10px 18px;
                 border-radius: 25px;
                 font-weight: bold;
