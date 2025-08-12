@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 font-weight: bold;
                 box-shadow: 0 4px 12px rgba(0,255,174,0.4);
                 transition: all 0.3s ease;
-                 left:10px;
+                 right:10px;
 
             `;
             dashboardLink.addEventListener('mouseover', () => {
