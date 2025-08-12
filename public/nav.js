@@ -27,11 +27,16 @@ document.addEventListener('DOMContentLoaded', function () {
         let dashboardLink = document.querySelector('a[href="dashboard.html"]');
 
         const navLinksEl = document.getElementById('navLinks');
+        navLinksEl.style.position = 'relative'; // needed so absolute positions are relative to navbar
 
         // Create dashboard link if logged in and doesn't exist
         if ((isLoggedIn || token) && !dashboardLink) {
             console.log('Creating dashboard link');
             const li = document.createElement('li');
+            li.style.listStyle = 'none'; // no bullet
+            li.style.position = 'absolute';
+            li.style.top = '10px';
+            li.style.right = '120px'; // leave space for logout
             li.innerHTML = '<a href="dashboard.html" class="dashboard-btn">Dashboard</a>';
             navLinksEl.appendChild(li);
             dashboardLink = li.querySelector('a');
@@ -39,15 +44,12 @@ document.addEventListener('DOMContentLoaded', function () {
             // Style dashboard button
             dashboardLink.style.cssText = `
                 background: linear-gradient(135deg, #00ffae, #0dc0de);
-                right:10px;
-                left: 90%;
                 color: white;
                 padding: 10px 18px;
                 border-radius: 25px;
                 font-weight: bold;
                 box-shadow: 0 4px 12px rgba(0,255,174,0.4);
                 transition: all 0.3s ease;
-
             `;
             dashboardLink.addEventListener('mouseover', () => {
                 dashboardLink.style.transform = 'scale(1.05)';
@@ -63,6 +65,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if ((isLoggedIn || token) && !logoutLink) {
             console.log('Creating logout link');
             const li = document.createElement('li');
+            li.style.listStyle = 'none';
+            li.style.position = 'absolute';
+            li.style.top = '10px';
+            li.style.right = '10px';
             li.innerHTML = '<a href="#logout" class="logout-btn">Logout</a>';
             navLinksEl.appendChild(li);
             logoutLink = li.querySelector('a');
@@ -71,8 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
             logoutLink.style.cssText = `
                 background: linear-gradient(135deg, #ff5c5c, #ff2e2e);
                 color: white;
-                right:10px;
-                left:90%;
                 padding: 10px 18px;
                 border-radius: 25px;
                 font-weight: bold;
