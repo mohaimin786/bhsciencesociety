@@ -1,7 +1,8 @@
 // Check login status and update nav
 function updateNavigation() {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  const navLinks = document.querySelectorAll('.nav-links li a[href="login.html"]');
+  const login = document.querySelectorAll('.nav-links li a[href="login.html"]');
+  const register = 
   
   navLinks.forEach(link => {
     const listItem = link.parentElement;
