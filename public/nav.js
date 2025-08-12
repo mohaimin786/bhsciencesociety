@@ -26,23 +26,34 @@ document.addEventListener('DOMContentLoaded', function () {
         let logoutLink = document.querySelector('a[href="#logout"]');
         let dashboardLink = document.querySelector('a[href="dashboard.html"]');
 
-        const navLinksEl = document.getElementById('navLinks');
-        navLinksEl.style.position = 'relative'; // needed so absolute positions are relative to navbar
+        // Create a container for auth buttons if it doesn't exist
+        let authContainer = document.getElementById('auth-buttons');
+        if (!authContainer) {
+            authContainer = document.createElement('div');
+            authContainer.id = 'auth-buttons';
+            authContainer.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                display: flex;
+                gap: 10px;
+                z-index: 1000;
+                align-items: center;
+            `;
+            document.body.appendChild(authContainer);
+        }
 
         // Create dashboard link if logged in and doesn't exist
         if ((isLoggedIn || token) && !dashboardLink) {
             console.log('Creating dashboard link');
-            const li = document.createElement('li');
-            li.style.listStyle = 'none'; // no bullet
-            li.style.position = 'absolute';
-            li.style.top = '10px';
-            li.style.right = '120px'; // leave space for logout
-            li.innerHTML = '<a href="dashboard.html" class="dashboard-btn">Dashboard</a>';
-            navLinksEl.appendChild(li);
-            dashboardLink = li.querySelector('a');
-
+            const dashboardBtn = document.createElement('a');
+            dashboardBtn.href = 'dashboard.html';
+            dashboardBtn.className = 'dashboard-btn';
+            dashboardBtn.textContent = 'Dashboard';
+            dashboardBtn.id = 'dashboard-link';
+            
             // Style dashboard button
-            dashboardLink.style.cssText = `
+            dashboardBtn.style.cssText = `
                 background: linear-gradient(135deg, #00ffae, #0dc0de);
                 color: white;
                 padding: 10px 18px;
@@ -50,31 +61,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 font-weight: bold;
                 box-shadow: 0 4px 12px rgba(0,255,174,0.4);
                 transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 14px;
             `;
-            dashboardLink.addEventListener('mouseover', () => {
-                dashboardLink.style.transform = 'scale(1.05)';
-                dashboardLink.style.boxShadow = '0 6px 15px rgba(0,255,174,0.6)';
+            
+            dashboardBtn.addEventListener('mouseover', () => {
+                dashboardBtn.style.transform = 'scale(1.05)';
+                dashboardBtn.style.boxShadow = '0 6px 15px rgba(0,255,174,0.6)';
             });
-            dashboardLink.addEventListener('mouseout', () => {
-                dashboardLink.style.transform = 'scale(1)';
-                dashboardLink.style.boxShadow = '0 4px 12px rgba(0,255,174,0.4)';
+            dashboardBtn.addEventListener('mouseout', () => {
+                dashboardBtn.style.transform = 'scale(1)';
+                dashboardBtn.style.boxShadow = '0 4px 12px rgba(0,255,174,0.4)';
             });
+            
+            authContainer.appendChild(dashboardBtn);
+            dashboardLink = dashboardBtn;
         }
 
         // Create logout link if it doesn't exist
         if ((isLoggedIn || token) && !logoutLink) {
             console.log('Creating logout link');
-            const li = document.createElement('li');
-            li.style.listStyle = 'none';
-            li.style.position = 'absolute';
-            li.style.top = '10px';
-            li.style.right = '10px';
-            li.innerHTML = '<a href="#logout" class="logout-btn">Logout</a>';
-            navLinksEl.appendChild(li);
-            logoutLink = li.querySelector('a');
+            const logoutBtn = document.createElement('a');
+            logoutBtn.href = '#logout';
+            logoutBtn.className = 'logout-btn';
+            logoutBtn.textContent = 'Logout';
+            logoutBtn.id = 'logout-link';
 
-            // Prettier logout button
-            logoutLink.style.cssText = `
+            // Style logout button
+            logoutBtn.style.cssText = `
                 background: linear-gradient(135deg, #ff5c5c, #ff2e2e);
                 color: white;
                 padding: 10px 18px;
@@ -82,18 +97,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 font-weight: bold;
                 box-shadow: 0 4px 12px rgba(255,92,92,0.4);
                 transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 14px;
             `;
-            logoutLink.addEventListener('mouseover', () => {
-                logoutLink.style.transform = 'scale(1.05)';
-                logoutLink.style.boxShadow = '0 6px 15px rgba(255,92,92,0.6)';
+            
+            logoutBtn.addEventListener('mouseover', () => {
+                logoutBtn.style.transform = 'scale(1.05)';
+                logoutBtn.style.boxShadow = '0 6px 15px rgba(255,92,92,0.6)';
             });
-            logoutLink.addEventListener('mouseout', () => {
-                logoutLink.style.transform = 'scale(1)';
-                logoutLink.style.boxShadow = '0 4px 12px rgba(255,92,92,0.4)';
+            logoutBtn.addEventListener('mouseout', () => {
+                logoutBtn.style.transform = 'scale(1)';
+                logoutBtn.style.boxShadow = '0 4px 12px rgba(255,92,92,0.4)';
             });
 
             // Logout click handler
-            logoutLink.addEventListener('click', function (e) {
+            logoutBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 console.log('Logout clicked');
                 localStorage.removeItem('bhss_token');
@@ -103,20 +122,85 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.location.href = 'index.html';
                 }, 1000);
             });
+            
+            authContainer.appendChild(logoutBtn);
+            logoutLink = logoutBtn;
         }
 
         // Update visibility
         if (isLoggedIn && token) {
+            // Hide register/login links from main nav
             if (registerLink) registerLink.closest('li').style.display = 'none';
             if (loginLink) loginLink.closest('li').style.display = 'none';
-            if (logoutLink) logoutLink.closest('li').style.display = 'block';
-            if (dashboardLink) dashboardLink.closest('li').style.display = 'block';
+            
+            // Show auth buttons
+            if (authContainer) authContainer.style.display = 'flex';
+            if (logoutLink) logoutLink.style.display = 'inline-block';
+            if (dashboardLink) dashboardLink.style.display = 'inline-block';
         } else {
+            // Show register/login links in main nav
             if (registerLink) registerLink.closest('li').style.display = 'block';
             if (loginLink) loginLink.closest('li').style.display = 'block';
-            if (logoutLink) logoutLink.closest('li').style.display = 'none';
-            if (dashboardLink) dashboardLink.closest('li').style.display = 'none';
+            
+            // Hide auth buttons
+            if (authContainer) authContainer.style.display = 'none';
         }
+
+        // Responsive behavior for mobile
+        function handleResponsive() {
+            if (window.innerWidth <= 768) {
+                if (authContainer) {
+                    authContainer.style.cssText = `
+                        position: fixed;
+                        top: 10px;
+                        right: 10px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 5px;
+                        z-index: 1000;
+                        align-items: flex-end;
+                    `;
+                }
+                
+                // Make buttons smaller on mobile
+                if (dashboardLink) {
+                    dashboardLink.style.padding = '8px 14px';
+                    dashboardLink.style.fontSize = '12px';
+                }
+                if (logoutLink) {
+                    logoutLink.style.padding = '8px 14px';
+                    logoutLink.style.fontSize = '12px';
+                }
+            } else {
+                if (authContainer) {
+                    authContainer.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        display: flex;
+                        gap: 10px;
+                        z-index: 1000;
+                        align-items: center;
+                    `;
+                }
+                
+                // Reset button sizes for desktop
+                if (dashboardLink) {
+                    dashboardLink.style.padding = '10px 18px';
+                    dashboardLink.style.fontSize = '14px';
+                }
+                if (logoutLink) {
+                    logoutLink.style.padding = '10px 18px';
+                    logoutLink.style.fontSize = '14px';
+                }
+            }
+        }
+
+        // Apply responsive styles
+        handleResponsive();
+        
+        // Listen for window resize
+        window.addEventListener('resize', handleResponsive);
     }
 
     // Notification helper (matches your existing notification system)
