@@ -913,6 +913,7 @@
         // Store token if needed
         if (data.token) {
           localStorage.setItem('bhss_token', data.token);
+          localStorage.setItem('isLoggedIn', 'true');
         }
         
         // Show success notification
