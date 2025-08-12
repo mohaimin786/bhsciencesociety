@@ -31,9 +31,31 @@ document.addEventListener('DOMContentLoaded', function() {
             const navLinks = document.getElementById('navLinks');
             if (navLinks) {
                 const li = document.createElement('li');
-                li.innerHTML = '<a href="#logout">Logout</a>';
+                li.innerHTML = '<a href="#logout" class="logout-btn">Logout</a>';
                 navLinks.appendChild(li);
                 logoutLink = li.querySelector('a');
+                
+                // Add custom style to the logout button
+                logoutLink.style.cssText = `
+                    border: 1px solid #ff4444;
+                    color: #ff4444;
+                    background: transparent;
+                    border-radius: 4px;
+                    padding: 8px 16px;
+                    transition: all 0.3s ease;
+                    margin-left: 10px;
+                `;
+                
+                // Hover effect
+                logoutLink.addEventListener('mouseover', () => {
+                    logoutLink.style.background = '#ff4444';
+                    logoutLink.style.color = 'white';
+                });
+                
+                logoutLink.addEventListener('mouseout', () => {
+                    logoutLink.style.background = 'transparent';
+                    logoutLink.style.color = '#ff4444';
+                });
                 
                 // Add click handler
                 logoutLink.addEventListener('click', function(e) {
