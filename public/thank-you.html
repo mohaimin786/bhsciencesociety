@@ -11,7 +11,6 @@
   <style>
     /* Form-specific styles */
     .footer {
-  position: sticky;
   bottom: 0;
   left: 0;
   right: 0;
@@ -207,6 +206,165 @@ main {
       text-decoration: none; /* Remove underline */
       color: inherit; /* Remove blue color */
     }
+    /* Success Message Container */
+.success-message {
+  text-align: center;
+  padding: 40px;
+  background-color: rgba(27, 30, 47, 0.9);
+  border-radius: 16px;
+  margin: 30px auto;
+  max-width: 700px;
+  box-shadow: 0 8px 20px rgba(0, 255, 174, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 255, 174, 0.2);
+}
+
+/* Main Check Icon */
+.success-icon {
+  margin-bottom: 20px;
+}
+
+.success-icon i {
+  font-size: 5rem;
+  color: #00ffae;
+}
+
+/* Heading */
+.success-message h3 {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #00ffae;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* Details Section */
+.success-details {
+  text-align: left;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Detail Items */
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.detail-icon {
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+  padding-top: 3px;
+}
+
+.detail-icon i {
+  font-size: 1.2rem;
+  color: #00ffae;
+}
+
+.detail-text {
+  flex-grow: 1;
+  text-align: left;
+  line-height: 1.6;
+}
+
+/* Notice Box */
+.notice-box {
+  background: rgba(0, 255, 174, 0.1);
+  border-left: 4px solid #00ffae;
+  padding: 15px 20px;
+  border-radius: 4px;
+  margin: 30px 0;
+}
+
+.notice-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 15px;
+}
+
+.notice-item:last-child {
+  margin-bottom: 0;
+}
+
+.notice-icon {
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+  padding-top: 3px;
+}
+
+.notice-icon i {
+  font-size: 1.2rem;
+  color: #00ffae;
+}
+
+.notice-text {
+  flex-grow: 1;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.notice-box a {
+  color: #00ffae;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.notice-box a:hover {
+  color: #7bd859;
+  text-decoration: underline;
+}
+
+/* Submit Button */
+.btn-submit {
+  margin-top: 30px;
+  display: inline-block;
+  text-decoration: none;
+  color: #0f111a;
+  background-color: #00ffae;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 1px;
+}
+
+.btn-submit:hover {
+  background-color: #7bd859;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 255, 174, 0.3);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .success-message {
+    padding: 30px 20px;
+    margin: 20px auto;
+  }
+  
+  .success-icon i {
+    font-size: 4rem;
+  }
+  
+  .success-message h3 {
+    font-size: 1.6rem;
+  }
+  
+  .detail-item, .notice-item {
+    gap: 12px;
+  }
+  
+  .detail-icon, .notice-icon {
+    width: 20px;
+  }
+}
 
     /* Enhanced Radio Buttons & Checkboxes */
     .radio-option, .checkbox-option {
@@ -519,19 +677,54 @@ main {
 
   <main class="registration-container">
     <!-- Success Message (now always visible) -->
-    <div class="success-message">
-      <i class="fas fa-check-circle"></i>
-      <h3>Application Submitted Successfully!</h3>
-      <div class="success-details">
-        <p><i class="fas fa-check"></i> Your application has been sent to the admin for review.</p>
-        <p><i class="fas fa-clock"></i> You'll receive the result via email within <strong>48 hours</strong>.</p>
-        <div class="notice-box">
-          <p><i class="fas fa-exclamation-circle"></i> <strong>Please check your spam folder</strong> if you don't see our email in your inbox.</p>
-          <p><i class="fas fa-envelope"></i> For any issues, contact us at: <a href="mailto:bhsciencesociety@gmail.com">bhsciencesociety@gmail.com</a></p>
+<div class="success-message">
+  <div class="success-icon">
+    <i class="fas fa-check-circle"></i>
+  </div>
+  <h3>Application Submitted Successfully!</h3>
+  
+  <div class="success-details">
+    <div class="detail-item">
+      <div class="detail-icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="detail-text">
+        Your application has been sent to the admin for review.
+      </div>
+    </div>
+    
+    <div class="detail-item">
+      <div class="detail-icon">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="detail-text">
+        You'll receive the result via email within <strong>48 hours</strong>.
+      </div>
+    </div>
+    
+    <div class="notice-box">
+      <div class="notice-item">
+        <div class="notice-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="notice-text">
+          <strong>Please check your spam folder</strong> if you don't see our email.
         </div>
       </div>
-      <a href="index.html" class="btn btn-submit">Return to Homepage</a>
+      
+      <div class="notice-item">
+        <div class="notice-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <div class="notice-text">
+          For any issues, contact: <a href="mailto:bhsciencesociety@gmail.com">bhsciencesociety@gmail.com</a>
+        </div>
+      </div>
     </div>
+  </div>
+  
+  <a href="index.html" class="btn btn-submit">Return to Homepage</a>
+</div>
  
   <footer class="footer">
     <p>© 2025 Bloomfield Hall Science Society | All Rights Reserved</p>
