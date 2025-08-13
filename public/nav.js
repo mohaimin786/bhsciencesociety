@@ -173,14 +173,16 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add dashboard to mobile nav
         const dashboardNavItem = document.createElement('li');
         dashboardNavItem.id = 'dashboard-nav-item';
+        dashboardNavItem.className = 'mobile-auth-item';
         dashboardNavItem.innerHTML = '<a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>';
         
         // Add logout to mobile nav
         const logoutNavItem = document.createElement('li');
         logoutNavItem.id = 'logout-nav-item';
+        logoutNavItem.className = 'mobile-auth-item';
         logoutNavItem.innerHTML = '<a href="#logout"><i class="fas fa-sign-out-alt"></i> Logout</a>';
         
-        // Style mobile nav items
+        // Style mobile nav items and HIDE them by default
         const mobileNavStyle = `
             color: var(--text-dark);
             text-decoration: none;
@@ -192,6 +194,13 @@ document.addEventListener('DOMContentLoaded', function () {
             overflow: hidden;
         `;
         
+        // Hide the mobile auth items by default (only show in mobile hamburger menu)
+        const mobileItemStyle = `
+            display: none;
+        `;
+        
+        dashboardNavItem.style.cssText = mobileItemStyle;
+        logoutNavItem.style.cssText = mobileItemStyle;
         dashboardNavItem.querySelector('a').style.cssText = mobileNavStyle;
         logoutNavItem.querySelector('a').style.cssText = mobileNavStyle;
         
@@ -248,20 +257,37 @@ document.addEventListener('DOMContentLoaded', function () {
     
     function handleResponsive() {
         const authContainer = document.getElementById('auth-buttons');
+        const dashboardNavItem = document.getElementById('dashboard-nav-item');
+        const logoutNavItem = document.getElementById('logout-nav-item');
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         const token = localStorage.getItem('bhss_token');
         
         function updateVisibility() {
             if (window.innerWidth <= 992) {
-                // Mobile view - hide desktop auth buttons
+                // Mobile view - hide desktop auth buttons, show mobile auth items
                 if (authContainer) {
                     authContainer.style.display = 'none';
                 }
+                
+                // Show mobile auth items in hamburger menu if logged in
+                if (isLoggedIn && token) {
+                    if (dashboardNavItem) dashboardNavItem.style.display = 'block';
+                    if (logoutNavItem) logoutNavItem.style.display = 'block';
+                } else {
+                    if (dashboardNavItem) dashboardNavItem.style.display = 'none';
+                    if (logoutNavItem) logoutNavItem.style.display = 'none';
+                }
             } else {
-                // Desktop view - show desktop auth buttons if logged in
+                // Desktop view - show desktop auth buttons if logged in, hide mobile items
                 if (authContainer && isLoggedIn && token) {
                     authContainer.style.display = 'flex';
+                } else if (authContainer) {
+                    authContainer.style.display = 'none';
                 }
+                
+                // Always hide mobile auth items on desktop
+                if (dashboardNavItem) dashboardNavItem.style.display = 'none';
+                if (logoutNavItem) logoutNavItem.style.display = 'none';
             }
         }
         
