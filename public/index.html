@@ -1115,9 +1115,12 @@
     }
     
     @media (max-width: 992px) {
+        .hamburger {
+    display: flex !important; /* Add !important to override the display: none */
+  }
       .nav-links {
         position: fixed;
-        top: 0;
+        top: 80px;
         left: 0;
         width: 100%;
         background-color: rgba(0, 0, 0, 0.95);
@@ -1138,10 +1141,7 @@
         opacity: 1;
       }
     
-      .hamburger {
-        display: flex;
-        order: 3;
-      }
+
     
       #theme-toggle {
         order: 2;
