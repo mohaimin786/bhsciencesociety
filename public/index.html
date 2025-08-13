@@ -1578,40 +1578,9 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
 
-  // Hamburger menu functionality
-  const hamburgerBtn = document.getElementById('hamburger-btn');
-  const navLinks = document.getElementById('navLinks');
 
-  hamburgerBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    hamburgerBtn.classList.toggle('active');
-    navLinks.classList.toggle('show');
-  });
-  
-  // Close menu when clicking on a link
-  document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-      hamburgerBtn.classList.remove('active');
-      navLinks.classList.remove('show');
-    });
-  });
 
-  // Close menu when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.navbar') && window.innerWidth <= 992) {
-      hamburgerBtn.classList.remove('active');
-      navLinks.classList.remove('show');
-    }
-  });
 
-  // Navbar scroll effect
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      document.querySelector('.navbar').classList.add('scrolled');
-    } else {
-      document.querySelector('.navbar').classList.remove('scrolled');
-    }
-  });
 
 
  const params = new URLSearchParams(window.location.search);
@@ -1810,35 +1779,7 @@ if (error === 'rateLimitReached') {
     });
   </script>
   <script src="navAndHamburger.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', () => {
-  const debugEl = document.getElementById('debug-text');
-  
-  // Debug info
-  function updateDebug() {
-    const hamburger = document.getElementById('hamburger-btn');
-    const navLinks = document.getElementById('navLinks');
-    const windowWidth = window.innerWidth;
-    
-    debugEl.innerHTML = `
-      Width: ${windowWidth}px<br>
-      Hamburger: ${hamburger ? 'Found' : 'NOT FOUND'}<br>
-      NavLinks: ${navLinks ? 'Found' : 'NOT FOUND'}<br>
-      Hamburger Active: ${hamburger?.classList.contains('active')}<br>
-      NavLinks Show: ${navLinks?.classList.contains('show')}
-    `;
-  }
-  
-  updateDebug();
-  window.addEventListener('resize', updateDebug);
-  
-  // Add click handler to hamburger
-  const hamburger = document.getElementById('hamburger-btn');
-  if (hamburger) {
-    hamburger.addEventListener('click', () => {
-      console.log('HAMBURGER CLICKED!');
-      updateDebug();
-    });
-  }</script>
+
 
 </body>
 </html>
