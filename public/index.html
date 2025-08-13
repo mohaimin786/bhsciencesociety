@@ -1810,6 +1810,35 @@ if (error === 'rateLimitReached') {
     });
   </script>
   <script src="nav.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => {
+  const debugEl = document.getElementById('debug-text');
+  
+  // Debug info
+  function updateDebug() {
+    const hamburger = document.getElementById('hamburger-btn');
+    const navLinks = document.getElementById('navLinks');
+    const windowWidth = window.innerWidth;
+    
+    debugEl.innerHTML = `
+      Width: ${windowWidth}px<br>
+      Hamburger: ${hamburger ? 'Found' : 'NOT FOUND'}<br>
+      NavLinks: ${navLinks ? 'Found' : 'NOT FOUND'}<br>
+      Hamburger Active: ${hamburger?.classList.contains('active')}<br>
+      NavLinks Show: ${navLinks?.classList.contains('show')}
+    `;
+  }
+  
+  updateDebug();
+  window.addEventListener('resize', updateDebug);
+  
+  // Add click handler to hamburger
+  const hamburger = document.getElementById('hamburger-btn');
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      console.log('HAMBURGER CLICKED!');
+      updateDebug();
+    });
+  }</script>
 
 </body>
 </html>
