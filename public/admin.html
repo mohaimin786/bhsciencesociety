@@ -857,6 +857,34 @@ body.light-mode .nav-tabs .nav-link[data-status="all"]:hover {
               <option value="rejected">Rejected</option>
             </select>
           </div>
+          
+          <!-- Rejection Reason Section -->
+          <div id="rejectionReasonContainer" class="mb-3 d-none">
+            <label for="rejectionReason" class="form-label">Rejection Reason</label>
+            <select id="rejectionReason" class="form-select mb-2">
+              <option value="">Select reason...</option>
+              <option value="age">Doesn't match age criteria</option>
+              <option value="grade">Doesn't match grade criteria</option>
+              <option value="other">Other reason</option>
+            </select>
+            
+            <div id="ageDetailsContainer" class="mt-2 d-none">
+              <label for="ageSpecific" class="form-label">Age is:</label>
+              <select id="ageSpecific" class="form-select">
+                <option value="higher">Higher than criteria</option>
+                <option value="lower">Lower than criteria</option>
+              </select>
+            </div>
+            
+            <div id="gradeDetailsContainer" class="mt-2 d-none">
+              <label for="gradeSpecific" class="form-label">Grade is:</label>
+              <select id="gradeSpecific" class="form-select">
+                <option value="higher">Higher than criteria</option>
+                <option value="lower">Lower than criteria</option>
+              </select>
+            </div>
+          </div>
+          
           <div class="mb-3">
             <label for="statusNotes" class="form-label">Admin Notes</label>
             <textarea id="statusNotes" class="form-control" rows="4" placeholder="Add any notes for internal use..."></textarea>
@@ -891,6 +919,32 @@ body.light-mode .nav-tabs .nav-link[data-status="all"]:hover {
               <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
             </select>
+          </div>
+          <!-- Bulk Rejection Reason Section -->
+          <div id="bulkRejectionReasonContainer" class="mb-3 d-none">
+            <label for="bulkRejectionReason" class="form-label">Rejection Reason</label>
+            <select id="bulkRejectionReason" class="form-select mb-2">
+              <option value="">Select reason...</option>
+              <option value="age">Doesn't match age criteria</option>
+              <option value="grade">Doesn't match grade criteria</option>
+              <option value="other">Other reason</option>
+            </select>
+            
+            <div id="bulkAgeDetailsContainer" class="mt-2 d-none">
+              <label for="bulkAgeSpecific" class="form-label">Age is:</label>
+              <select id="bulkAgeSpecific" class="form-select">
+                <option value="higher">Higher than criteria</option>
+                <option value="lower">Lower than criteria</option>
+              </select>
+            </div>
+            
+            <div id="bulkGradeDetailsContainer" class="mt-2 d-none">
+              <label for="bulkGradeSpecific" class="form-label">Grade is:</label>
+              <select id="bulkGradeSpecific" class="form-select">
+                <option value="higher">Higher than criteria</option>
+                <option value="lower">Lower than criteria</option>
+              </select>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -973,6 +1027,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const bulkStatusSelectContainer = document.getElementById('bulkStatusSelectContainer');
   const bulkStatusSelect = document.getElementById('bulkStatusSelect');
   const toastMessage = document.getElementById('toastMessage');
+  
+  // Rejection reason elements
+  const rejectionReasonContainer = document.getElementById('rejectionReasonContainer');
+  const rejectionReason = document.getElementById('rejectionReason');
+  const ageDetailsContainer = document.getElementById('ageDetailsContainer');
+  const ageSpecific = document.getElementById('ageSpecific');
+  const gradeDetailsContainer = document.getElementById('gradeDetailsContainer');
+  const gradeSpecific = document.getElementById('gradeSpecific');
+  
+  // Bulk rejection reason elements
+  const bulkRejectionReasonContainer = document.getElementById('bulkRejectionReasonContainer');
+  const bulkRejectionReason = document.getElementById('bulkRejectionReason');
+  const bulkAgeDetailsContainer = document.getElementById('bulkAgeDetailsContainer');
+  const bulkAgeSpecific = document.getElementById('bulkAgeSpecific');
+  const bulkGradeDetailsContainer = document.getElementById('bulkGradeDetailsContainer');
+  const bulkGradeSpecific = document.getElementById('bulkGradeSpecific');
 
   let currentSubmissionId = null;
   let currentFilter = 'all';
@@ -983,36 +1053,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load submissions
   async function loadSubmissions() {
-  try {
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
-      console.error("No token found — redirecting to login.");
-      window.location.href = '/admin-login.html';
-      return;
-    }
-
-    const response = await fetch('https://bhss-backend.up.railway.app/api/submissions', {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
+        console.error("No token found — redirecting to login.");
+        window.location.href = '/admin-login.html';
+        return;
       }
-    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+      const response = await fetch('https://bhss-backend.up.railway.app/api/submissions', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      allSubmissions = data.data || [];
+      renderSubmissions();
+      updateSubmissionCount();
+    } catch (err) {
+      console.error("Error:", err);
+      showToast('Error', 'Failed to load submissions.', 'error');
     }
-
-    const data = await response.json();
-    allSubmissions = data.data || [];
-    renderSubmissions();
-    updateSubmissionCount();
-  } catch (err) {
-    console.error("Error:", err);
-    showToast('Error', 'Failed to load submissions.', 'error');
   }
-}
-
 
   // Update submission count display
   function updateSubmissionCount() {
@@ -1136,6 +1205,24 @@ document.addEventListener('DOMContentLoaded', () => {
             modalSubmissionName.textContent = submission.fullName;
             statusSelect.value = submission.status;
             statusNotes.value = submission.notes || '';
+            
+            // Show/hide rejection reason based on current status
+            if (submission.status === 'rejected') {
+              rejectionReasonContainer.classList.remove('d-none');
+              if (submission.rejectionDetails) {
+                rejectionReason.value = submission.rejectionDetails.reason || '';
+                if (submission.rejectionDetails.reason === 'age') {
+                  ageDetailsContainer.classList.remove('d-none');
+                  ageSpecific.value = submission.rejectionDetails.detail || 'higher';
+                } else if (submission.rejectionDetails.reason === 'grade') {
+                  gradeDetailsContainer.classList.remove('d-none');
+                  gradeSpecific.value = submission.rejectionDetails.detail || 'higher';
+                }
+              }
+            } else {
+              rejectionReasonContainer.classList.add('d-none');
+            }
+            
             statusModal.show();
           }
         });
@@ -1238,10 +1325,17 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
       bulkStatusSelectContainer.classList.add('d-none');
+      bulkRejectionReasonContainer.classList.add('d-none');
     } else {
       bulkActionModalTitle.textContent = action === 'approve' ? 'Bulk Approve Applications' : 'Bulk Reject Applications';
       bulkStatusSelectContainer.classList.remove('d-none');
       bulkStatusSelect.value = action === 'approve' ? 'approved' : 'rejected';
+      
+      if (action === 'reject') {
+        bulkRejectionReasonContainer.classList.remove('d-none');
+      } else {
+        bulkRejectionReasonContainer.classList.add('d-none');
+      }
     }
 
     bulkActionModal.show();
@@ -1281,6 +1375,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const id of validIds) {
       try {
         let response, data;
+        let requestBody = {};
 
         if (currentBulkAction === 'delete') {
           response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}`, {
@@ -1299,12 +1394,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           });
         } else if (currentBulkAction === 'reject') {
+          // Prepare rejection details for bulk reject
+          const rejectionReason = bulkRejectionReason.value;
+          let rejectionDetails = null;
+          
+          if (rejectionReason === 'age') {
+            rejectionDetails = {
+              reason: 'age',
+              detail: bulkAgeSpecific.value
+            };
+          } else if (rejectionReason === 'grade') {
+            rejectionDetails = {
+              reason: 'grade',
+              detail: bulkGradeSpecific.value
+            };
+          } else if (rejectionReason === 'other') {
+            rejectionDetails = {
+              reason: 'other'
+            };
+          }
+
           response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${id}/reject`, {
             method: 'POST',
             headers: {
+              'Content-Type': 'application/json',
               'Accept': 'application/json',
               'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-            }
+            },
+            body: JSON.stringify({
+              rejectionDetails: rejectionDetails
+            })
           });
         }
 
@@ -1313,7 +1432,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (response.ok && data.success) {
           if (currentBulkAction !== 'delete') {
             const submission = allSubmissions.find(sub => sub._id === id);
-            if (submission) submission.status = currentBulkAction;
+            if (submission) {
+              submission.status = currentBulkAction;
+              if (currentBulkAction === 'reject' && data.rejectionDetails) {
+                submission.rejectionDetails = data.rejectionDetails;
+              }
+            }
           } else {
             allSubmissions = allSubmissions.filter(sub => sub._id !== id);
           }
@@ -1365,86 +1489,162 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSubmissions();
   });
 
+  // Status select change handler to show/hide rejection reasons
+  statusSelect.addEventListener('change', function() {
+    if (this.value === 'rejected') {
+      rejectionReasonContainer.classList.remove('d-none');
+    } else {
+      rejectionReasonContainer.classList.add('d-none');
+      ageDetailsContainer.classList.add('d-none');
+      gradeDetailsContainer.classList.add('d-none');
+    }
+  });
+
+  // Rejection reason change handler
+  rejectionReason.addEventListener('change', function() {
+    ageDetailsContainer.classList.add('d-none');
+    gradeDetailsContainer.classList.add('d-none');
+    
+    if (this.value === 'age') {
+      ageDetailsContainer.classList.remove('d-none');
+    } else if (this.value === 'grade') {
+      gradeDetailsContainer.classList.remove('d-none');
+    }
+  });
+
+  // Bulk status select change handler
+  bulkStatusSelect.addEventListener('change', function() {
+    if (this.value === 'rejected') {
+      bulkRejectionReasonContainer.classList.remove('d-none');
+    } else {
+      bulkRejectionReasonContainer.classList.add('d-none');
+      bulkAgeDetailsContainer.classList.add('d-none');
+      bulkGradeDetailsContainer.classList.add('d-none');
+    }
+  });
+
+  // Bulk rejection reason change handler
+  bulkRejectionReason.addEventListener('change', function() {
+    bulkAgeDetailsContainer.classList.add('d-none');
+    bulkGradeDetailsContainer.classList.add('d-none');
+    
+    if (this.value === 'age') {
+      bulkAgeDetailsContainer.classList.remove('d-none');
+    } else if (this.value === 'grade') {
+      bulkGradeDetailsContainer.classList.remove('d-none');
+    }
+  });
+
   // Update status
   confirmBtn.addEventListener('click', async () => {
-  const newStatus = statusSelect.value;
-  const notes = statusNotes.value;
-  
-  if (!currentSubmissionId) return;
-  
-  loadingSpinner.classList.remove('d-none');
-  confirmBtn.disabled = true;
-  
-  try {
-    let response, data;
+    const newStatus = statusSelect.value;
+    const notes = statusNotes.value;
     
-    if (newStatus === 'approved') {
-      // Use the approve endpoint that sends emails
-      response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}/approve`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-        }
-      });
-    } else if (newStatus === 'rejected') {
-      // Use the reject endpoint that sends emails
-      response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}/reject`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-        }
-      });
-    } else {
-      // For pending status, use the regular update endpoint
-      response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-        },
-        body: JSON.stringify({
-          status: newStatus,
-          notes: notes
-        })
-      });
-    }
+    if (!currentSubmissionId) return;
     
-    if (!response.ok) throw new Error('Network response was not ok');
-    data = await response.json();
+    loadingSpinner.classList.remove('d-none');
+    confirmBtn.disabled = true;
     
-    if (data.success) {
-      const index = allSubmissions.findIndex(s => s._id === currentSubmissionId);
-      if (index !== -1) {
-        allSubmissions[index].status = newStatus;
-        allSubmissions[index].notes = notes;
-      }
-      statusModal.hide();
+    try {
+      let response, data;
+      let requestBody = {};
       
-      // Show different messages based on action
-      let message = `Application status updated to ${newStatus}`;
       if (newStatus === 'approved') {
-        message += ' and approval email sent to applicant';
+        // Use the approve endpoint that sends emails
+        response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}/approve`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+          }
+        });
       } else if (newStatus === 'rejected') {
-        message += ' and rejection email sent to applicant';
+        // Prepare rejection details
+        const rejectionReasonValue = rejectionReason.value;
+        let rejectionDetails = null;
+        
+        if (rejectionReasonValue === 'age') {
+          rejectionDetails = {
+            reason: 'age',
+            detail: ageSpecific.value
+          };
+        } else if (rejectionReasonValue === 'grade') {
+          rejectionDetails = {
+            reason: 'grade',
+            detail: gradeSpecific.value
+          };
+        } else if (rejectionReasonValue === 'other') {
+          rejectionDetails = {
+            reason: 'other'
+          };
+        }
+
+        // Use the reject endpoint with additional rejection details
+        response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}/reject`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+          },
+          body: JSON.stringify({
+            rejectionDetails: rejectionDetails,
+            notes: notes
+          })
+        });
+      } else {
+        // For pending status, use the regular update endpoint
+        response = await fetch(`https://bhss-backend.up.railway.app/api/submissions/${currentSubmissionId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+          },
+          body: JSON.stringify({
+            status: newStatus,
+            notes: notes
+          })
+        });
       }
       
-      showToast('Success', message, 'success');
-      renderSubmissions();
-      updateSubmissionCount();
-    } else {
-      throw new Error(data.error || 'Failed to update status');
+      if (!response.ok) throw new Error('Network response was not ok');
+      data = await response.json();
+      
+      if (data.success) {
+        const index = allSubmissions.findIndex(s => s._id === currentSubmissionId);
+        if (index !== -1) {
+          allSubmissions[index].status = newStatus;
+          allSubmissions[index].notes = notes;
+          if (newStatus === 'rejected' && data.rejectionDetails) {
+            allSubmissions[index].rejectionDetails = data.rejectionDetails;
+          }
+        }
+        statusModal.hide();
+        
+        // Show different messages based on action
+        let message = `Application status updated to ${newStatus}`;
+        if (newStatus === 'approved') {
+          message += ' and approval email sent to applicant';
+        } else if (newStatus === 'rejected') {
+          message += ' and rejection email sent to applicant';
+        }
+        
+        showToast('Success', message, 'success');
+        renderSubmissions();
+        updateSubmissionCount();
+      } else {
+        throw new Error(data.error || 'Failed to update status');
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      showToast('Error', 'Failed to update status: ' + err.message, 'error');
+    } finally {
+      loadingSpinner.classList.add('d-none');
+      confirmBtn.disabled = false;
     }
-  } catch (err) {
-    console.error('Error:', err);
-    showToast('Error', 'Failed to update status: ' + err.message, 'error');
-  } finally {
-    loadingSpinner.classList.add('d-none');
-    confirmBtn.disabled = false;
-  }
-});
+  });
+
   // Delete submission
   document.addEventListener('click', function (e) {
     if (e.target.classList.contains('delete-submission') || e.target.closest('.delete-submission')) {
