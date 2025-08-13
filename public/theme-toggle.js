@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.getElementById('navLinks');
     
     if (hamburgerBtn && navLinks) {
+        console.log('Hamburger menu elements found, setting up event listeners');
+        
         // Main hamburger click handler
         hamburgerBtn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -19,11 +21,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (isActive) {
                 // Close menu
+                console.log('Closing hamburger menu');
                 this.classList.remove('active');
                 navLinks.classList.remove('show');
                 document.body.style.overflow = ''; // Re-enable scroll
             } else {
                 // Open menu
+                console.log('Opening hamburger menu');
                 this.classList.add('active');
                 navLinks.classList.add('show');
                 document.body.style.overflow = 'hidden'; // Prevent scroll
@@ -31,7 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Close menu when clicking on any nav link
-        document.querySelectorAll('.nav-links a').forEach(link => {
+        const navLinkElements = document.querySelectorAll('.nav-links a');
+        console.log(`Found ${navLinkElements.length} nav links`);
+        
+        navLinkElements.forEach(link => {
             link.addEventListener('click', function() {
                 console.log('Nav link clicked, closing menu');
                 hamburgerBtn.classList.remove('active');
@@ -44,10 +51,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('click', function(e) {
             const navbar = document.querySelector('.navbar');
             if (!navbar.contains(e.target) && window.innerWidth <= 992) {
-                console.log('Clicked outside navbar, closing menu');
-                hamburgerBtn.classList.remove('active');
-                navLinks.classList.remove('show');
-                document.body.style.overflow = '';
+                if (hamburgerBtn.classList.contains('active')) {
+                    console.log('Clicked outside navbar, closing menu');
+                    hamburgerBtn.classList.remove('active');
+                    navLinks.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
             }
         });
         
@@ -55,15 +64,27 @@ document.addEventListener('DOMContentLoaded', function() {
         window.addEventListener('resize', function() {
             if (window.innerWidth > 992) {
                 // Desktop view - ensure menu is closed and scroll is enabled
-                hamburgerBtn.classList.remove('active');
-                navLinks.classList.remove('show');
-                document.body.style.overflow = '';
+                if (hamburgerBtn.classList.contains('active')) {
+                    console.log('Switching to desktop view, closing mobile menu');
+                    hamburgerBtn.classList.remove('active');
+                    navLinks.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
             }
         });
         
         // Prevent menu from closing when clicking inside nav-links
         navLinks.addEventListener('click', function(e) {
-            e.stopPropagation();
+            // Only stop propagation if clicking on the menu itself, not on links
+            if (e.target === navLinks || e.target.classList.contains('nav-links')) {
+                e.stopPropagation();
+            }
+        });
+        
+    } else {
+        console.error('Hamburger menu elements not found:', {
+            hamburgerBtn: !!hamburgerBtn,
+            navLinks: !!navLinks
         });
     }
     
@@ -264,9 +285,15 @@ const additionalCSS = `
             border-bottom: 2px solid var(--primary);
             max-height: calc(100vh - 80px);
             overflow-y: auto;
+            transform: translateY(-150%);
+            opacity: 0;
+            visibility: hidden;
         }
         
         .nav-links.show {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
             animation: slideDown 0.4s ease-out forwards;
         }
         
@@ -288,9 +315,28 @@ const additionalCSS = `
         .nav-links.show li:nth-child(5) { transition-delay: 0.5s; }
         .nav-links.show li:nth-child(6) { transition-delay: 0.6s; }
         .nav-links.show li:nth-child(7) { transition-delay: 0.7s; }
+        .nav-links.show li:nth-child(8) { transition-delay: 0.8s; }
+        .nav-links.show li:nth-child(9) { transition-delay: 0.9s; }
         
         .hamburger-line {
             transform-origin: center;
+        }
+        
+        /* Hide mobile auth items by default on all screen sizes */
+        .mobile-auth-item {
+            display: none !important;
+        }
+        
+        /* Only show mobile auth items in mobile view when logged in */
+        .nav-links .mobile-auth-item.show-mobile-auth {
+            display: block !important;
+        }
+    }
+    
+    /* Always hide mobile auth items on desktop */
+    @media (min-width: 993px) {
+        .mobile-auth-item {
+            display: none !important;
         }
     }
     
