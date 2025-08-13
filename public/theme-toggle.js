@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Theme toggle script loaded');
     
-    // Hamburger menu functionality - Enhanced
+    // Hamburger menu functionality - Enhanced and Fixed
     const hamburgerBtn = document.getElementById('hamburger-btn');
     const navLinks = document.getElementById('navLinks');
     
@@ -273,27 +273,42 @@ window.createParticles = function() {
     document.dispatchEvent(event);
 };
 
-// Add CSS for enhanced mobile menu
+// Add CSS for enhanced mobile menu - FIXED VERSION
 const additionalCSS = `
-    /* Enhanced mobile menu styles */
+    /* Enhanced mobile menu styles - FIXED */
     @media (max-width: 992px) {
+        .hamburger {
+            display: flex !important;
+            z-index: 1001;
+        }
+        
         .nav-links {
-            background: rgba(0, 0, 0, 0.98);
+            position: fixed !important;
+            top: 80px;
+            left: 0;
+            width: 100% !important;
+            height: calc(100vh - 80px);
+            background: rgba(0, 0, 0, 0.98) !important;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
             border-bottom: 2px solid var(--primary);
-            max-height: calc(100vh - 80px);
             overflow-y: auto;
-            transform: translateY(-150%);
-            opacity: 0;
-            visibility: hidden;
+            transform: translateY(-100%) !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            padding-top: 50px !important;
+            gap: 30px !important;
+            z-index: 999 !important;
         }
         
         .nav-links.show {
-            transform: translateY(0);
-            opacity: 1;
-            visibility: visible;
+            transform: translateY(0) !important;
+            opacity: 1 !important;
+            visibility: visible !important;
             animation: slideDown 0.4s ease-out forwards;
         }
         
@@ -301,6 +316,7 @@ const additionalCSS = `
             opacity: 0;
             transform: translateX(-50px);
             transition: all 0.3s ease;
+            width: auto;
         }
         
         .nav-links.show li {
@@ -318,6 +334,13 @@ const additionalCSS = `
         .nav-links.show li:nth-child(8) { transition-delay: 0.8s; }
         .nav-links.show li:nth-child(9) { transition-delay: 0.9s; }
         
+        .nav-links li a {
+            font-size: 1.2rem;
+            padding: 15px 25px;
+            display: block;
+            text-align: center;
+        }
+        
         .hamburger-line {
             transform-origin: center;
         }
@@ -331,11 +354,22 @@ const additionalCSS = `
         .nav-links .mobile-auth-item.show-mobile-auth {
             display: block !important;
         }
+        
+        /* Fix nav-center-container positioning */
+        .nav-center-container {
+            position: static;
+            justify-content: center;
+            pointer-events: auto;
+        }
     }
     
     /* Always hide mobile auth items on desktop */
     @media (min-width: 993px) {
         .mobile-auth-item {
+            display: none !important;
+        }
+        
+        .hamburger {
             display: none !important;
         }
     }
@@ -374,6 +408,21 @@ const additionalCSS = `
         pointer-events: none;
         position: absolute;
         will-change: transform, opacity;
+    }
+    
+    /* Ensure hamburger is always visible on mobile */
+    .hamburger {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 10px;
+        z-index: 1001;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 21px;
+        position: relative;
     }
 `;
 
