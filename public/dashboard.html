@@ -617,7 +617,12 @@
 
         // Interactive effects
         document.addEventListener('DOMContentLoaded', function() {
-          
+             const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+             const token = localStorage.getItem('bhss_token');
+            
+                if (!isLoggedIn || !token) {
+                    window.location.href = '/login.html';
+                }
             // Start counter animation
             setTimeout(animateCounters, 1000);
             
