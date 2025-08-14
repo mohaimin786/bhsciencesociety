@@ -2073,10 +2073,24 @@
   }
 
   // Disable the submit button to prevent multiple clicks
+let role = null;
+
+if (bhStudentSelected) { 
+  let studentType = bhStudentSelected.value;
+
+  if (studentType === "yes") {
+    role = "Member";
+  } else {
+    role = "Online Member";
+  }
+} else {
+  console.error("No selection made for BH student status.");
+}
   const submitBtn = document.querySelector('.btn-submit');
   submitBtn.disabled = true;
   submitBtn.innerHTML =
     '<span class="spinner-border spinner-border-sm"></span> Submitting...';
+      
 
   try {
     // Prepare form data
@@ -2095,6 +2109,7 @@
       school: document.getElementById('school').value,
       subjects: selectedSubjects.map((checkbox) => checkbox.value),
       motivation: motivation.value,
+      role: role,
     };
 
     // Show loading state
