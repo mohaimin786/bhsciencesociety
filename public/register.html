@@ -2075,7 +2075,6 @@
   // Disable the submit button to prevent multiple clicks
 let role = null;
 
-if (bhStudentSelected) { 
   let studentType = bhStudentSelected.value;
 
   if (studentType === "yes") {
@@ -2083,9 +2082,7 @@ if (bhStudentSelected) {
   } else {
     role = "Online Member";
   }
-} else {
-  console.error("No selection made for BH student status.");
-}
+ 
   const submitBtn = document.querySelector('.btn-submit');
   submitBtn.disabled = true;
   submitBtn.innerHTML =
