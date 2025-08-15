@@ -19,7 +19,7 @@
         }
 
         /* Loading Spinner */
-  .loading-overlay {
+        .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -55,7 +55,6 @@
             left: 42%;
             transform: translateX(-50%);
         }
-
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -96,6 +95,114 @@
             100% { transform: translateX(-100%); }
         }
 
+        /* Enhanced Sidebar Toggle Button */
+        .sidebar-toggle {
+            position: fixed;
+            left: 15px;
+            top: 55px;
+            z-index: 1001;
+            background: linear-gradient(135deg, #00ffae, #7df9ff);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(0, 255, 174, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-toggle:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(0, 255, 174, 0.6);
+            background: linear-gradient(135deg, #00ffcc, #00d4ff);
+        }
+
+        .sidebar-toggle:active {
+            transform: translateY(-1px) scale(0.98);
+            transition: all 0.1s ease;
+        }
+
+        /* Hamburger Menu Animation */
+        .hamburger {
+            width: 24px;
+            height: 20px;
+            position: relative;
+            transform: rotate(0deg);
+            transition: 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background: #0f111a;
+            border-radius: 2px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: 0.3s ease-in-out;
+        }
+
+        .hamburger span:nth-child(1) {
+            top: 0px;
+            transform-origin: left center;
+        }
+
+        .hamburger span:nth-child(2) {
+            top: 8px;
+            transform-origin: left center;
+        }
+
+        .hamburger span:nth-child(3) {
+            top: 16px;
+            transform-origin: left center;
+        }
+
+        /* Animated X when sidebar is open */
+        .sidebar-toggle.active .hamburger span:nth-child(1) {
+            transform: rotate(45deg);
+            top: 0px;
+            left: 4px;
+        }
+
+        .sidebar-toggle.active .hamburger span:nth-child(2) {
+            width: 0%;
+            opacity: 0;
+        }
+
+        .sidebar-toggle.active .hamburger span:nth-child(3) {
+            transform: rotate(-45deg);
+            top: 18px;
+            left: 4px;
+        }
+
+        /* Pulse animation for attention */
+        .sidebar-toggle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0, 255, 174, 0.3);
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        .sidebar-toggle:hover::before {
+            width: 100px;
+            height: 100px;
+            opacity: 0;
+        }
+
         /* Sidebar Navigation */
         .sidebar {
             position: fixed;
@@ -108,28 +215,11 @@
             border-right: 1px solid #00ffae30;
             z-index: 999;
             transform: translateX(-100%);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sidebar.open {
             transform: translateX(0);
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            left: 10px;
-            top: 50px;
-            z-index: 1001;
-            background: linear-gradient(135deg, #00ffae, #7df9ff);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(0, 255, 174, 0.3);
         }
 
         .sidebar-content {
@@ -688,6 +778,14 @@
             .subject-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
+
+            /* Adjust sidebar toggle for mobile */
+            .sidebar-toggle {
+                left: 10px;
+                top: 50px;
+                width: 45px;
+                height: 45px;
+            }
         }
 
         /* Special Effects */
@@ -754,7 +852,7 @@
 </head>
 <body>
     <!-- Loading Overlay -->
-<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-container">
             <div class="spinner"></div>
             <div class="loading-text">Loading your dashboard...</div>
@@ -768,9 +866,13 @@
         </div>
     </div>
 
-    <!-- Sidebar Toggle -->
-    <button class="sidebar-toggle" onclick="toggleSidebar()">
-        ☰
+    <!-- Enhanced Sidebar Toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()" id="sidebarToggle">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </button>
 
     <!-- Sidebar Navigation -->
@@ -1379,12 +1481,15 @@
             }
         }
 
-        // Sidebar functions
+        // Enhanced Sidebar functions
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            
             if (sidebar) sidebar.classList.toggle('open');
             if (mainContent) mainContent.classList.toggle('shifted');
+            if (toggleBtn) toggleBtn.classList.toggle('active');
         }
 
         // Logout function
@@ -1486,10 +1591,12 @@
             window.addEventListener('resize', function() {
                 const sidebar = document.getElementById('sidebar');
                 const mainContent = document.getElementById('mainContent');
+                const toggleBtn = document.getElementById('sidebarToggle');
                 
-                if (window.innerWidth > 768 && sidebar && mainContent) {
+                if (window.innerWidth > 768 && sidebar && mainContent && toggleBtn) {
                     sidebar.classList.remove('open');
                     mainContent.classList.remove('shifted');
+                    toggleBtn.classList.remove('active');
                 }
             });
         }
