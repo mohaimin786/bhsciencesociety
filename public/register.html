@@ -1425,6 +1425,13 @@
             }
           });
         });
+          const isLoggedIn = localStorage.getItem('isLoggedIn');
+          const token = localStorage.getItem('bhss_token');
+          
+          if (isLoggedIn === 'true' && token) {
+            // User is already logged in, redirect to dashboard
+            window.location.href = 'dashboard.html';
+          }
 
         // Enhanced phone number validation
 
