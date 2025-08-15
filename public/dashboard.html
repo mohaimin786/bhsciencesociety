@@ -441,6 +441,7 @@
             cursor: pointer;
             font-size: 1em;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .modal-btn.primary {
@@ -454,9 +455,16 @@
             border: 1px solid rgba(125, 249, 255, 0.3);
         }
 
-        .modal-btn:hover {
+        .modal-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 255, 174, 0.3);
+        }
+
+        .modal-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
         }
 
         .profile-card {
@@ -788,7 +796,7 @@
 
             <div class="modal-actions">
                 <button class="modal-btn secondary" onclick="closeSubjectModal()">Cancel</button>
-                <button class="modal-btn primary" onclick="saveSubjects()">Save Changes</button>
+                <button class="modal-btn primary" id="saveSubjectsBtn" onclick="saveSubjects()">Save Changes</button>
             </div>
         </div>
     </div>
@@ -870,6 +878,7 @@
         let currentUser = null;
         let userSubjects = [];
         let tempSubjects = [];
+        let isSaving = false; // Flag to prevent multiple saves
         
         // Available subjects list
         const availableSubjectsList = [
@@ -1068,7 +1077,7 @@
                     ${subject}
                     ${removable ? `
                         <button class="remove-subject" 
-                                onclick="removeSubject(${index})"
+                                onclick="removeSubjectFromModal(${index}, event)"
                                 ${subjects.length === 1 ? 'disabled title="At least one subject is required"' : ''}>
                             ×
                         </button>
@@ -1107,11 +1116,13 @@
                 // Add subject
                 tempSubjects.push(subject);
                 element.classList.add('selected');
+                showNotification(`Added ${subject}`, 'success');
             } else {
                 // Remove subject (only if more than 1 subject)
                 if (tempSubjects.length > 1) {
                     tempSubjects.splice(index, 1);
                     element.classList.remove('selected');
+                    showNotification(`Removed ${subject}`, 'success');
                 } else {
                     showNotification('You must have at least one subject selected', 'error');
                     return;
@@ -1119,30 +1130,41 @@
             }
             
             // Update current subjects display in modal
+            updateModalCurrentSubjects();
+        }
+
+        function removeSubjectFromModal(index, event) {
+            event.stopPropagation(); // Prevent any parent click handlers
+            
+            if (tempSubjects.length <= 1) {
+                showNotification('You must have at least one subject selected', 'error');
+                return;
+            }
+            
+            const removedSubject = tempSubjects[index];
+            tempSubjects.splice(index, 1);
+            
+            showNotification(`Removed ${removedSubject}`, 'success');
+            
+            // Update both displays
+            updateModalCurrentSubjects();
+            updateAvailableSubjectsDisplay();
+        }
+
+        function updateModalCurrentSubjects() {
             const currentDisplay = document.getElementById('currentSubjectsDisplay');
             if (currentDisplay) {
                 renderSubjectChips(tempSubjects, currentDisplay, true);
             }
         }
 
-        function removeSubject(index) {
-            if (tempSubjects.length <= 1) {
-                showNotification('You must have at least one subject selected', 'error');
-                return;
-            }
-            
-            const removedSubject = tempSubjects.splice(index, 1)[0];
-            
-            // Update displays
-            const currentDisplay = document.getElementById('currentSubjectsDisplay');
-            if (currentDisplay) {
-                renderSubjectChips(tempSubjects, currentDisplay, true);
-            }
-            
-            // Update available subjects display
+        function updateAvailableSubjectsDisplay() {
             const availableOptions = document.querySelectorAll('.subject-option');
             availableOptions.forEach(option => {
-                if (option.textContent === removedSubject) {
+                const subject = option.textContent;
+                if (tempSubjects.includes(subject)) {
+                    option.classList.add('selected');
+                } else {
                     option.classList.remove('selected');
                 }
             });
@@ -1152,6 +1174,20 @@
             if (tempSubjects.length === 0) {
                 showNotification('You must select at least one subject', 'error');
                 return;
+            }
+
+            // Prevent multiple saves
+            if (isSaving) {
+                return;
+            }
+
+            const saveBtn = document.getElementById('saveSubjectsBtn');
+            isSaving = true;
+            
+            // Disable the button and show loading state
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
             }
 
             try {
@@ -1171,18 +1207,30 @@
             } catch (error) {
                 console.error('Error saving subjects:', error);
                 showNotification('An error occurred while saving subjects', 'error');
+            } finally {
+                // Re-enable the button
+                isSaving = false;
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Save Changes';
+                }
             }
         }
 
         // Modal functions
         function openSubjectModal() {
             tempSubjects = [...userSubjects];
+            isSaving = false; // Reset saving flag
+            
+            // Reset save button state
+            const saveBtn = document.getElementById('saveSubjectsBtn');
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            }
             
             // Render current subjects
-            const currentDisplay = document.getElementById('currentSubjectsDisplay');
-            if (currentDisplay) {
-                renderSubjectChips(tempSubjects, currentDisplay, true);
-            }
+            updateModalCurrentSubjects();
             
             // Render available subjects
             renderAvailableSubjects();
@@ -1203,6 +1251,7 @@
                 modal.removeEventListener('click', handleModalBackdropClick);
             }
             tempSubjects = [];
+            isSaving = false; // Reset saving flag
         }
 
         function handleModalBackdropClick(e) {
