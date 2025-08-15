@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BHSS Dashboard - Mohaimin</title>
+    <title>BHSS Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -17,6 +16,41 @@
             background: #0f111a;
             color: #ffffff;
             overflow-x: hidden;
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 17, 26, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 255, 174, 0.3);
+            border-top: 3px solid #00ffae;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            color: #00ffae;
+            font-size: 1.1em;
         }
 
         /* News Ticker */
@@ -108,6 +142,25 @@
             transform: translateX(5px);
         }
 
+        .logout-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+        }
+
         /* Main Content */
         .main-content {
             margin-left: 0;
@@ -132,8 +185,6 @@
             position: relative;
             overflow: hidden;
         }
-
-
 
         .hero-content {
             position: relative;
@@ -183,6 +234,21 @@
             justify-content: center;
             font-size: 30px;
             box-shadow: 0 0 20px rgba(0, 255, 174, 0.5);
+            font-weight: bold;
+        }
+
+        .user-info {
+            margin-bottom: 15px;
+        }
+
+        .user-info h3 {
+            margin: 5px 0;
+            color: #00ffae;
+        }
+
+        .user-info p {
+            color: #7df9ff;
+            font-size: 0.9em;
         }
 
         /* Quick Actions */
@@ -397,6 +463,17 @@
             display: inline-block;
         }
 
+        /* Error Message */
+        .error-message {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #ff6b6b;
+            text-align: center;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .hero-content {
@@ -436,9 +513,33 @@
             70% { box-shadow: 0 0 0 10px rgba(0, 255, 174, 0); }
             100% { box-shadow: 0 0 0 0 rgba(0, 255, 174, 0); }
         }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="text-align: center;">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading your dashboard...</div>
+        </div>
+    </div>
+
     <!-- News Ticker -->
     <div class="news-ticker">
         <div class="ticker-content">
@@ -462,6 +563,7 @@
             <div class="nav-item">Resources</div>
             <div class="nav-item">Profile</div>
             <div class="nav-item">Settings</div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </div>
 
@@ -476,13 +578,16 @@
         <div class="hero-section">
             <div class="hero-content">
                 <div class="welcome-text">
-                    <h1>Welcome back, Mohaimin</h1>
+                    <h1 id="welcomeMessage">Welcome back!</h1>
                     <p>Ready to continue your scientific journey today?</p>
                 </div>
                 <div class="profile-card">
-                    <div class="profile-pic">M</div>
-                    <h3>Mohaimin</h3>
-                    <p>Grade 11 | Member</p>
+                    <div class="profile-pic" id="profileInitials">?</div>
+                    <div class="user-info">
+                        <h3 id="userName">Loading...</h3>
+                        <p id="userEmail">Loading...</p>
+                        <p id="userDetails">Member since...</p>
+                    </div>
                     <button class="action-btn" style="margin-top: 10px; width: 100%;">Edit Profile</button>
                 </div>
             </div>
@@ -500,11 +605,11 @@
         <div class="stats-grid">
             <div class="stat-card glow">
                 <div class="stat-number counter" data-target="12">0</div>
-                <div class="stat-label">Events Attending</div>
+                <div class="stat-label">Events Attended</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number counter" data-target="8">0</div>
-                <div class="stat-label">Projects Involved In</div>
+                <div class="stat-label">Projects Completed</div>
             </div>
             <div class="stat-card pulse">
                 <div class="stat-number counter" data-target="25">0</div>
@@ -523,7 +628,7 @@
             <div class="progress-bar">
                 <div class="progress-fill" style="width: 75%;"></div>
             </div>
-            <p style="color: #ffffff;">75% Complete - Participation Streak: 14 days</p>
+            <p style="color: #ffffff;">75% Complete - Participation Streak: <span id="streakDays">14</span> days</p>
         </div>
 
         <!-- Updates & Announcements -->
@@ -586,12 +691,158 @@
     </div>
 
     <script>
-        // Sidebar Toggle
+        // Configuration
+        const API_BASE_URL = 'https://stackblitz-starters-uogm5vlf.vercel.app'; // Replace with your actual API URL
+        
+        // Global user data
+        let currentUser = null;
+
+        // Utility functions
+        function getAuthToken() {
+            return localStorage.getItem('bhss_token');
+        }
+
+        function redirectToLogin() {
+            localStorage.removeItem('bhss_token');
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = '/login.html';
+        }
+
+        function showError(message) {
+            const mainContent = document.getElementById('mainContent');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `
+                <h3>Error</h3>
+                <p>${message}</p>
+                <button class="action-btn" onclick="location.reload()" style="margin-top: 15px;">Retry</button>
+            `;
+            mainContent.insertBefore(errorDiv, mainContent.firstChild);
+        }
+
+        function getInitials(name) {
+            if (!name) return '?';
+            return name.split(' ')
+                      .map(word => word[0])
+                      .join('')
+                      .toUpperCase()
+                      .substring(0, 2);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Recently';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        // API functions
+        async function fetchUserProfile() {
+            const token = getAuthToken();
+            if (!token) {
+                redirectToLogin();
+                return null;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    redirectToLogin();
+                    return null;
+                }
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    return data.user;
+                } else {
+                    throw new Error(data.message || 'Failed to fetch user profile');
+                }
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+                throw error;
+            }
+        }
+
+        // Dashboard functions
+        function updateUserDisplay(user) {
+            // Update welcome message
+            const firstName = user.fullName ? user.fullName.split(' ')[0] : 'User';
+            document.getElementById('welcomeMessage').textContent = `Welcome back, ${firstName}`;
+
+            // Update profile card
+            document.getElementById('profileInitials').textContent = getInitials(user.fullName);
+            document.getElementById('userName').textContent = user.fullName || 'BHSS Member';
+            document.getElementById('userEmail').textContent = user.email || '';
+            
+            // Update member since date
+            const memberSince = user.createdAt ? formatDate(user.createdAt) : 'Recently';
+            document.getElementById('userDetails').textContent = `Member since ${memberSince}`;
+
+            // Store user data globally
+            currentUser = user;
+        }
+
+        // Dashboard initialization
+        async function initializeDashboard() {
+            try {
+                // Check authentication
+                const token = getAuthToken();
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                
+                if (!token || !isLoggedIn) {
+                    redirectToLogin();
+                    return;
+                }
+
+                // Fetch user profile
+                const user = await fetchUserProfile();
+                if (user) {
+                    updateUserDisplay(user);
+                    
+                    // Initialize other dashboard features
+                    setTimeout(animateCounters, 1000);
+                    initializeInteractiveElements();
+                } else {
+                    throw new Error('Failed to load user data');
+                }
+
+            } catch (error) {
+                console.error('Dashboard initialization error:', error);
+                showError('Failed to load dashboard data. Please try refreshing the page.');
+            } finally {
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+
+        // Sidebar functions
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
             sidebar.classList.toggle('open');
             mainContent.classList.toggle('shifted');
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('bhss_token');
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = '/login.html';
         }
 
         // Counter Animation
@@ -616,20 +867,14 @@
         }
 
         // Interactive effects
-        document.addEventListener('DOMContentLoaded', function() {
-             const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-             const token = localStorage.getItem('bhss_token');
-            
-                if (!isLoggedIn || !token) {
-                    window.location.href = '/login.html';
-                }
-            // Start counter animation
-            setTimeout(animateCounters, 1000);
-            
+        function initializeInteractiveElements() {
             // Add click effects to action buttons
             const actionBtns = document.querySelectorAll('.action-btn');
             actionBtns.forEach(btn => {
                 btn.addEventListener('click', function(e) {
+                    // Prevent multiple rapid clicks
+                    if (this.disabled) return;
+                    
                     // Create ripple effect
                     const ripple = document.createElement('span');
                     const rect = this.getBoundingClientRect();
@@ -661,41 +906,121 @@
                     this.style.transform = 'scale(1) rotateY(0deg)';
                 });
             });
-        });
-
-        // Add ripple effect styles
-        const style = document.createElement('style');
-        style.textContent = `
-            .ripple {
-                position: absolute;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.6);
-                transform: scale(0);
-                animation: ripple-animation 0.6s linear;
-                pointer-events: none;
-            }
-            
-            @keyframes ripple-animation {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
+        }
 
         // Auto-close sidebar on mobile when clicking outside
-        document.addEventListener('click', function(e) {
-            const sidebar = document.getElementById('sidebar');
-            const toggle = document.querySelector('.sidebar-toggle');
+        function setupMobileInteractions() {
+            document.addEventListener('click', function(e) {
+                const sidebar = document.getElementById('sidebar');
+                const toggle = document.querySelector('.sidebar-toggle');
+                
+                if (window.innerWidth <= 768 && 
+                    !sidebar.contains(e.target) && 
+                    !toggle.contains(e.target) && 
+                    sidebar.classList.contains('open')) {
+                    toggleSidebar();
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('open');
+                    mainContent.classList.remove('shifted');
+                }
+            });
+        }
+
+        // Additional dashboard features
+        function updateDynamicContent() {
+            // Update streak days with random variation for demo
+            const streakElement = document.getElementById('streakDays');
+            if (streakElement) {
+                const baseStreak = 14;
+                const variation = Math.floor(Math.random() * 7) - 3; // -3 to +3
+                streakElement.textContent = Math.max(1, baseStreak + variation);
+            }
+
+            // You could add more dynamic content updates here
+            // For example, fetching recent activities, notifications, etc.
+        }
+
+        // Navigation handlers
+        function setupNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const page = this.textContent.toLowerCase();
+                    console.log(`Navigating to: ${page}`);
+                    
+                    // Add visual feedback
+                    this.style.background = 'rgba(0, 255, 174, 0.3)';
+                    setTimeout(() => {
+                        this.style.background = 'rgba(125, 249, 255, 0.1)';
+                    }, 200);
+                    
+                    // Here you would implement actual navigation
+                    // For now, we'll just show an alert
+                    if (page === 'profile') {
+                        showUserProfile();
+                    } else {
+                        alert(`${page.charAt(0).toUpperCase() + page.slice(1)} section coming soon!`);
+                    }
+                });
+            });
+        }
+
+        function showUserProfile() {
+            if (currentUser) {
+                alert(`User Profile:\nName: ${currentUser.fullName}\nEmail: ${currentUser.email}\nMember Since: ${formatDate(currentUser.createdAt)}`);
+            }
+        }
+
+        // Error handling for failed requests
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled promise rejection:', event.reason);
             
-            if (window.innerWidth <= 768 && 
-                !sidebar.contains(e.target) && 
-                !toggle.contains(e.target) && 
-                sidebar.classList.contains('open')) {
-                toggleSidebar();
+            if (event.reason.message && event.reason.message.includes('401')) {
+                redirectToLogin();
             }
         });
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start dashboard initialization
+            initializeDashboard();
+            
+            // Setup mobile interactions
+            setupMobileInteractions();
+            
+            // Setup navigation
+            setupNavigation();
+            
+            // Update dynamic content
+            updateDynamicContent();
+            
+            // Set up periodic updates (every 5 minutes)
+            setInterval(updateDynamicContent, 5 * 60 * 1000);
+        });
+
+        // Handle page visibility change (when user comes back to tab)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // Refresh data when user comes back to the page
+                updateDynamicContent();
+            }
+        });
+
+        // Service worker registration for offline support (optional)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // You could register a service worker here for offline support
+                console.log('Service worker support detected');
+            });
+        }
     </script>
 </body>
 </html>
