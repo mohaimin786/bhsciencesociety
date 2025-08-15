@@ -19,7 +19,7 @@
         }
 
         /* Loading Spinner */
-        .loading-overlay {
+  .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -33,14 +33,29 @@
             backdrop-filter: blur(10px);
         }
 
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+            position: relative;
+        }
+
         .spinner {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border: 3px solid rgba(0, 255, 174, 0.3);
             border-top: 3px solid #00ffae;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
         }
+
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -739,8 +754,8 @@
 </head>
 <body>
     <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div style="text-align: center;">
+<div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-container">
             <div class="spinner"></div>
             <div class="loading-text">Loading your dashboard...</div>
         </div>
