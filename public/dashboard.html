@@ -192,7 +192,13 @@
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 30px;
-            align-items: center;
+            align-items: flex-start;
+        }
+
+        .hero-left {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .welcome-text h1 {
@@ -206,6 +212,251 @@
         .welcome-text p {
             color: #7df9ff;
             font-size: 1.1em;
+        }
+
+        /* Subjects Section */
+        .subjects-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(125, 249, 255, 0.3);
+            margin-top: 20px;
+        }
+
+        .subjects-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .subjects-header h3 {
+            color: #00ffae;
+            font-size: 1.2em;
+        }
+
+        .edit-subjects-btn {
+            background: linear-gradient(135deg, #00ffae20, #7df9ff20);
+            border: 1px solid #00ffae;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: #00ffae;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .edit-subjects-btn:hover {
+            background: linear-gradient(135deg, #00ffae30, #7df9ff30);
+            transform: scale(1.05);
+        }
+
+        .subjects-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .subject-chip {
+            background: linear-gradient(135deg, rgba(0, 255, 174, 0.2), rgba(125, 249, 255, 0.2));
+            border: 1px solid rgba(0, 255, 174, 0.5);
+            border-radius: 25px;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .subject-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 174, 0.3);
+        }
+
+        .subject-chip.removable {
+            padding-right: 35px;
+        }
+
+        .remove-subject {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 68, 68, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .remove-subject:hover {
+            background: rgba(255, 68, 68, 1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .subject-chip.cannot-remove {
+            border-color: rgba(255, 193, 7, 0.8);
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 235, 59, 0.2));
+        }
+
+        .subject-chip.cannot-remove .remove-subject {
+            background: rgba(255, 193, 7, 0.8);
+            cursor: not-allowed;
+        }
+
+        /* Subject Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .subject-modal {
+            background: linear-gradient(135deg, rgba(15, 17, 26, 0.95), rgba(30, 35, 50, 0.95));
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 255, 174, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            color: #00ffae;
+            font-size: 1.5em;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #7df9ff;
+            font-size: 24px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 68, 68, 0.3);
+            color: #ff4444;
+        }
+
+        .current-subjects {
+            margin-bottom: 25px;
+        }
+
+        .current-subjects h3 {
+            color: #7df9ff;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .available-subjects {
+            margin-bottom: 25px;
+        }
+
+        .available-subjects h3 {
+            color: #7df9ff;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .subject-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(125, 249, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .subject-option:hover {
+            background: rgba(0, 255, 174, 0.1);
+            border-color: #00ffae;
+            transform: scale(1.05);
+        }
+
+        .subject-option.selected {
+            background: linear-gradient(135deg, rgba(0, 255, 174, 0.3), rgba(125, 249, 255, 0.3));
+            border-color: #00ffae;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #00ffae, #7df9ff);
+            color: #000;
+        }
+
+        .modal-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #7df9ff;
+            border: 1px solid rgba(125, 249, 255, 0.3);
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 174, 0.3);
         }
 
         .profile-card {
@@ -329,102 +580,7 @@
             font-size: 1.1em;
         }
 
-        /* Progress Section */
-        .progress-section {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 15px;
-            padding: 25px;
-            margin: 30px 0;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 174, 0.2);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 15px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00ffae, #7df9ff);
-            border-radius: 10px;
-            animation: fillProgress 2s ease-out;
-            box-shadow: 0 0 10px rgba(0, 255, 174, 0.5);
-        }
-
-        @keyframes fillProgress {
-            0% { width: 0%; }
-            100% { width: 75%; }
-        }
-
-        /* Updates Section */
-        .updates-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .update-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(125, 249, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .update-card:hover {
-            transform: translateY(-5px);
-            border-color: #00ffae;
-        }
-
-        .update-title {
-            color: #00ffae;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-
-        .update-content {
-            color: #7df9ff;
-            line-height: 1.6;
-        }
-
-        /* Interactive Elements */
-        .interactive-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .challenge-card, .leaderboard-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 25px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(125, 249, 255, 0.3);
-        }
-
-        .leaderboard-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            margin: 5px 0;
-            background: rgba(0, 255, 174, 0.1);
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
-
-        .leaderboard-item:hover {
-            background: rgba(0, 255, 174, 0.2);
-        }
-
-        /* 3D Elements */
+        /* Floating Elements */
         .floating-element {
             position: absolute;
             width: 100px;
@@ -474,15 +630,23 @@
             text-align: center;
         }
 
+        /* Success Message */
+        .success-message {
+            background: rgba(0, 255, 174, 0.1);
+            border: 1px solid #00ffae;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #00ffae;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .hero-content {
                 grid-template-columns: 1fr;
                 text-align: center;
-            }
-
-            .interactive-section {
-                grid-template-columns: 1fr;
             }
 
             .main-content.shifted {
@@ -496,6 +660,10 @@
 
             .welcome-text h1 {
                 font-size: 2em;
+            }
+
+            .subject-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
         }
 
@@ -528,6 +696,36 @@
                 transform: scale(4);
                 opacity: 0;
             }
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid;
+            z-index: 10001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: rgba(0, 255, 174, 0.1);
+            border-color: #00ffae;
+            color: #00ffae;
+        }
+
+        .notification.error {
+            background: rgba(255, 68, 68, 0.1);
+            border-color: #ff4444;
+            color: #ff6b6b;
         }
     </style>
 </head>
@@ -567,6 +765,34 @@
         </div>
     </div>
 
+    <!-- Subject Modal -->
+    <div class="modal-overlay" id="subjectModal">
+        <div class="subject-modal">
+            <div class="modal-header">
+                <h2>Edit Your Subjects</h2>
+                <button class="close-modal" onclick="closeSubjectModal()">&times;</button>
+            </div>
+            
+            <div class="current-subjects">
+                <h3>Current Subjects</h3>
+                <div class="subjects-container" id="currentSubjectsDisplay"></div>
+                <p style="color: #7df9ff; font-size: 0.9em; margin-top: 10px;">
+                    💡 You must have at least one subject selected
+                </p>
+            </div>
+
+            <div class="available-subjects">
+                <h3>Available Subjects</h3>
+                <div class="subject-grid" id="availableSubjects"></div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-btn secondary" onclick="closeSubjectModal()">Cancel</button>
+                <button class="modal-btn primary" onclick="saveSubjects()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
         <!-- Floating 3D Elements -->
@@ -577,10 +803,24 @@
         <!-- Hero Section -->
         <div class="hero-section">
             <div class="hero-content">
-                <div class="welcome-text">
-                    <h1 id="welcomeMessage">Welcome back!</h1>
-                    <p>Ready to continue your scientific journey today?</p>
+                <div class="hero-left">
+                    <div class="welcome-text">
+                        <h1 id="welcomeMessage">Welcome back!</h1>
+                        <p>Ready to continue your scientific journey today?</p>
+                    </div>
+                    
+                    <!-- Subjects Section -->
+                    <div class="subjects-section">
+                        <div class="subjects-header">
+                            <h3>🔬 Your Subjects of Interest</h3>
+                            <button class="edit-subjects-btn" onclick="openSubjectModal()">Edit Subjects</button>
+                        </div>
+                        <div class="subjects-container" id="userSubjects">
+                            <!-- Subject chips will be populated here -->
+                        </div>
+                    </div>
                 </div>
+                
                 <div class="profile-card">
                     <div class="profile-pic" id="profileInitials">?</div>
                     <div class="user-info">
@@ -620,82 +860,26 @@
                 <div class="stat-label">Points Earned</div>
             </div>
         </div>
-
-        <!-- Progress Section -->
-        <div class="progress-section">
-            <h2 style="color: #00ffae; margin-bottom: 15px;">Overall Progress</h2>
-            <p style="color: #7df9ff;">You're doing great! Keep up the momentum 🚀</p>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: 75%;"></div>
-            </div>
-            <p style="color: #ffffff;">75% Complete - Participation Streak: <span id="streakDays">14</span> days</p>
-        </div>
-
-        <!-- Updates & Announcements -->
-        <h2 style="color: #00ffae; margin-bottom: 20px;">Latest Updates & Announcements</h2>
-        <div class="updates-section">
-            <div class="update-card">
-                <div class="update-title">🎊 Upcoming Event Highlight</div>
-                <div class="update-content">
-                    <strong>AI & Machine Learning Workshop</strong><br>
-                    March 15, 2025 | 2:00 PM - 5:00 PM<br>
-                    Learn cutting-edge AI techniques with industry experts.
-                </div>
-                <button class="action-btn" style="margin-top: 15px;">Register Now</button>
-            </div>
-            <div class="update-card">
-                <div class="update-title">📢 BHSS News</div>
-                <div class="update-content">
-                    • Science Fair 2025 submissions open<br>
-                    • New robotics lab equipment arrived<br>
-                    • Monthly achievement awards announced
-                </div>
-            </div>
-            <div class="update-card">
-                <div class="update-title">📚 New Resources Added</div>
-                <div class="update-content">
-                    • Advanced Physics Simulations<br>
-                    • Chemistry Lab Safety Videos<br>
-                    • Mathematics Problem Solving Guide
-                </div>
-            </div>
-        </div>
-
-        <!-- Interactive Section -->
-        <div class="interactive-section">
-            <div class="challenge-card">
-                <h3 style="color: #00ffae; margin-bottom: 15px;">🧩 This Week's Challenge</h3>
-                <div style="color: #7df9ff;">
-                    <strong>Quantum Physics Puzzle</strong><br>
-                    Solve the wave-particle duality problem and earn 50 bonus points!
-                </div>
-                <button class="action-btn" style="margin-top: 15px;">Take Challenge</button>
-            </div>
-            <div class="leaderboard-card">
-                <h3 style="color: #00ffae; margin-bottom: 15px;">🏆 Top Performers</h3>
-                <div class="leaderboard-item">
-                    <span>🥇 Sarah Ahmed</span>
-                    <span style="color: #00ffae;">2,450 pts</span>
-                </div>
-                <div class="leaderboard-item">
-                    <span>🥈 Alex Chen</span>
-                    <span style="color: #7df9ff;">2,280 pts</span>
-                </div>
-                <div class="leaderboard-item">
-                    <span>🥉 Maria Lopez</span>
-                    <span style="color: #fffc00;">2,150 pts</span>
-                </div>
-                <button class="action-btn" style="margin-top: 15px; width: 100%;">View Full Leaderboard</button>
-            </div>
-        </div>
     </div>
 
     <script>
         // Configuration
-        const API_BASE_URL = 'https://bhss-backend.up.railway.app'; // Replace with your actual API URL
+        const API_BASE_URL = 'https://bhss-backend.up.railway.app';
         
-        // Global user data
+        // Global variables
         let currentUser = null;
+        let userSubjects = [];
+        let tempSubjects = [];
+        
+        // Available subjects list
+        const availableSubjectsList = [
+            'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Computer Science',
+            'Engineering', 'Medicine', 'Astronomy', 'Environmental Science',
+            'Psychology', 'Statistics', 'Data Science', 'Artificial Intelligence',
+            'Robotics', 'Biotechnology', 'Genetics', 'Neuroscience',
+            'Marine Biology', 'Geology', 'Meteorology', 'Quantum Physics',
+            'Biochemistry', 'Microbiology', 'Pharmacology', 'Ecology'
+        ];
 
         // Utility functions
         function getAuthToken() {
@@ -706,6 +890,19 @@
             localStorage.removeItem('bhss_token');
             localStorage.removeItem('isLoggedIn');
             window.location.href = '/login.html';
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
 
         function showError(message) {
@@ -778,6 +975,206 @@
             }
         }
 
+        async function fetchUserDashboardInfo() {
+            const token = getAuthToken();
+            if (!token) return null;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/dashboard-info`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success && data.data.length > 0) {
+                    // Find user's dashboard info by email
+                    const userInfo = data.data.find(item => item.email === currentUser?.email);
+                    return userInfo;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetching dashboard info:', error);
+                return null;
+            }
+        }
+
+        async function updateUserSubjects(subjects) {
+            const token = getAuthToken();
+            if (!token) return false;
+
+            try {
+                // First, get user's dashboard info to find their ID
+                const dashboardInfo = await fetchUserDashboardInfo();
+                if (!dashboardInfo) {
+                    throw new Error('Dashboard info not found');
+                }
+
+                const response = await fetch(`${API_BASE_URL}/api/dashboard-info/${dashboardInfo._id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subjects: subjects
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.success;
+            } catch (error) {
+                console.error('Error updating subjects:', error);
+                return false;
+            }
+        }
+
+        // Subject management functions
+        function renderSubjectChips(subjects, container, removable = false) {
+            container.innerHTML = '';
+            
+            if (!subjects || subjects.length === 0) {
+                container.innerHTML = '<p style="color: #7df9ff; font-style: italic;">No subjects selected</p>';
+                return;
+            }
+
+            subjects.forEach((subject, index) => {
+                const chip = document.createElement('div');
+                chip.className = `subject-chip ${removable ? 'removable' : ''}`;
+                
+                // If only one subject left, mark it as cannot-remove
+                if (removable && subjects.length === 1) {
+                    chip.classList.add('cannot-remove');
+                }
+                
+                chip.innerHTML = `
+                    ${subject}
+                    ${removable ? `
+                        <button class="remove-subject" 
+                                onclick="removeSubject(${index})"
+                                ${subjects.length === 1 ? 'disabled title="At least one subject is required"' : ''}>
+                            ×
+                        </button>
+                    ` : ''}
+                `;
+                
+                container.appendChild(chip);
+            });
+        }
+
+        function renderAvailableSubjects() {
+            const container = document.getElementById('availableSubjects');
+            container.innerHTML = '';
+
+            availableSubjectsList.forEach(subject => {
+                const option = document.createElement('div');
+                option.className = 'subject-option';
+                option.textContent = subject;
+                
+                // Check if already selected
+                if (tempSubjects.includes(subject)) {
+                    option.classList.add('selected');
+                }
+                
+                option.onclick = () => toggleSubject(subject, option);
+                container.appendChild(option);
+            });
+        }
+
+        function toggleSubject(subject, element) {
+            const index = tempSubjects.indexOf(subject);
+            
+            if (index === -1) {
+                // Add subject
+                tempSubjects.push(subject);
+                element.classList.add('selected');
+            } else {
+                // Remove subject (only if more than 1 subject)
+                if (tempSubjects.length > 1) {
+                    tempSubjects.splice(index, 1);
+                    element.classList.remove('selected');
+                } else {
+                    showNotification('You must have at least one subject selected', 'error');
+                    return;
+                }
+            }
+            
+            // Update current subjects display in modal
+            renderSubjectChips(tempSubjects, document.getElementById('currentSubjectsDisplay'), true);
+        }
+
+        function removeSubject(index) {
+            if (tempSubjects.length <= 1) {
+                showNotification('You must have at least one subject selected', 'error');
+                return;
+            }
+            
+            const removedSubject = tempSubjects.splice(index, 1)[0];
+            
+            // Update displays
+            renderSubjectChips(tempSubjects, document.getElementById('currentSubjectsDisplay'), true);
+            
+            // Update available subjects display
+            const availableOptions = document.querySelectorAll('.subject-option');
+            availableOptions.forEach(option => {
+                if (option.textContent === removedSubject) {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+
+        async function saveSubjects() {
+            if (tempSubjects.length === 0) {
+                showNotification('You must select at least one subject', 'error');
+                return;
+            }
+
+            try {
+                const success = await updateUserSubjects(tempSubjects);
+                
+                if (success) {
+                    userSubjects = [...tempSubjects];
+                    renderSubjectChips(userSubjects, document.getElementById('userSubjects'));
+                    closeSubjectModal();
+                    showNotification('Subjects updated successfully!');
+                } else {
+                    showNotification('Failed to update subjects. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving subjects:', error);
+                showNotification('An error occurred while saving subjects', 'error');
+            }
+        }
+
+        // Modal functions
+        function openSubjectModal() {
+            tempSubjects = [...userSubjects];
+            
+            // Render current subjects
+            renderSubjectChips(tempSubjects, document.getElementById('currentSubjectsDisplay'), true);
+            
+            // Render available subjects
+            renderAvailableSubjects();
+            
+            // Show modal
+            document.getElementById('subjectModal').classList.add('show');
+        }
+
+        function closeSubjectModal() {
+            document.getElementById('subjectModal').classList.remove('show');
+            tempSubjects = [];
+        }
+
         // Dashboard functions
         function updateUserDisplay(user) {
             // Update welcome message
@@ -797,6 +1194,28 @@
             currentUser = user;
         }
 
+        async function loadUserSubjects() {
+            try {
+                const dashboardInfo = await fetchUserDashboardInfo();
+                
+                if (dashboardInfo && dashboardInfo.subjects) {
+                    userSubjects = dashboardInfo.subjects;
+                } else {
+                    // Default subjects if none found
+                    userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
+                }
+                
+                // Render subjects
+                renderSubjectChips(userSubjects, document.getElementById('userSubjects'));
+                
+            } catch (error) {
+                console.error('Error loading user subjects:', error);
+                // Set default subjects on error
+                userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
+                renderSubjectChips(userSubjects, document.getElementById('userSubjects'));
+            }
+        }
+
         // Dashboard initialization
         async function initializeDashboard() {
             try {
@@ -813,6 +1232,9 @@
                 const user = await fetchUserProfile();
                 if (user) {
                     updateUserDisplay(user);
+                    
+                    // Load user subjects
+                    await loadUserSubjects();
                     
                     // Initialize other dashboard features
                     setTimeout(animateCounters, 1000);
@@ -896,7 +1318,7 @@
             });
 
             // Add hover effects to cards
-            const cards = document.querySelectorAll('.stat-card, .update-card, .profile-card');
+            const cards = document.querySelectorAll('.stat-card, .profile-card');
             cards.forEach(card => {
                 card.addEventListener('mouseenter', function() {
                     this.style.transform = 'scale(1.05) rotateY(5deg)';
@@ -905,6 +1327,26 @@
                 card.addEventListener('mouseleave', function() {
                     this.style.transform = 'scale(1) rotateY(0deg)';
                 });
+            });
+        }
+
+        // Auto-close modal when clicking outside
+        function setupModalInteractions() {
+            document.addEventListener('click', function(e) {
+                const modal = document.getElementById('subjectModal');
+                const modalContent = document.querySelector('.subject-modal');
+                
+                if (modal.classList.contains('show') && 
+                    !modalContent.contains(e.target)) {
+                    closeSubjectModal();
+                }
+            });
+
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeSubjectModal();
+                }
             });
         }
 
@@ -934,20 +1376,6 @@
             });
         }
 
-        // Additional dashboard features
-        function updateDynamicContent() {
-            // Update streak days with random variation for demo
-            const streakElement = document.getElementById('streakDays');
-            if (streakElement) {
-                const baseStreak = 14;
-                const variation = Math.floor(Math.random() * 7) - 3; // -3 to +3
-                streakElement.textContent = Math.max(1, baseStreak + variation);
-            }
-
-            // You could add more dynamic content updates here
-            // For example, fetching recent activities, notifications, etc.
-        }
-
         // Navigation handlers
         function setupNavigation() {
             const navItems = document.querySelectorAll('.nav-item');
@@ -975,7 +1403,7 @@
 
         function showUserProfile() {
             if (currentUser) {
-                alert(`User Profile:\nName: ${currentUser.fullName}\nEmail: ${currentUser.email}\nMember Since: ${formatDate(currentUser.createdAt)}`);
+                alert(`User Profile:\nName: ${currentUser.fullName}\nEmail: ${currentUser.email}\nMember Since: ${formatDate(currentUser.createdAt)}\nSubjects: ${userSubjects.join(', ')}`);
             }
         }
 
@@ -993,34 +1421,19 @@
             // Start dashboard initialization
             initializeDashboard();
             
-            // Setup mobile interactions
+            // Setup interactions
             setupMobileInteractions();
-            
-            // Setup navigation
+            setupModalInteractions();
             setupNavigation();
-            
-            // Update dynamic content
-            updateDynamicContent();
-            
-            // Set up periodic updates (every 5 minutes)
-            setInterval(updateDynamicContent, 5 * 60 * 1000);
         });
 
         // Handle page visibility change (when user comes back to tab)
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
-                // Refresh data when user comes back to the page
-                updateDynamicContent();
+                // Refresh subjects when user comes back to the page
+                loadUserSubjects();
             }
         });
-
-        // Service worker registration for offline support (optional)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                // You could register a service worker here for offline support
-                console.log('Service worker support detected');
-            });
-        }
     </script>
 </body>
 </html>
