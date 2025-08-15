@@ -2151,6 +2151,12 @@ let role = null;
       const clone = input.cloneNode(true);
       formSubmitForm.appendChild(clone);
     });
+    const roleInput = document.createElement('input');
+    roleInput.type = 'hidden';
+    roleInput.name = 'role';
+    roleInput.value = role;
+    formSubmitForm.appendChild(roleInput);
+
 
     // Add hidden input for full phone number
     const phoneHiddenInput = document.createElement('input');
