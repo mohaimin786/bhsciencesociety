@@ -1,171 +1,74 @@
 // merged-navigation.js - Complete Navigation and Theme Handler - FIXED VERSION
 
 document.addEventListener('DOMContentLoaded', function() {
-
     console.log('Merged navigation script loaded');
-
-    
-
-    // =============================================
-
-    // HAMBURGER MENU FUNCTIONALITY - Enhanced and Fixed
-
-    // =============================================
-
     const hamburgerBtn = document.getElementById('hamburger-btn');
-
     const navLinks = document.getElementById('navLinks');
-
-    
-
     if (hamburgerBtn && navLinks) {
-
         console.log('Hamburger menu elements found, setting up event listeners');
-
-        
-
-        // Main hamburger click handler
-
+        // Main hamburger click hand
         hamburgerBtn.addEventListener('click', function(e) {
-
             e.preventDefault();
-
             e.stopPropagation();
-
             console.log('Hamburger menu toggled');
-
-            
-
             // Toggle states
-
             const isActive = this.classList.contains('active');
-
-            
-
             if (isActive) {
-
                 // Close menu
-
                 console.log('Closing hamburger menu');
-
                 this.classList.remove('active');
-
                 navLinks.classList.remove('show');
-
                 document.body.style.overflow = ''; // Re-enable scroll
-
             } else {
-
                 // Open menu
-
                 console.log('Opening hamburger menu');
-
                 this.classList.add('active');
-
                 navLinks.classList.add('show');
-
                 document.body.style.overflow = 'hidden'; // Prevent scroll
-
             }
-
         });
-
-        
-
         // Close menu when clicking on any nav link
-
         const navLinkElements = document.querySelectorAll('.nav-links a');
-
         console.log(`Found ${navLinkElements.length} nav links`);
-
-        
-
         navLinkElements.forEach(link => {
-
             link.addEventListener('click', function() {
-
                 console.log('Nav link clicked, closing menu');
-
                 hamburgerBtn.classList.remove('active');
-
                 navLinks.classList.remove('show');
-
                 document.body.style.overflow = '';
-
             });
-
         });
-
-        
-
         // Close menu when clicking outside navbar
-
         document.addEventListener('click', function(e) {
-
             const navbar = document.querySelector('.navbar');
-
             if (!navbar.contains(e.target) && window.innerWidth <= 992) {
-
                 if (hamburgerBtn.classList.contains('active')) {
-
                     console.log('Clicked outside navbar, closing menu');
-
                     hamburgerBtn.classList.remove('active');
-
                     navLinks.classList.remove('show');
-
                     document.body.style.overflow = '';
-
                 }
-
             }
-
         });
-
-        
-
         // Handle window resize
-
         window.addEventListener('resize', function() {
-
             if (window.innerWidth > 992) {
-
                 // Desktop view - ensure menu is closed and scroll is enabled
-
                 if (hamburgerBtn.classList.contains('active')) {
-
                     console.log('Switching to desktop view, closing mobile menu');
-
                     hamburgerBtn.classList.remove('active');
-
                     navLinks.classList.remove('show');
-
                     document.body.style.overflow = '';
-
                 }
-
             }
-
         });
-
-        
-
         // Prevent menu from closing when clicking inside nav-links
-
         navLinks.addEventListener('click', function(e) {
-
             // Only stop propagation if clicking on the menu itself, not on links
-
             if (e.target === navLinks || e.target.classList.contains('nav-links')) {
-
                 e.stopPropagation();
-
             }
-
         });
-
-        
-
     } else {
 
         console.error('Hamburger menu elements not found:', {
@@ -178,13 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
 
-    // =============================================
-
-    // AUTHENTICATION AND NAVIGATION STATE MANAGEMENT
-
-    // =============================================
-
-    
 
     // Update navigation based on login state
 
