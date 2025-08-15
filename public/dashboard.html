@@ -4,7 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BHSS Dashboard</title>
+    <link rel="icon" href="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/logo.png?v=1747136438719" type="image/png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        /* Reset with futuristic variables */
+        :root {
+            --primary: #00ffae;
+            --primary-light: #7bd859;
+            --secondary: #0dc0de;
+            --accent: #6A5ACD;
+            --dark-bg: #0f111a;
+            --darker-bg: #090b12;
+            --light-bg: #f8f9fa;
+            --lighter-bg: #ffffff;
+            --text-dark: #ffffff;
+            --text-light: #2d3748;
+            --glow: 0 0 15px;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,10 +31,142 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', sans-serif;
             background: #0f111a;
             color: #ffffff;
             overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        /* Top Navigation Bar */
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 15px 5%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 255, 174, 0.2);
+            transition: var(--transition);
+        }
+
+        .nav-center-container {
+            position: absolute;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1;
+        }
+
+        .top-navbar .logo {
+            height: 45px;
+            width: auto;
+            transition: var(--transition);
+        }
+
+        .top-navbar .logo:hover {
+            transform: rotate(15deg);
+        }
+
+        .top-navbar .title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            white-space: nowrap;
+            text-shadow: 0 0 10px rgba(0, 255, 174, 0.5);
+        }
+
+        .top-nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+            transition: var(--transition);
+            pointer-events: auto;
+        }
+
+        .top-nav-links li a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 4px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .top-nav-links li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .top-nav-links li a:hover {
+            color: var(--primary);
+            background-color: transparent;
+        }
+
+        .top-nav-links li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Top Navigation Hamburger Menu */
+        .top-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1001;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            position: relative;
+        }
+
+        .top-hamburger-line {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: white;
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .top-hamburger.active .top-hamburger-line:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+            background: var(--primary);
+        }
+
+        .top-hamburger.active .top-hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .top-hamburger.active .top-hamburger-line:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+            background: var(--primary);
         }
 
         /* Loading Spinner */
@@ -67,39 +218,11 @@
             font-size: 1.1em;
         }
 
-        /* News Ticker */
-        .news-ticker {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 40px;
-            background: linear-gradient(90deg, #00ffae20, #7df9ff20);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #00ffae30;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .ticker-content {
-            animation: scroll 30s linear infinite;
-            white-space: nowrap;
-            font-size: 14px;
-            color: #00ffae;
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
         /* Enhanced Sidebar Toggle Button */
         .sidebar-toggle {
             position: fixed;
             left: 15px;
-            top: 55px;
+            top: 95px;
             z-index: 1001;
             background: linear-gradient(135deg, #00ffae, #7df9ff);
             border: none;
@@ -127,7 +250,7 @@
             transition: all 0.1s ease;
         }
 
-        /* Hamburger Menu Animation */
+        /* Hamburger Menu Animation for Sidebar */
         .hamburger {
             width: 24px;
             height: 20px;
@@ -207,8 +330,8 @@
         .sidebar {
             position: fixed;
             left: 0;
-            top: 40px;
-            height: calc(100vh - 40px);
+            top: 80px;
+            height: calc(100vh - 80px);
             width: 250px;
             background: rgba(15, 17, 26, 0.9);
             backdrop-filter: blur(20px);
@@ -269,10 +392,10 @@
         /* Main Content */
         .main-content {
             margin-left: 0;
-            margin-top: 40px;
+            margin-top: 0;
             padding: 20px;
             transition: margin-left 0.3s ease;
-            min-height: calc(100vh - 40px);
+            min-height: calc(100vh - 80px);
         }
 
         .main-content.shifted {
@@ -755,8 +878,66 @@
             font-size: 0.9em;
         }
 
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid;
+            z-index: 10001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: rgba(0, 255, 174, 0.1);
+            border-color: #00ffae;
+            color: #00ffae;
+        }
+
+        .notification.error {
+            background: rgba(255, 68, 68, 0.1);
+            border-color: #ff4444;
+            color: #ff6b6b;
+        }
+
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
+            .top-nav-links {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background-color: rgba(0, 0, 0, 0.95);
+                flex-direction: column;
+                align-items: center;
+                padding: 30px 0;
+                gap: 20px;
+                transform: translateY(-150%);
+                opacity: 0;
+                z-index: 999;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(0, 255, 174, 0.2);
+            }
+            
+            .top-nav-links.show {
+                transform: translateY(0);
+                opacity: 1;
+            }
+    
+            .top-hamburger {
+                display: flex;
+                order: 3;
+            }
+
             .hero-content {
                 grid-template-columns: 1fr;
                 text-align: center;
@@ -782,9 +963,19 @@
             /* Adjust sidebar toggle for mobile */
             .sidebar-toggle {
                 left: 10px;
-                top: 50px;
+                top: 90px;
                 width: 45px;
                 height: 45px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-navbar .title {
+                display: none;
+            }
+
+            .top-navbar {
+                padding: 15px 20px;
             }
         }
 
@@ -811,45 +1002,16 @@
             animation: ripple-animation 0.6s linear;
             pointer-events: none;
         }
-        
+
         @keyframes ripple-animation {
             to {
                 transform: scale(4);
                 opacity: 0;
             }
         }
-
-        /* Notification styles */
-        .notification {
-            position: fixed;
-            top: 60px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            border: 1px solid;
-            z-index: 10001;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            background: rgba(0, 255, 174, 0.1);
-            border-color: #00ffae;
-            color: #00ffae;
-        }
-
-        .notification.error {
-            background: rgba(255, 68, 68, 0.1);
-            border-color: #ff4444;
-            color: #ff6b6b;
-        }
     </style>
 </head>
+
 <body>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
@@ -859,12 +1021,36 @@
         </div>
     </div>
 
-    <!-- News Ticker -->
-    <div class="news-ticker">
-        <div class="ticker-content">
-            🎉 BHSS Innovation Summit 2025 - Register Now! | 📚 New AI Workshop Series Starting Next Week | 🏆 Congratulations to our Top Performers | 💡 Science Fair Submissions Due March 1st | 🔬 Lab Access Extended Hours This Month
-        </div>
-    </div>
+    <!-- Top Navigation Bar -->
+    <header>
+        <nav class="top-navbar">
+            <!--Logo and Title Container-->
+            <div class="logo-container">
+                <img src="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/logo.png?v=1747136438719" alt="BHSS Logo" class="logo" loading="lazy" />
+                <span class="title">BHS Science Society</span>
+            </div>
+
+            <!--Nav Links-->
+            <div class="nav-center-container">
+                <ul class="top-nav-links" id="topNavLinks">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="#research">Research</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="register.html">Register</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="login.html">Login</a></li>
+                </ul>
+            </div>
+
+            <!--Top Hamburger-->
+            <button class="top-hamburger" id="top-hamburger-btn" aria-label="Menu">
+                <span class="top-hamburger-line"></span>
+                <span class="top-hamburger-line"></span>
+                <span class="top-hamburger-line"></span>
+            </button>
+        </nav>
+    </header>
 
     <!-- Enhanced Sidebar Toggle -->
     <button class="sidebar-toggle" onclick="toggleSidebar()" id="sidebarToggle">
@@ -995,7 +1181,7 @@
         let currentUser = null;
         let userSubjects = [];
         let tempSubjects = [];
-        let isSaving = false; // Flag to prevent multiple saves
+        let isSaving = false;
         
         // Available subjects list
         const availableSubjectsList = [
@@ -1003,6 +1189,82 @@
             'Business', 'English', 'Puzzles and Riddles', 'Earth and Space Sciences',
             'Robotics'
         ];
+
+        // Top Navigation Hamburger Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const topHamburgerBtn = document.getElementById('top-hamburger-btn');
+            const topNavLinks = document.getElementById('topNavLinks');
+            
+            if (topHamburgerBtn && topNavLinks) {
+                topHamburgerBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isActive = this.classList.contains('active');
+                    if (isActive) {
+                        this.classList.remove('active');
+                        topNavLinks.classList.remove('show');
+                        document.body.style.overflow = '';
+                    } else {
+                        this.classList.add('active');
+                        topNavLinks.classList.add('show');
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+
+                // Close menu when clicking on any nav link
+                const topNavLinkElements = document.querySelectorAll('.top-nav-links a');
+                topNavLinkElements.forEach(link => {
+                    link.addEventListener('click', function() {
+                        topHamburgerBtn.classList.remove('active');
+                        topNavLinks.classList.remove('show');
+                        document.body.style.overflow = '';
+                    });
+                });
+
+                // Close menu when clicking outside navbar
+                document.addEventListener('click', function(e) {
+                    const navbar = document.querySelector('.top-navbar');
+                    if (!navbar.contains(e.target) && window.innerWidth <= 992) {
+                        if (topHamburgerBtn.classList.contains('active')) {
+                            topHamburgerBtn.classList.remove('active');
+                            topNavLinks.classList.remove('show');
+                            document.body.style.overflow = '';
+                        }
+                    }
+                });
+
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 992) {
+                        if (topHamburgerBtn.classList.contains('active')) {
+                            topHamburgerBtn.classList.remove('active');
+                            topNavLinks.classList.remove('show');
+                            document.body.style.overflow = '';
+                        }
+                    }
+                });
+            }
+        });
+
+        // Check authentication and update navigation
+        function updateTopNavigation() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const token = localStorage.getItem('bhss_token');
+            
+            const registerLink = document.querySelector('.top-nav-links a[href="register.html"]');
+            const loginLink = document.querySelector('.top-nav-links a[href="login.html"]');
+            
+            if (isLoggedIn && token) {
+                // Hide register/login links
+                if (registerLink) registerLink.closest('li').style.display = 'none';
+                if (loginLink) loginLink.closest('li').style.display = 'none';
+            } else {
+                // Show register/login links
+                if (registerLink) registerLink.closest('li').style.display = 'block';
+                if (loginLink) loginLink.closest('li').style.display = 'block';
+            }
+        }
 
         // Utility functions
         function getAuthToken() {
@@ -1012,7 +1274,7 @@
         function redirectToLogin() {
             localStorage.removeItem('bhss_token');
             localStorage.removeItem('isLoggedIn');
-            window.location.href = '/login.html';
+            window.location.href = 'login.html';
         }
 
         function showNotification(message, type = 'success') {
@@ -1094,7 +1356,6 @@
                 }
             } catch (error) {
                 console.error('Error fetching user profile:', error);
-                // If API fails, create a demo user
                 return {
                     fullName: 'Demo User',
                     email: 'demo@bhss.edu',
@@ -1122,7 +1383,6 @@
 
                 const data = await response.json();
                 if (data.success && data.data.length > 0) {
-                    // Find user's dashboard info by email
                     const userInfo = data.data.find(item => item.email === currentUser?.email);
                     return userInfo;
                 }
@@ -1138,10 +1398,8 @@
             if (!token) return false;
 
             try {
-                // First, get user's dashboard info to find their ID
                 const dashboardInfo = await fetchUserDashboardInfo();
                 if (!dashboardInfo) {
-                    // If no dashboard info exists, just save locally for demo
                     console.log('No dashboard info found, saving locally');
                     return true;
                 }
@@ -1165,7 +1423,6 @@
                 return data.success;
             } catch (error) {
                 console.error('Error updating subjects:', error);
-                // Return true for demo purposes - save locally
                 return true;
             }
         }
@@ -1185,7 +1442,6 @@
                 const chip = document.createElement('div');
                 chip.className = `subject-chip ${removable ? 'removable' : ''}`;
                 
-                // If only one subject left, mark it as cannot-remove
                 if (removable && subjects.length === 1) {
                     chip.classList.add('cannot-remove');
                 }
@@ -1210,13 +1466,11 @@
             if (!container) return;
             
             container.innerHTML = '';
-
             availableSubjectsList.forEach(subject => {
                 const option = document.createElement('div');
                 option.className = 'subject-option';
                 option.textContent = subject;
                 
-                // Check if already selected
                 if (tempSubjects.includes(subject)) {
                     option.classList.add('selected');
                 }
@@ -1230,12 +1484,10 @@
             const index = tempSubjects.indexOf(subject);
             
             if (index === -1) {
-                // Add subject
                 tempSubjects.push(subject);
                 element.classList.add('selected');
                 showNotification(`Added ${subject}`, 'success');
             } else {
-                // Remove subject (only if more than 1 subject)
                 if (tempSubjects.length > 1) {
                     tempSubjects.splice(index, 1);
                     element.classList.remove('selected');
@@ -1246,12 +1498,11 @@
                 }
             }
             
-            // Update current subjects display in modal
             updateModalCurrentSubjects();
         }
 
         function removeSubjectFromModal(index, event) {
-            event.stopPropagation(); // Prevent any parent click handlers
+            event.stopPropagation();
             
             if (tempSubjects.length <= 1) {
                 showNotification('You must have at least one subject selected', 'error');
@@ -1263,7 +1514,6 @@
             
             showNotification(`Removed ${removedSubject}`, 'success');
             
-            // Update both displays
             updateModalCurrentSubjects();
             updateAvailableSubjectsDisplay();
         }
@@ -1293,15 +1543,11 @@
                 return;
             }
 
-            // Prevent multiple saves
-            if (isSaving) {
-                return;
-            }
+            if (isSaving) return;
 
             const saveBtn = document.getElementById('saveSubjectsBtn');
             isSaving = true;
             
-            // Disable the button and show loading state
             if (saveBtn) {
                 saveBtn.disabled = true;
                 saveBtn.textContent = 'Saving...';
@@ -1325,7 +1571,6 @@
                 console.error('Error saving subjects:', error);
                 showNotification('An error occurred while saving subjects', 'error');
             } finally {
-                // Re-enable the button
                 isSaving = false;
                 if (saveBtn) {
                     saveBtn.disabled = false;
@@ -1337,26 +1582,20 @@
         // Modal functions
         function openSubjectModal() {
             tempSubjects = [...userSubjects];
-            isSaving = false; // Reset saving flag
+            isSaving = false;
             
-            // Reset save button state
             const saveBtn = document.getElementById('saveSubjectsBtn');
             if (saveBtn) {
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Save Changes';
             }
             
-            // Render current subjects
             updateModalCurrentSubjects();
-            
-            // Render available subjects
             renderAvailableSubjects();
             
-            // Show modal
             const modal = document.getElementById('subjectModal');
             if (modal) {
                 modal.classList.add('show');
-                // Add event listener for backdrop click
                 modal.addEventListener('click', handleModalBackdropClick);
             }
         }
@@ -1368,7 +1607,7 @@
                 modal.removeEventListener('click', handleModalBackdropClick);
             }
             tempSubjects = [];
-            isSaving = false; // Reset saving flag
+            isSaving = false;
         }
 
         function handleModalBackdropClick(e) {
@@ -1380,14 +1619,12 @@
 
         // Dashboard functions
         function updateUserDisplay(user) {
-            // Update welcome message
             const firstName = user.fullName ? user.fullName.split(' ')[0] : 'User';
             const welcomeMsg = document.getElementById('welcomeMessage');
             if (welcomeMsg) {
                 welcomeMsg.textContent = `Welcome back, ${firstName}!`;
             }
 
-            // Update profile card
             const profileInitials = document.getElementById('profileInitials');
             if (profileInitials) {
                 profileInitials.textContent = getInitials(user.fullName);
@@ -1403,14 +1640,12 @@
                 userEmail.textContent = user.email || '';
             }
             
-            // Update member since date
             const memberSince = user.createdAt ? formatDate(user.createdAt) : 'Recently';
             const userDetails = document.getElementById('userDetails');
             if (userDetails) {
                 userDetails.textContent = `Member since ${memberSince}`;
             }
 
-            // Store user data globally
             currentUser = user;
         }
 
@@ -1421,11 +1656,9 @@
                 if (dashboardInfo && dashboardInfo.subjects && dashboardInfo.subjects.length > 0) {
                     userSubjects = dashboardInfo.subjects;
                 } else {
-                    // Default subjects if none found
                     userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
                 }
                 
-                // Render subjects
                 const userSubjectsContainer = document.getElementById('userSubjects');
                 if (userSubjectsContainer) {
                     renderSubjectChips(userSubjects, userSubjectsContainer);
@@ -1433,7 +1666,6 @@
                 
             } catch (error) {
                 console.error('Error loading user subjects:', error);
-                // Set default subjects on error
                 userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
                 const userSubjectsContainer = document.getElementById('userSubjects');
                 if (userSubjectsContainer) {
@@ -1445,7 +1677,6 @@
         // Dashboard initialization
         async function initializeDashboard() {
             try {
-                // Check authentication
                 const token = getAuthToken();
                 const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
                 
@@ -1454,26 +1685,19 @@
                     return;
                 }
 
-                // Fetch user profile
                 const user = await fetchUserProfile();
                 if (user) {
                     updateUserDisplay(user);
-                    
-                    // Load user subjects
                     await loadUserSubjects();
-                    
-                    // Initialize other dashboard features
                     setTimeout(animateCounters, 1000);
                     initializeInteractiveElements();
                 } else {
                     throw new Error('Failed to load user data');
                 }
-
             } catch (error) {
                 console.error('Dashboard initialization error:', error);
                 showError('Failed to load dashboard data. Please try refreshing the page.');
             } finally {
-                // Hide loading overlay
                 const loadingOverlay = document.getElementById('loadingOverlay');
                 if (loadingOverlay) {
                     loadingOverlay.style.display = 'none';
@@ -1496,7 +1720,7 @@
         function logout() {
             localStorage.removeItem('bhss_token');
             localStorage.removeItem('isLoggedIn');
-            window.location.href = '/login.html';
+            window.location.href = 'login.html';
         }
 
         // Counter Animation
@@ -1522,14 +1746,11 @@
 
         // Interactive effects
         function initializeInteractiveElements() {
-            // Add click effects to action buttons
             const actionBtns = document.querySelectorAll('.action-btn');
             actionBtns.forEach(btn => {
                 btn.addEventListener('click', function(e) {
-                    // Prevent multiple rapid clicks
                     if (this.disabled) return;
                     
-                    // Create ripple effect
                     const ripple = document.createElement('span');
                     const rect = this.getBoundingClientRect();
                     const size = 60;
@@ -1549,7 +1770,6 @@
                 });
             });
 
-            // Add hover effects to cards
             const cards = document.querySelectorAll('.stat-card, .profile-card');
             cards.forEach(card => {
                 card.addEventListener('mouseenter', function() {
@@ -1564,7 +1784,6 @@
 
         // Modal interaction setup
         function setupModalInteractions() {
-            // Close modal with Escape key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     closeSubjectModal();
@@ -1587,7 +1806,6 @@
                 }
             });
 
-            // Handle window resize
             window.addEventListener('resize', function() {
                 const sidebar = document.getElementById('sidebar');
                 const mainContent = document.getElementById('mainContent');
@@ -1609,14 +1827,11 @@
                     const page = this.textContent.toLowerCase();
                     console.log(`Navigating to: ${page}`);
                     
-                    // Add visual feedback
                     this.style.background = 'rgba(0, 255, 174, 0.3)';
                     setTimeout(() => {
                         this.style.background = 'rgba(125, 249, 255, 0.1)';
                     }, 200);
                     
-                    // Here you would implement actual navigation
-                    // For now, we'll just show an alert
                     if (page === 'profile') {
                         showUserProfile();
                     } else {
@@ -1646,6 +1861,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing dashboard...');
             
+            // Update top navigation
+            updateTopNavigation();
+            
             // Start dashboard initialization
             initializeDashboard();
             
@@ -1658,7 +1876,6 @@
         // Handle page visibility change (when user comes back to tab)
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
-                // Refresh subjects when user comes back to the page
                 loadUserSubjects();
             }
         });
