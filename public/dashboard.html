@@ -172,7 +172,7 @@
         /* Fixed News Ticker - positioned directly under navbar */
         .news-ticker-container {
             position: fixed;
-            top: 80px; /* Directly under the navbar */
+             /* Directly under the navbar */
             left: 0;
             width: 100%;
             z-index: 999;
@@ -1727,15 +1727,18 @@
             try {
                 const dashboardInfo = await fetchUserDashboardInfo();
                 
-                if (dashboardInfo && dashboardInfo.subjects && dashboardInfo.subjects.length > 0) {
-                    userSubjects = dashboardInfo.subjects;
+                if (dashboardInfo) {
+                    // Update subjects from dashboard info if available
+                    if (dashboardInfo.subjects && dashboardInfo.subjects.length > 0) {
+                        userSubjects = dashboardInfo.subjects;
+                    }
                     
-                    // Also update grade from dashboard info if available
+                    // Update grade from dashboard info if available
                     if (dashboardInfo.grade && currentUser) {
                         currentUser.grade = dashboardInfo.grade;
                         const userGrade = document.getElementById('userGrade');
                         if (userGrade) {
-                            userGrade.textContent = dashboardInfo.grade;
+                            userGrade.textContent = `Grade: ${dashboardInfo.grade}`;  // Add prefix here
                         }
                     }
                 } else {
