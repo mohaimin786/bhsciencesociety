@@ -35,7 +35,7 @@
             background: #0f111a;
             color: #ffffff;
             overflow-x: hidden;
-            padding-top: 110px;
+            padding-top: 110px; /* Space for fixed navbar + ticker */
         }
 
         /* Top Navigation Bar */
@@ -169,6 +169,63 @@
             background: var(--primary);
         }
 
+        /* Fixed News Ticker - positioned directly under navbar */
+        .news-ticker-container {
+            position: fixed;
+            top: 80px; /* Directly under the navbar */
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            overflow: hidden;
+            background: rgba(15, 17, 26, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 255, 174, 0.2);
+        }
+
+        .news-ticker {
+            padding: 8px 0;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .news-ticker-content {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .ticker-label {
+            font-weight: bold;
+            color: var(--primary);
+            margin-right: 15px;
+            padding: 0 20px;
+            text-shadow: 0 0 5px rgba(0, 255, 174, 0.5);
+        }
+
+        .ticker-items {
+            display: inline-flex;
+            animation: ticker 30s linear infinite;
+        }
+
+        .ticker-item {
+            margin-right: 40px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .ticker-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
         /* Loading Spinner */
         .loading-overlay {
             position: fixed;
@@ -222,7 +279,7 @@
         .sidebar-toggle {
             position: fixed;
             left: 15px;
-            top: 140px;
+            top: 140px; /* Adjusted for navbar + ticker */
             z-index: 1001;
             background: linear-gradient(135deg, #00ffae, #7df9ff);
             border: none;
@@ -330,8 +387,8 @@
         .sidebar {
             position: fixed;
             left: 0;
-            top: 80px;
-            height: calc(100vh - 80px);
+            top: 110px; /* Adjusted for navbar + ticker */
+            height: calc(100vh - 110px);
             width: 250px;
             background: rgba(15, 17, 26, 0.9);
             backdrop-filter: blur(20px);
@@ -395,7 +452,7 @@
             margin-top: 0;
             padding: 20px;
             transition: margin-left 0.3s ease;
-            min-height: calc(100vh - 80px);
+            min-height: calc(100vh - 110px);
         }
 
         .main-content.shifted {
@@ -881,7 +938,7 @@
         /* Notification styles */
         .notification {
             position: fixed;
-            top: 100px;
+            top: 130px; /* Adjusted for navbar + ticker */
             right: 20px;
             padding: 15px 20px;
             border-radius: 10px;
@@ -963,7 +1020,7 @@
             /* Adjust sidebar toggle for mobile */
             .sidebar-toggle {
                 left: 10px;
-                top: 90px;
+                top: 130px; /* Adjusted for mobile navbar + ticker */
                 width: 45px;
                 height: 45px;
             }
@@ -1009,77 +1066,6 @@
                 opacity: 0;
             }
         }
-        /* News Ticker Styles */
-.news-ticker-container {
-    
-    left: 0;
-    width: 100%;
-    z-index: 999;
-    overflow: hidden;
-    background: rgba(15, 17, 26, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 255, 174, 0.2);
-}
-
-.news-ticker {
-    padding: 8px 0;
-    color: white;
-    font-size: 0.9em;
-}
-
-.news-ticker-content {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-}
-
-.ticker-label {
-    font-weight: bold;
-    color: var(--primary);
-    margin-right: 15px;
-    padding: 0 20px;
-    text-shadow: 0 0 5px rgba(0, 255, 174, 0.5);
-}
-
-.ticker-items {
-    display: inline-flex;
-    animation: ticker 30s linear infinite;
-}
-
-.ticker-item {
-    margin-right: 40px;
-    position: relative;
-    padding-left: 20px;
-}
-
-.ticker-item:before {
-    content: "•";
-    position: absolute;
-    left: 0;
-    color: var(--secondary);
-}
-
-@keyframes ticker {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
-}
-
-/* Adjust main content padding to account for ticker */
-body {
-    padding-top: 110px; /* Increased from 80px to account for ticker */
-}
-
-/* Adjust sidebar toggle position */
-.sidebar-toggle {
-    top: 140px; /* Increased from 95px to account for ticker */
-}
-
-@media (max-width: 992px) {
-    .sidebar-toggle {
-        top: 135px; /* Adjusted for mobile */
-    }
-}
     </style>
 </head>
 
@@ -1121,18 +1107,21 @@ body {
                 <span class="top-hamburger-line"></span>
             </button>
         </nav>
-            <div class="news-ticker-container">
-                <div class="news-ticker">
-                    <div class="news-ticker-content">
-                        <div class="ticker-items">
-                            <span class="ticker-item">🔬 Science Fair registration now open!</span>
-                            <span class="ticker-item">🌟 New research paper published by our members</span>
-                            <span class="ticker-item">📅 Next society meeting: August 25th at 3:30 PM</span>
-                            <span class="ticker-item">🏆 Congratulations to our robotics team for their recent win!</span>
-                        </div>
+        
+        <!-- News Ticker - directly under navbar, NOT fixed -->
+        <div class="news-ticker-container">
+            <div class="news-ticker">
+                <div class="news-ticker-content">
+                    <span class="ticker-label">📢 BHSS NEWS:</span>
+                    <div class="ticker-items">
+                        <span class="ticker-item">🔬 Science Fair registration now open!</span>
+                        <span class="ticker-item">🌟 New research paper published by our members</span>
+                        <span class="ticker-item">📅 Next society meeting: August 25th at 3:30 PM</span>
+                        <span class="ticker-item">🏆 Congratulations to our robotics team for their recent win!</span>
                     </div>
                 </div>
             </div>
+        </div>
     </header>
 
     <!-- Enhanced Sidebar Toggle -->
@@ -1466,7 +1455,8 @@ body {
 
                 const data = await response.json();
                 if (data.success && data.data.length > 0) {
-                    const userInfo = data.data.find(item => item.grade === currentUser?.grade);
+                    // Find user's dashboard info by email
+                    const userInfo = data.data.find(item => item.email === currentUser?.email);
                     return userInfo;
                 }
                 return null;
@@ -1718,9 +1708,10 @@ body {
                 userName.textContent = user.fullName || 'BHSS Member';
             }
             
+            // Display grade from dashboard info if available, otherwise use user grade
             const userGrade = document.getElementById('userGrade');
             if (userGrade) {
-                userGrade.textContent = user.grade || '';
+                userGrade.textContent = user.grade || 'Grade not specified';
             }
             
             const memberSince = user.createdAt ? formatDate(user.createdAt) : 'Recently';
@@ -1738,6 +1729,15 @@ body {
                 
                 if (dashboardInfo && dashboardInfo.subjects && dashboardInfo.subjects.length > 0) {
                     userSubjects = dashboardInfo.subjects;
+                    
+                    // Also update grade from dashboard info if available
+                    if (dashboardInfo.grade && currentUser) {
+                        currentUser.grade = dashboardInfo.grade;
+                        const userGrade = document.getElementById('userGrade');
+                        if (userGrade) {
+                            userGrade.textContent = dashboardInfo.grade;
+                        }
+                    }
                 } else {
                     userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
                 }
@@ -1926,8 +1926,21 @@ body {
 
         function showUserProfile() {
             if (currentUser) {
-                const profileInfo = `User Profile:\nName: ${currentUser.fullName}\nGrade: ${currentUser.grade}\nMember Since: ${formatDate(currentUser.createdAt)}\nSubjects: ${userSubjects.join(', ')}`;
+                const profileInfo = `User Profile:\nName: ${currentUser.fullName}\nGrade: ${currentUser.grade || 'Not specified'}\nMember Since: ${formatDate(currentUser.createdAt)}\nSubjects: ${userSubjects.join(', ')}`;
                 alert(profileInfo);
+            }
+        }
+
+        // News ticker functions
+        function setupNewsTicker() {
+            const ticker = document.querySelector('.ticker-items');
+            if (ticker) {
+                ticker.addEventListener('mouseenter', () => {
+                    ticker.style.animationPlayState = 'paused';
+                });
+                ticker.addEventListener('mouseleave', () => {
+                    ticker.style.animationPlayState = 'running';
+                });
             }
         }
 
@@ -1946,6 +1959,9 @@ body {
             
             // Update top navigation
             updateTopNavigation();
+            
+            // Setup news ticker
+            setupNewsTicker();
             
             // Start dashboard initialization
             initializeDashboard();
@@ -1968,24 +1984,6 @@ body {
             console.log('Testing modal...');
             openSubjectModal();
         };
-    </script>
-    <script>
-function setupNewsTicker() {
-    const ticker = document.querySelector('.ticker-items');
-    if (ticker) {
-        ticker.addEventListener('mouseenter', () => {
-            ticker.style.animationPlayState = 'paused';
-        });
-        ticker.addEventListener('mouseleave', () => {
-            ticker.style.animationPlayState = 'running';
-        });
-    }
-}
-
-// Call this in your DOMContentLoaded event
-document.addEventListener('DOMContentLoaded', function() {
-    setupNewsTicker();
-});
     </script>
 </body>
 </html>
