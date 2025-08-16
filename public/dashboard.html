@@ -1221,7 +1221,7 @@ body {
                     <div class="profile-pic" id="profileInitials">?</div>
                     <div class="user-info">
                         <h3 id="userName">Loading...</h3>
-                        <p id="userEmail">Loading...</p>
+                        <p id="userGrade">Loading...</p>
                         <p id="userDetails">Member since...</p>
                     </div>
                     <button class="action-btn" style="margin-top: 10px; width: 100%;">Edit Profile</button>
@@ -1443,7 +1443,7 @@ body {
                 console.error('Error fetching user profile:', error);
                 return {
                     fullName: 'Demo User',
-                    email: 'demo@bhss.edu',
+                    grade: 'Demo Grade',
                     createdAt: new Date().toISOString()
                 };
             }
@@ -1468,7 +1468,7 @@ body {
 
                 const data = await response.json();
                 if (data.success && data.data.length > 0) {
-                    const userInfo = data.data.find(item => item.email === currentUser?.email);
+                    const userInfo = data.data.find(item => item.grade === currentUser?.grade);
                     return userInfo;
                 }
                 return null;
@@ -1720,9 +1720,9 @@ body {
                 userName.textContent = user.fullName || 'BHSS Member';
             }
             
-            const userEmail = document.getElementById('userEmail');
-            if (userEmail) {
-                userEmail.textContent = user.email || '';
+            const userGrade = document.getElementById('userGrade');
+            if (userGrade) {
+                userGrade.textContent = user.grade || '';
             }
             
             const memberSince = user.createdAt ? formatDate(user.createdAt) : 'Recently';
@@ -1928,7 +1928,7 @@ body {
 
         function showUserProfile() {
             if (currentUser) {
-                const profileInfo = `User Profile:\nName: ${currentUser.fullName}\nEmail: ${currentUser.email}\nMember Since: ${formatDate(currentUser.createdAt)}\nSubjects: ${userSubjects.join(', ')}`;
+                const profileInfo = `User Profile:\nName: ${currentUser.fullName}\nGrade: ${currentUser.grade}\nMember Since: ${formatDate(currentUser.createdAt)}\nSubjects: ${userSubjects.join(', ')}`;
                 alert(profileInfo);
             }
         }
