@@ -1710,7 +1710,7 @@
             // Display grade from dashboard info if available, otherwise use user grade
             const userGrade = document.getElementById('userGrade');
             if (userGrade) {
-                userGrade.textContent = `Grade: ${userGrade}`;
+                userGrade.textContent = user.grade ? `Grade: ${user.grade}` : 'Grade not specified';
             }
             
             const memberSince = user.createdAt ? formatDate(user.createdAt) : 'Recently';
