@@ -1112,7 +1112,6 @@
         <div class="news-ticker-container">
             <div class="news-ticker">
                 <div class="news-ticker-content">
-                    <span class="ticker-label">📢 BHSS NEWS:</span>
                     <div class="ticker-items">
                         <span class="ticker-item">🔬 Science Fair registration now open!</span>
                         <span class="ticker-item">🌟 New research paper published by our members</span>
@@ -1208,7 +1207,7 @@
                     <div class="profile-pic" id="profileInitials">?</div>
                     <div class="user-info">
                         <h3 id="userName">Loading...</h3>
-                        <p id="userGrade">Loading...</p>
+                        <p id="userGrade">Grade...</p>
                         <p id="userDetails">Member since...</p>
                     </div>
                     <button class="action-btn" style="margin-top: 10px; width: 100%;">Edit Profile</button>
@@ -1717,7 +1716,7 @@
             const memberSince = user.createdAt ? formatDate(user.createdAt) : 'Recently';
             const userDetails = document.getElementById('userDetails');
             if (userDetails) {
-                userDetails.textContent = `Member since ${memberSince}`;
+                userDetails.textContent = `Member Since ${memberSince}`;
             }
 
             currentUser = user;
