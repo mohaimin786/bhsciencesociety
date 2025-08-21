@@ -1568,7 +1568,7 @@
                 return;
             }
 
-            subjects.forEach(subject, index) {
+                subjects.forEach((subject, index) => {
                 const chip = document.createElement('div');
                 chip.className = `subject-chip ${removable ? 'removable' : ''}`;
                 
@@ -1588,8 +1588,7 @@
                 `;
                 
                 container.appendChild(chip);
-            };
-        }
+            }); // <-- No semicolon here, just closing the forEach method call
 
         function renderAvailableSubjects() {
             const container = document.getElementById('availableSubjects');
