@@ -276,7 +276,7 @@
             font-size: 1.1em;
         }
 
-        /* Enhanced Sidebar Toggle Button */
+        /* ENHANCED: Sidebar Toggle Button */
         .sidebar-toggle {
             position: fixed;
             left: 15px;
@@ -284,9 +284,9 @@
             z-index: 1001;
             background: linear-gradient(135deg, #00ffae, #7df9ff);
             border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 15px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -308,7 +308,7 @@
             transition: all 0.1s ease;
         }
 
-        /* Hamburger Menu Animation for Sidebar */
+        /* ENHANCED: Hamburger Menu Animation for Sidebar */
         .hamburger {
             width: 24px;
             height: 20px;
@@ -351,6 +351,7 @@
             transform: rotate(45deg);
             top: 0px;
             left: 4px;
+            width: 22px;
         }
 
         .sidebar-toggle.active .hamburger span:nth-child(2) {
@@ -362,9 +363,10 @@
             transform: rotate(-45deg);
             top: 18px;
             left: 4px;
+            width: 22px;
         }
 
-        /* Pulse animation for attention */
+        /* ENHANCED: Pulse animation for attention */
         .sidebar-toggle::before {
             content: '';
             position: absolute;
@@ -384,19 +386,22 @@
             opacity: 0;
         }
 
-        /* Sidebar Navigation */
+        /* ENHANCED: Sidebar Navigation */
         .sidebar {
             position: fixed;
             left: 0;
             top: 110px; /* Adjusted for navbar + ticker */
             height: calc(100vh - 110px);
-            width: 250px;
-            background: rgba(15, 17, 26, 0.9);
+            width: 280px; /* Slightly wider for better spacing */
+            background: rgba(15, 17, 26, 0.95);
             backdrop-filter: blur(20px);
-            border-right: 1px solid #00ffae30;
+            border-right: 1px solid rgba(0, 255, 174, 0.3);
             z-index: 999;
             transform: translateX(-100%);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar.open {
@@ -406,45 +411,83 @@
         .sidebar-content {
             padding: 20px;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar h3 {
             color: #00ffae;
             margin-bottom: 20px;
             text-align: center;
+            font-size: 1.4rem;
+            text-shadow: 0 0 10px rgba(0, 255, 174, 0.5);
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 255, 174, 0.2);
         }
 
         .nav-item {
-            padding: 12px 16px;
+            padding: 15px 20px;
             margin: 8px 0;
             background: rgba(125, 249, 255, 0.1);
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 174, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
         }
 
         .nav-item:hover {
             background: rgba(0, 255, 174, 0.2);
-            transform: translateX(5px);
+            transform: translateX(8px);
+            box-shadow: 0 5px 15px rgba(0, 255, 174, 0.2);
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+            color: #7df9ff;
         }
 
         .logout-btn {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
+            margin-top: auto;
             background: linear-gradient(135deg, #ff4444, #cc0000);
             border: none;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 10px;
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
         }
 
         .logout-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+            box-shadow: 0 8px 20px rgba(255, 68, 68, 0.4);
         }
 
         /* Main Content */
@@ -457,7 +500,7 @@
         }
 
         .main-content.shifted {
-            margin-left: 250px;
+            margin-left: 280px; /* Adjusted for wider sidebar */
         }
 
         /* Hero Section */
@@ -1137,14 +1180,14 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-content">
             <h3>Navigation</h3>
-            <div class="nav-item">Dashboard</div>
-            <div class="nav-item">Events</div>
-            <div class="nav-item">Projects</div>
-            <div class="nav-item">Leaderboard</div>
-            <div class="nav-item">Resources</div>
-            <div class="nav-item">Profile</div>
-            <div class="nav-item">Settings</div>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <div class="nav-item"><i class="fas fa-home"></i> Dashboard</div>
+            <div class="nav-item"><i class="fas fa-calendar-alt"></i> Events</div>
+            <div class="nav-item"><i class="fas fa-project-diagram"></i> Projects</div>
+            <div class="nav-item"><i class="fas fa-trophy"></i> Leaderboard</div>
+            <div class="nav-item"><i class="fas fa-book"></i> Resources</div>
+            <div class="nav-item"><i class="fas fa-user"></i> Profile</div>
+            <div class="nav-item"><i class="fas fa-cog"></i> Settings</div>
+            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
     </div>
 
@@ -1525,7 +1568,7 @@
                 return;
             }
 
-            subjects.forEach((subject, index) => {
+            subjects.forEach((subject, index) {
                 const chip = document.createElement('div');
                 chip.className = `subject-chip ${removable ? 'removable' : ''}`;
                 
