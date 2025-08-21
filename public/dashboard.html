@@ -1761,35 +1761,73 @@
         }
 
         // Dashboard initialization
-        async function initializeDashboard() {
-            try {
-                const token = getAuthToken();
-                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-                
-                if (!token || !isLoggedIn) {
-                    redirectToLogin();
-                    return;
-                }
-
-                const user = await fetchUserProfile();
-                if (user) {
-                    updateUserDisplay(user);
-                    await loadUserSubjects();
-                    setTimeout(animateCounters, 1000);
-                    initializeInteractiveElements();
-                } else {
-                    throw new Error('Failed to load user data');
-                }
-            } catch (error) {
-                console.error('Dashboard initialization error:', error);
-                showError('Failed to load dashboard data. Please try refreshing the page.');
-            } finally {
-                const loadingOverlay = document.getElementById('loadingOverlay');
-                if (loadingOverlay) {
-                    loadingOverlay.style.display = 'none';
-                }
-            }
+async function initializeDashboard() {
+    try {
+        const token = getAuthToken();
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        
+        if (!token || !isLoggedIn) {
+            redirectToLogin();
+            return;
         }
+
+        const user = await fetchUserProfile();
+        if (user) {
+            // Load dashboard info first to get the complete user data
+            const dashboardInfo = await fetchUserDashboardInfo();
+            
+            // Update user object with dashboard info if available
+            if (dashboardInfo && dashboardInfo.grade) {
+                user.grade = dashboardInfo.grade;
+            }
+            
+            // Now update display with complete info
+            updateUserDisplay(user);
+            await loadUserSubjects();
+            setTimeout(animateCounters, 1000);
+            initializeInteractiveElements();
+        } else {
+            throw new Error('Failed to load user data');
+        }
+    } catch (error) {
+        console.error('Dashboard initialization error:', error);
+        showError('Failed to load dashboard data. Please try refreshing the page.');
+    } finally {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'none';
+        }
+    }
+}
+
+// Simplified loadUserSubjects function
+async function loadUserSubjects() {
+    try {
+        const dashboardInfo = await fetchUserDashboardInfo();
+        
+        if (dashboardInfo) {
+            // Update subjects from dashboard info if available
+            if (dashboardInfo.subjects && dashboardInfo.subjects.length > 0) {
+                userSubjects = dashboardInfo.subjects;
+            }
+        } else {
+            userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
+        }
+        
+        const userSubjectsContainer = document.getElementById('userSubjects');
+        if (userSubjectsContainer) {
+            renderSubjectChips(userSubjects, userSubjectsContainer);
+        }
+        
+    } catch (error) {
+        console.error('Error loading user subjects:', error);
+        userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
+        const userSubjectsContainer = document.getElementById('userSubjects');
+        if (userSubjectsContainer) {
+            renderSubjectChips(userSubjects, userSubjectsContainer);
+        }
+    }
+}
 
         // Enhanced Sidebar functions
         function toggleSidebar() {
