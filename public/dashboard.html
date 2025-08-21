@@ -1691,76 +1691,45 @@
 
         // Dashboard functions
         function updateUserDisplay(user) {
-            const firstName = user.fullName ? user.fullName.split(' ')[0] : 'User';
-            const welcomeMsg = document.getElementById('welcomeMessage');
-            if (welcomeMsg) {
-                welcomeMsg.textContent = `Welcome back, ${firstName}!`;
-            }
+    const firstName = user.fullName ? user.fullName.split(' ')[0] : 'User';
+    const welcomeMsg = document.getElementById('welcomeMessage');
+    if (welcomeMsg) {
+        welcomeMsg.textContent = `Welcome back, ${firstName}!`;
+    }
 
-            const profileInitials = document.getElementById('profileInitials');
-            if (profileInitials) {
-                profileInitials.textContent = getInitials(user.fullName);
-            }
-            
-            const userName = document.getElementById('userName');
-            if (userName) {
-                userName.textContent = user.fullName || 'BHSS Member';
-            }
-            
-            // Display grade from dashboard info if available, otherwise use user grade
-            const userGrade = document.getElementById('userGrade');
-            if (userGrade) {
-                userGrade.textContent = user.grade ? `Grade: ${user.grade}` : 'Grade not specified';
-            }
-            
-            const memberSince = user.createdAt ? formatDate(user.createdAt) : 'Recently';
-            const userDetails = document.getElementById('userDetails');
-            if (userDetails) {
-                userDetails.textContent = `Member Since ${memberSince}`;
-            }
+    const profileInitials = document.getElementById('profileInitials');
+    if (profileInitials) {
+        profileInitials.textContent = getInitials(user.fullName);
+    }
+    
+    const userName = document.getElementById('userName');
+    if (userName) {
+        userName.textContent = user.fullName || 'BHSS Member';
+    }
+    
+    // Handle grade display with better fallback
+    const userGrade = document.getElementById('userGrade');
+    if (userGrade) {
+        const gradeText = user.grade && user.grade !== 'Not specified' 
+            ? `Grade: ${user.grade}` 
+            : 'Grade not specified';
+        userGrade.textContent = gradeText;
+    }
+    
+    const memberSince = user.createdAt ? formatDate(user.createdAt) : 'Recently';
+    const userDetails = document.getElementById('userDetails');
+    if (userDetails) {
+        userDetails.textContent = `Member Since ${memberSince}`;
+    }
 
+    // Store current user globally
+    currentUser = user;
+}
 
-            currentUser = user;
-        }
-
-        async function loadUserSubjects() {
-            try {
-                const dashboardInfo = await fetchUserDashboardInfo();
-                
-                if (dashboardInfo) {
-                    // Update subjects from dashboard info if available
-                    if (dashboardInfo.subjects && dashboardInfo.subjects.length > 0) {
-                        userSubjects = dashboardInfo.subjects;
-                    }
-                    
-                    // Update grade from dashboard info if available
-                    if (dashboardInfo.grade && currentUser) {
-                        currentUser.grade = dashboardInfo.grade;
-                        const userGrade = document.getElementById('userGrade');
-                        if (userGrade) {
-                            userGrade.textContent = `Grade: ${dashboardInfo.grade}`;  // Add prefix here
-                        }
-                    }
-                } else {
-                    userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
-                }
-                
-                const userSubjectsContainer = document.getElementById('userSubjects');
-                if (userSubjectsContainer) {
-                    renderSubjectChips(userSubjects, userSubjectsContainer);
-                }
-                
-            } catch (error) {
-                console.error('Error loading user subjects:', error);
-                userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
-                const userSubjectsContainer = document.getElementById('userSubjects');
-                if (userSubjectsContainer) {
-                    renderSubjectChips(userSubjects, userSubjectsContainer);
-                }
-            }
-        }
 
         // Dashboard initialization
+// Fixed Dashboard initialization
+    // Fixed Dashboard initialization
 async function initializeDashboard() {
     try {
         const token = getAuthToken();
@@ -1771,24 +1740,44 @@ async function initializeDashboard() {
             return;
         }
 
+        // First get the base user profile
         const user = await fetchUserProfile();
-        if (user) {
-            // Load dashboard info first to get the complete user data
-            const dashboardInfo = await fetchUserDashboardInfo();
-            
-            // Update user object with dashboard info if available
-            if (dashboardInfo && dashboardInfo.grade) {
-                user.grade = dashboardInfo.grade;
-            }
-            
-            // Now update display with complete info
-            updateUserDisplay(user);
-            await loadUserSubjects();
-            setTimeout(animateCounters, 1000);
-            initializeInteractiveElements();
-        } else {
+        if (!user) {
             throw new Error('Failed to load user data');
         }
+
+        // Then get dashboard info to complete the user data
+        const dashboardInfo = await fetchUserDashboardInfo();
+        
+        // Merge dashboard info with user profile
+        if (dashboardInfo) {
+            // Update user object with dashboard data
+            user.grade = dashboardInfo.grade || user.grade || 'Not specified';
+            user.subjects = dashboardInfo.subjects || [];
+            
+            // Store complete user data globally
+            currentUser = user;
+            userSubjects = dashboardInfo.subjects || ['Mathematics', 'Physics', 'Computer Science'];
+        } else {
+            // Fallback if no dashboard info
+            user.grade = user.grade || 'Not specified';
+            currentUser = user;
+            userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
+        }
+
+        // Now update display with complete user info
+        updateUserDisplay(user);
+        
+        // Render subjects
+        const userSubjectsContainer = document.getElementById('userSubjects');
+        if (userSubjectsContainer) {
+            renderSubjectChips(userSubjects, userSubjectsContainer);
+        }
+        
+        // Start animations and setup interactions
+        setTimeout(animateCounters, 1000);
+        initializeInteractiveElements();
+        
     } catch (error) {
         console.error('Dashboard initialization error:', error);
         showError('Failed to load dashboard data. Please try refreshing the page.');
@@ -1799,19 +1788,21 @@ async function initializeDashboard() {
         }
     }
 }
-
-// Simplified loadUserSubjects function
-async function loadUserSubjects() {
+        async function loadUserSubjects() {
     try {
         const dashboardInfo = await fetchUserDashboardInfo();
         
         if (dashboardInfo) {
-            // Update subjects from dashboard info if available
-            if (dashboardInfo.subjects && dashboardInfo.subjects.length > 0) {
-                userSubjects = dashboardInfo.subjects;
+            userSubjects = dashboardInfo.subjects || userSubjects;
+            
+            // Also update grade if changed
+            if (dashboardInfo.grade && currentUser) {
+                currentUser.grade = dashboardInfo.grade;
+                const userGrade = document.getElementById('userGrade');
+                if (userGrade) {
+                    userGrade.textContent = `Grade: ${dashboardInfo.grade}`;
+                }
             }
-        } else {
-            userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
         }
         
         const userSubjectsContainer = document.getElementById('userSubjects');
@@ -1821,11 +1812,7 @@ async function loadUserSubjects() {
         
     } catch (error) {
         console.error('Error loading user subjects:', error);
-        userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
-        const userSubjectsContainer = document.getElementById('userSubjects');
-        if (userSubjectsContainer) {
-            renderSubjectChips(userSubjects, userSubjectsContainer);
-        }
+        // Keep existing subjects if error occurs
     }
 }
 
