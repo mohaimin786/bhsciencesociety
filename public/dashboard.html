@@ -1690,7 +1690,7 @@
         }
 
         // Dashboard functions
-        function updateUserDisplay(user) {
+    function updateUserDisplay(user) {
     const firstName = user.fullName ? user.fullName.split(' ')[0] : 'User';
     const welcomeMsg = document.getElementById('welcomeMessage');
     if (welcomeMsg) {
@@ -1710,7 +1710,7 @@
     // Handle grade display with better fallback
     const userGrade = document.getElementById('userGrade');
     if (userGrade) {
-        const gradeText = user.grade && user.grade !== 'Not specified' 
+        const gradeText = user.grade && user.grade !== 'Not specified' && user.grade !== 'null' && user.grade !== 'undefined'
             ? `Grade: ${user.grade}` 
             : 'Grade not specified';
         userGrade.textContent = gradeText;
@@ -1759,10 +1759,10 @@ async function initializeDashboard() {
             currentUser = user;
             userSubjects = dashboardInfo.subjects || ['Mathematics', 'Physics', 'Computer Science'];
         } else {
-            // Fallback if no dashboard info
+            // Fallback if no dashboard info - use profile data or defaults
             user.grade = user.grade || 'Not specified';
             currentUser = user;
-            userSubjects = ['Mathematics', 'Physics', 'Computer Science'];
+            userSubjects = user.subjects || ['Mathematics', 'Physics', 'Computer Science'];
         }
 
         // Now update display with complete user info
