@@ -820,49 +820,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let lastScrollY = 0;
 
-    window.addEventListener('scroll', function() {
+  window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
+    
+    const currentScrollY = window.scrollY;
+    
+    if (currentScrollY > 50) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
 
-        const navbar = document.querySelector('.navbar');
-
-        if (!navbar) return;
-
-        
-
-        const currentScrollY = window.scrollY;
-
-        
-
-        if (currentScrollY > 50) {
-
-            navbar.classList.add('scrolled');
-
-            
-
-            // Hide navbar when scrolling down, show when scrolling up
-
-            if (currentScrollY > lastScrollY && currentScrollY > 100) {
-
-                navbar.style.transform = 'translateY(-100%)';
-
-            } else {
-
-                navbar.style.transform = 'translateY(0)';
-
-            }
-
-        } else {
-
-            navbar.classList.remove('scrolled');
-
-            navbar.style.transform = 'translateY(0)';
-
-        }
-
-        
-
-        lastScrollY = currentScrollY;
-
-    });
+    
+    lastScrollY = currentScrollY;
+});
 
     // =============================================
 
