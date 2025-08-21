@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* Updated color variables with better contrast */
+        /* Enhanced color variables with better contrast and visual appeal */
         :root {
-            --primary: #00D68F; /* More vibrant green */
+            --primary: #00D68F; /* Vibrant green */
             --primary-light: #5CE1B7; /* Lighter variant */
-            --secondary: #00B8D9; /* More vibrant cyan */
+            --secondary: #00B8D9; /* Vibrant cyan */
             --accent: #7B68EE; /* Softer purple */
-            --dark-bg: #0D1117; /* Darker background for better contrast */
+            --accent-light: #9370DB; /* Lighter purple */
+            --dark-bg: #0D1117; /* Dark background */
             --darker-bg: #070A0E; /* Even darker for depth */
             --card-bg: #161B22; /* Card background */
             --text-dark: #FFFFFF; /* White text */
@@ -23,6 +24,7 @@
             --success: #00D68F; /* Success color */
             --error: #FF4757; /* Error color */
             --warning: #FFC107; /* Warning color */
+            --info: #2D87D0; /* Info blue */
             
             --glow: 0 0 15px;
             --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
@@ -43,12 +45,12 @@
             line-height: 1.6;
         }
 
-        /* Top Navigation Bar - Improved contrast */
+        /* Top Navigation Bar - Enhanced contrast */
         .top-navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: rgba(13, 17, 23, 0.95);
+            background-color: rgba(13, 17, 23, 0.98);
             padding: 15px 5%;
             position: fixed;
             top: 0;
@@ -58,6 +60,7 @@
             -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--primary);
             transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .nav-center-container {
@@ -174,18 +177,20 @@
             background: var(--primary);
         }
 
-        /* Fixed News Ticker - Better contrast */
+        /* Fixed News Ticker - No gap with navbar */
         .news-ticker-container {
             position: fixed;
-            top:11.5%;
+            top: 75px; /* Adjusted to be directly under navbar */
             left: 0;
             width: 100%;
             z-index: 999;
             overflow: hidden;
-            background: rgba(22, 27, 34, 0.95);
+            background: rgba(22, 27, 34, 0.98);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--primary);
+            margin: 0;
+            padding: 0;
         }
 
         .news-ticker {
@@ -885,6 +890,7 @@
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s ease;
+            pointer-events: none;
         }
 
         .action-btn:hover::before {
@@ -934,7 +940,7 @@
             position: absolute;
             width: 100px;
             height: 100px;
-            background: linear-gradient(45deg, #fffc00, #e60000);
+            background: linear-gradient(45deg, var(--accent), var(--secondary));
             border-radius: 50%;
             opacity: 0.1;
             animation: float 6s ease-in-out infinite;
@@ -1091,6 +1097,10 @@
             .top-navbar {
                 padding: 15px 20px;
             }
+            
+            .news-ticker-container {
+                top: 70px; /* Adjusted for mobile */
+            }
         }
 
         /* Special Effects */
@@ -1165,7 +1175,7 @@
             </button>
         </nav>
         
-        <!-- News Ticker - directly under navbar, NOT fixed -->
+        <!-- News Ticker - directly under navbar, NO gap -->
         <div class="news-ticker-container">
             <div class="news-ticker">
                 <div class="news-ticker-content">
@@ -2042,7 +2052,7 @@
             if (event.reason && event.reason.message && event.reason.message.includes('401')) {
                 redirectToLogin();
             }
-        });
+        }
 
         // Initialize everything when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
