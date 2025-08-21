@@ -1558,37 +1558,37 @@
         }
 
         // Subject management functions
-        function renderSubjectChips(subjects, container, removable = false) {
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            if (!subjects || subjects.length === 0) {
-                container.innerHTML = '<p style="color: #7df9ff; font-style: italic;">No subjects selected</p>';
-                return;
-            }
+       function renderSubjectChips(subjects, container, removable = false) {
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (!subjects || subjects.length === 0) {
+        container.innerHTML = '<p style="color: #7df9ff; font-style: italic;">No subjects selected</p>';
+        return;
+    }
 
-                subjects.forEach((subject, index) => {
-                const chip = document.createElement('div');
-                chip.className = `subject-chip ${removable ? 'removable' : ''}`;
-                
-                if (removable && subjects.length === 1) {
-                    chip.classList.add('cannot-remove');
-                }
-                
-                chip.innerHTML = `
-                    ${subject}
-                    ${removable ? `
-                        <button class="remove-subject" 
-                                onclick="removeSubjectFromModal(${index}, event)"
-                                ${subjects.length === 1 ? 'disabled title="At least one subject is required"' : ''}>
-                            ×
-                        </button>
-                    ` : ''}
-                `;
-                
-                container.appendChild(chip);
-            }); // <-- No semicolon here, just closing the forEach method call
+        subjects.forEach((subject, index) => {
+        const chip = document.createElement('div');
+        chip.className = `subject-chip ${removable ? 'removable' : ''}`;
+        
+        if (removable && subjects.length === 1) {
+            chip.classList.add('cannot-remove');
+        }
+        
+        chip.innerHTML = `
+            ${subject}
+            ${removable ? `
+                <button class="remove-subject" 
+                        onclick="removeSubjectFromModal(${index}, event)"
+                        ${subjects.length === 1 ? 'disabled title="At least one subject is required"' : ''}>
+                    ×
+                </button>
+            ` : ''}
+        `;
+        
+        container.appendChild(chip);
+    }); // <-- No semicolon here, just closing the forEach method call
 
         function renderAvailableSubjects() {
             const container = document.getElementById('availableSubjects');
