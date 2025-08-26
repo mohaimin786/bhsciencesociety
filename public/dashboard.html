@@ -1721,9 +1721,7 @@
             <!-- Right side icons -->
             <div style="display: flex; align-items: center;">
                 <!-- Theme Toggle -->
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
-                    <i class="fas fa-moon"></i>
-                </button>
+
                 
                 <!-- Notification Bell -->
                 <div style="position: relative;">
@@ -2014,26 +2012,7 @@
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             
-            if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
-                document.body.classList.add('light-mode');
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            }
-            
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('light-mode');
-                
-                if (document.body.classList.contains('light-mode')) {
-                    localStorage.setItem('theme', 'light');
-                    icon.classList.remove('fa-moon');
-                    icon.classList.add('fa-sun');
-                } else {
-                    localStorage.setItem('theme', 'dark');
-                    icon.classList.remove('fa-sun');
-                    icon.classList.add('fa-moon');
-                }
-            });
-        }
+          
 
         // NEW: Notification functionality
         function setupNotifications() {
