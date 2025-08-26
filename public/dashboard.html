@@ -2454,6 +2454,73 @@
             </form>
         </div>
     </div>
+        <!-- Password Change Modal -->
+<div class="modal-overlay" id="passwordModal">
+  <div class="profile-modal">
+    <div class="profile-modal-header">
+      <h2><i class="fas fa-key"></i> Change Password</h2>
+      <button class="close-modal" onclick="closePasswordModal()">&times;</button>
+    </div>
+    
+    <form id="passwordForm">
+      <div class="form-group">
+        <label class="form-label">Current Password</label>
+        <div class="input-with-icon">
+          <input type="password" class="form-input" id="currentPassword" name="currentPassword" required>
+          <i class="fas fa-lock input-icon"></i>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">New Password</label>
+        <div class="input-with-icon">
+          <input type="password" class="form-input" id="newPassword" name="newPassword" required minlength="6">
+          <i class="fas fa-lock input-icon"></i>
+        </div>
+        <div class="form-hint">Must be at least 6 characters long</div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Confirm New Password</label>
+        <div class="input-with-icon">
+          <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" required minlength="6">
+          <i class="fas fa-lock input-icon"></i>
+        </div>
+      </div>
+      
+      <div class="profile-modal-actions">
+        <button type="button" class="profile-cancel-btn" onclick="closePasswordModal()">Cancel</button>
+        <button type="submit" class="profile-save-btn">Change Password</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Account Deletion Modal -->
+<div class="modal-overlay" id="deleteAccountModal">
+  <div class="profile-modal">
+    <div class="profile-modal-header">
+      <h2><i class="fas fa-exclamation-triangle"></i> Delete Account</h2>
+      <button class="close-modal" onclick="closeDeleteAccountModal()">&times;</button>
+    </div>
+    
+    <div class="form-group full-width">
+      <p style="color: var(--error); margin-bottom: 20px;">
+        <i class="fas fa-exclamation-circle"></i> Warning: This action cannot be undone. All your data will be permanently deleted.
+      </p>
+    </div>
+    
+    <div class="form-group full-width">
+      <label class="form-label">To confirm, type "DELETE MY ACCOUNT" below:</label>
+      <input type="text" class="form-input" id="deleteConfirmation" name="deleteConfirmation" required>
+    </div>
+    
+    <div class="profile-modal-actions">
+      <button type="button" class="profile-cancel-btn" onclick="closeDeleteAccountModal()">Cancel</button>
+      <button type="button" class="logout-btn" onclick="confirmAccountDeletion()">Delete My Account</button>
+    </div>
+  </div>
+</div>
         <!-- NEW: Quick Stats Section -->
         <div class="quick-stats">
             <div class="stat-item">
@@ -3547,505 +3614,634 @@
             console.log('Auth Token:', getAuthToken());
         };
     </script>
-    <script>
-        // NEW: Profile editing functionality
+<script>
+    // NEW: Profile editing functionality
+    
+    // Global variables for profile editing
+    let profileData = {};
+    let avatarFile = null;
+    let countriesList = [];
+    
+    // Function to open profile modal
+    function openProfileModal() {
+        // Load profile data
+        loadProfileData();
         
-        // Global variables for profile editing
-        let profileData = {};
-        let avatarFile = null;
-        let countriesList = [];
+        // Populate countries list if not already loaded
+        if (countriesList.length === 0) {
+            fetchCountries();
+        }
         
-        // Function to open profile modal
-        function openProfileModal() {
-            // Load profile data
-            loadProfileData();
-            
-            // Populate countries list if not already loaded
-            if (countriesList.length === 0) {
-                fetchCountries();
-            }
-            
-            const modal = document.getElementById('profileModal');
-            if (modal) {
-                modal.classList.add('show');
-                modal.addEventListener('click', handleProfileModalBackdropClick);
+        const modal = document.getElementById('profileModal');
+        if (modal) {
+            modal.classList.add('show');
+            modal.addEventListener('click', handleProfileModalBackdropClick);
+        }
+    }
+    
+    // Function to close profile modal
+    function closeProfileModal() {
+        const modal = document.getElementById('profileModal');
+        if (modal) {
+            modal.classList.remove('show');
+            modal.removeEventListener('click', handleProfileModalBackdropClick);
+        }
+        
+        // Reset form state
+        const saveBtn = document.getElementById('profileSaveBtn');
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            const saveBtnText = document.getElementById('saveBtnText');
+            if (saveBtnText) {
+                saveBtnText.textContent = 'Save Changes';
             }
         }
         
-        // Function to close profile modal
-        function closeProfileModal() {
-            const modal = document.getElementById('profileModal');
-            if (modal) {
-                modal.classList.remove('show');
-                modal.removeEventListener('click', handleProfileModalBackdropClick);
-            }
-            
-            // Reset form state
-            const saveBtn = document.getElementById('profileSaveBtn');
-            if (saveBtn) {
-                saveBtn.disabled = false;
-                const saveBtnText = document.getElementById('saveBtnText');
-                if (saveBtnText) {
-                    saveBtnText.textContent = 'Save Changes';
-                }
-            }
-            
-            avatarFile = null;
+        avatarFile = null;
+    }
+    
+    // Handle backdrop click
+    function handleProfileModalBackdropClick(e) {
+        const modalContent = document.querySelector('.profile-modal');
+        if (modalContent && !modalContent.contains(e.target)) {
+            closeProfileModal();
         }
-        
-        // Handle backdrop click
-        function handleProfileModalBackdropClick(e) {
-            const modalContent = document.querySelector('.profile-modal');
-            if (modalContent && !modalContent.contains(e.target)) {
-                closeProfileModal();
-            }
-        }
-        
-        // Load profile data from server or localStorage
-        async function loadProfileData() {
-            try {
-                // Try to fetch from server first
-                const token = getAuthToken();
-                if (token) {
-                    const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success) {
-                            profileData = data.user;
-                            populateProfileForm(profileData);
-                            calculateProfileCompletion();
-                            return;
-                        }
+    }
+    
+    // Load profile data from server or localStorage
+    async function loadProfileData() {
+        try {
+            // Try to fetch from server first
+            const token = getAuthToken();
+            if (token) {
+                const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
-                }
+                });
                 
-                // Fallback to localStorage or current user data
-                const storedProfile = localStorage.getItem('bhss_profile');
-                if (storedProfile) {
-                    profileData = JSON.parse(storedProfile);
-                    populateProfileForm(profileData);
-                    calculateProfileCompletion();
-                } else if (currentUser) {
-                    profileData = { ...currentUser };
-                    populateProfileForm(profileData);
-                    calculateProfileCompletion();
-                }
-            } catch (error) {
-                console.error('Error loading profile data:', error);
-                
-                // Fallback to current user data
-                if (currentUser) {
-                    profileData = { ...currentUser };
-                    populateProfileForm(profileData);
-                    calculateProfileCompletion();
-                }
-            }
-        }
-        
-        // Populate form with profile data
-        function populateProfileForm(data) {
-            // Basic info
-            document.getElementById('profileFullName').value = data.fullName || '';
-            document.getElementById('profileEmail').value = data.email || '';
-            document.getElementById('profilePhone').value = data.phone || '';
-            document.getElementById('profileDob').value = data.dob || '';
-            
-            // Academic info
-            document.getElementById('profileGrade').value = data.grade || '';
-            document.getElementById('profileSchool').value = data.school || '';
-            document.getElementById('profileCity').value = data.city || '';
-            document.getElementById('profileCountry').value = data.country || '';
-            document.getElementById('profileBio').value = data.bio || '';
-            
-            // Social info
-            document.getElementById('profileLinkedin').value = data.linkedin || '';
-            document.getElementById('profileGithub').value = data.github || '';
-            document.getElementById('profileTwitter').value = data.twitter || '';
-            document.getElementById('profileInstagram').value = data.instagram || '';
-            document.getElementById('profileWebsite').value = data.website || '';
-            
-            // Set avatar initials
-            const avatarInitials = document.getElementById('avatarInitials');
-            if (avatarInitials) {
-                avatarInitials.textContent = getInitials(data.fullName || '?');
-            }
-            
-            // Load avatar image if exists
-            if (data.avatar) {
-                // For demo purposes, we'll just show initials
-                // In a real app, you would load the image URL
-            }
-        }
-        
-        // Calculate profile completion percentage
-        function calculateProfileCompletion() {
-            const fields = [
-                'fullName', 'email', 'phone', 'dob', 
-                'grade', 'school', 'city', 'country', 'bio',
-                'linkedin', 'github', 'twitter', 'instagram', 'website'
-            ];
-            
-            let completed = 0;
-            fields.forEach(field => {
-                if (profileData[field] && String(profileData[field]).trim() !== '') {
-                    completed++;
-                }
-            });
-            
-            const percentage = Math.round((completed / fields.length) * 100);
-            
-            // Update UI
-            const completionElement = document.getElementById('profileCompletion');
-            const progressElement = document.getElementById('completionProgress');
-            
-            if (completionElement) {
-                completionElement.textContent = `${percentage}%`;
-            }
-            
-            if (progressElement) {
-                progressElement.style.width = `${percentage}%`;
-            }
-            
-            return percentage;
-        }
-        
-        // Fetch countries list for dropdown
-        async function fetchCountries() {
-            try {
-                // Use a free API to get countries list
-                const response = await fetch('https://restcountries.com/v3.1/all?fields=name');
                 if (response.ok) {
                     const data = await response.json();
-                    countriesList = data.map(country => country.name.common).sort();
-                    
-                    // Populate country dropdown
-                    const countrySelect = document.getElementById('profileCountry');
-                    if (countrySelect) {
-                        // Clear existing options except the first one
-                        while (countrySelect.options.length > 1) {
-                            countrySelect.remove(1);
-                        }
-                        
-                        // Add countries
-                        countriesList.forEach(country => {
-                            const option = document.createElement('option');
-                            option.value = country;
-                            option.textContent = country;
-                            countrySelect.appendChild(option);
-                        });
-                        
-                        // Set selected value if exists
-                        if (profileData.country) {
-                            countrySelect.value = profileData.country;
-                        }
+                    if (data.success) {
+                        profileData = data.profile || data.user;
+                        populateProfileForm(profileData);
+                        calculateProfileCompletion();
+                        return;
                     }
                 }
-            } catch (error) {
-                console.error('Error fetching countries:', error);
+            }
+            
+            // Fallback to localStorage or current user data
+            const storedProfile = localStorage.getItem('bhss_profile');
+            if (storedProfile) {
+                profileData = JSON.parse(storedProfile);
+                populateProfileForm(profileData);
+                calculateProfileCompletion();
+            } else if (currentUser) {
+                profileData = { ...currentUser };
+                populateProfileForm(profileData);
+                calculateProfileCompletion();
+            }
+        } catch (error) {
+            console.error('Error loading profile data:', error);
+            
+            // Fallback to current user data
+            if (currentUser) {
+                profileData = { ...currentUser };
+                populateProfileForm(profileData);
+                calculateProfileCompletion();
+            }
+        }
+    }
+    
+    // Populate form with profile data
+    function populateProfileForm(data) {
+        // Basic info
+        document.getElementById('profileFullName').value = data.fullName || '';
+        document.getElementById('profileEmail').value = data.email || '';
+        document.getElementById('profilePhone').value = data.phone || '';
+        document.getElementById('profileDob').value = data.dob || '';
+        
+        // Academic info
+        document.getElementById('profileGrade').value = data.grade || '';
+        document.getElementById('profileSchool').value = data.school || '';
+        document.getElementById('profileCity').value = data.city || '';
+        document.getElementById('profileCountry').value = data.country || '';
+        document.getElementById('profileBio').value = data.bio || '';
+        
+        // Social info
+        document.getElementById('profileLinkedin').value = data.linkedin || '';
+        document.getElementById('profileGithub').value = data.github || '';
+        document.getElementById('profileTwitter').value = data.twitter || '';
+        document.getElementById('profileInstagram').value = data.instagram || '';
+        document.getElementById('profileWebsite').value = data.website || '';
+        
+        // Set avatar initials
+        const avatarInitials = document.getElementById('avatarInitials');
+        if (avatarInitials) {
+            avatarInitials.textContent = getInitials(data.fullName || '?');
+        }
+        
+        // Load avatar image if exists
+        if (data.avatar) {
+            const avatarPreview = document.getElementById('avatarPreview');
+            if (avatarPreview) {
+                avatarPreview.innerHTML = `<img src="${data.avatar}" alt="Profile Avatar" style="width: 100%; height: 100%; object-fit: cover;">`;
+            }
+        }
+    }
+    
+    // Calculate profile completion percentage
+    function calculateProfileCompletion() {
+        const fields = [
+            'fullName', 'email', 'phone', 'dob', 
+            'grade', 'school', 'city', 'country', 'bio',
+            'linkedin', 'github', 'twitter', 'instagram', 'website'
+        ];
+        
+        let completed = 0;
+        fields.forEach(field => {
+            if (profileData[field] && String(profileData[field]).trim() !== '') {
+                completed++;
+            }
+        });
+        
+        const percentage = Math.round((completed / fields.length) * 100);
+        
+        // Update UI
+        const completionElement = document.getElementById('profileCompletion');
+        const progressElement = document.getElementById('completionProgress');
+        
+        if (completionElement) {
+            completionElement.textContent = `${percentage}%`;
+        }
+        
+        if (progressElement) {
+            progressElement.style.width = `${percentage}%`;
+        }
+        
+        return percentage;
+    }
+    
+    // Fetch countries list for dropdown
+    async function fetchCountries() {
+        try {
+            // Use a free API to get countries list
+            const response = await fetch('https://restcountries.com/v3.1/all?fields=name');
+            if (response.ok) {
+                const data = await response.json();
+                countriesList = data.map(country => country.name.common).sort();
                 
-                // Fallback to a basic list
-                const basicCountries = [
-                    'United States', 'Canada', 'United Kingdom', 'Australia', 'India',
-                    'Germany', 'France', 'Japan', 'China', 'Brazil', 'Mexico'
-                ];
-                
+                // Populate country dropdown
                 const countrySelect = document.getElementById('profileCountry');
                 if (countrySelect) {
-                    basicCountries.forEach(country => {
+                    // Clear existing options except the first one
+                    while (countrySelect.options.length > 1) {
+                        countrySelect.remove(1);
+                    }
+                    
+                    // Add countries
+                    countriesList.forEach(country => {
                         const option = document.createElement('option');
                         option.value = country;
                         option.textContent = country;
                         countrySelect.appendChild(option);
                     });
                     
+                    // Set selected value if exists
                     if (profileData.country) {
                         countrySelect.value = profileData.country;
                     }
                 }
             }
+        } catch (error) {
+            console.error('Error fetching countries:', error);
+            
+            // Fallback to a basic list
+            const basicCountries = [
+                'United States', 'Canada', 'United Kingdom', 'Australia', 'India',
+                'Germany', 'France', 'Japan', 'China', 'Brazil', 'Mexico'
+            ];
+            
+            const countrySelect = document.getElementById('profileCountry');
+            if (countrySelect) {
+                basicCountries.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country;
+                    countrySelect.appendChild(option);
+                });
+                
+                if (profileData.country) {
+                    countrySelect.value = profileData.country;
+                }
+            }
+        }
+    }
+    
+    // Handle profile form submission
+    async function handleProfileSubmit(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(e.target);
+        const updatedData = {};
+        
+        for (let [key, value] of formData.entries()) {
+            if (value.trim() !== '') {
+                updatedData[key] = value.trim();
+            }
+        }
+
+        try {
+            const token = getAuthToken();
+            const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    // Show success message and update UI
+                    showNotification('Profile updated successfully!');
+                    closeProfileModal();
+                    
+                    // Update current user data
+                    if (currentUser) {
+                        currentUser = { ...currentUser, ...updatedData };
+                        updateUserDisplay(currentUser);
+                    }
+                    return true;
+                }
+            }
+            throw new Error('Failed to update profile');
+        } catch (error) {
+            console.error('Profile update error:', error);
+            showNotification('Failed to update profile. Please try again.', 'error');
+            return false;
+        }
+    }
+    
+    // Handle avatar upload
+    async function handleAvatarUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // Check if file is an image
+        if (!file.type.match('image.*')) {
+            showNotification('Please select an image file', 'error');
+            return;
         }
         
-        // Handle profile form submission
-        async function handleProfileSubmit(e) {
-            e.preventDefault();
+        // Check file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            showNotification('Image must be less than 2MB', 'error');
+            return;
+        }
+        
+        try {
+            const formData = new FormData();
+            formData.append('avatar', file);
             
-            // Get form data
-            const formData = new FormData(e.target);
-            const updatedData = {};
+            const token = getAuthToken();
+            const response = await fetch(`${API_BASE_URL}/api/user/avatar-upload`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
             
-            for (let [key, value] of formData.entries()) {
-                if (value.trim() !== '') {
-                    updatedData[key] = value.trim();
+            const result = await response.json();
+            
+            if (result.success) {
+                // Update avatar preview
+                const avatarPreview = document.getElementById('avatarPreview');
+                if (avatarPreview) {
+                    avatarPreview.innerHTML = `<img src="${result.avatar}" alt="Profile Avatar" style="width: 100%; height: 100%; object-fit: cover;">`;
                 }
-            }
-            
-            // Add avatar file if selected
-            if (avatarFile) {
-                updatedData.avatarFile = avatarFile;
-                // In a real app, you would upload this to a server
-            }
-            
-            // Update profile data
-            profileData = { ...profileData, ...updatedData };
-            
-            // Save profile
-            const success = await saveProfileData(profileData);
-            
-            if (success) {
-                // Show success animation
-                const saveBtn = document.getElementById('profileSaveBtn');
-                const saveBtnText = document.getElementById('saveBtnText');
+                showNotification('Avatar uploaded successfully!');
                 
-                if (saveBtn && saveBtnText) {
-                    saveBtn.disabled = true;
-                    saveBtnText.innerHTML = '<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg> Saved Successfully!';
-                    
-                    setTimeout(() => {
-                        saveBtn.disabled = false;
-                        saveBtnText.textContent = 'Save Changes';
-                        closeProfileModal();
-                        
-                        // Update user display
-                        if (currentUser) {
-                            currentUser = { ...currentUser, ...profileData };
-                            updateUserDisplay(currentUser);
-                        }
-                    }, 1500);
-                }
+                // Update profile data
+                profileData.avatar = result.avatar;
             } else {
-                showNotification('Failed to save profile. Please try again.', 'error');
+                throw new Error(result.message || 'Upload failed');
             }
+        } catch (error) {
+            console.error('Avatar upload error:', error);
+            showNotification('Failed to upload avatar. Please try again.', 'error');
+        }
+    }
+    
+    // Handle password change
+    async function handlePasswordChange(e) {
+        e.preventDefault();
+        
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (newPassword !== confirmPassword) {
+            showNotification('New passwords do not match', 'error');
+            return;
         }
         
-        // Save profile data to server or localStorage
-        async function saveProfileData(data) {
-            try {
-                const token = getAuthToken();
-                if (token) {
-                    const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    });
-                    
-                    if (response.ok) {
-                        const result = await response.json();
-                        if (result.success) {
-                            // Also save to localStorage as backup
-                            localStorage.setItem('bhss_profile', JSON.stringify(data));
-                            return true;
-                        }
-                    }
-                }
-                
-                // Fallback to localStorage
-                localStorage.setItem('bhss_profile', JSON.stringify(data));
-                return true;
-            } catch (error) {
-                console.error('Error saving profile:', error);
-                
-                // Fallback to localStorage
-                localStorage.setItem('bhss_profile', JSON.stringify(data));
-                return true;
-            }
+        if (newPassword.length < 6) {
+            showNotification('Password must be at least 6 characters long', 'error');
+            return;
         }
         
-        // Handle avatar upload
-        function handleAvatarUpload(e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Check if file is an image
-                if (!file.type.match('image.*')) {
-                    showNotification('Please select an image file', 'error');
-                    return;
-                }
-                
-                // Check file size (max 2MB)
-                if (file.size > 2 * 1024 * 1024) {
-                    showNotification('Image must be less than 2MB', 'error');
-                    return;
-                }
-                
-                avatarFile = file;
-                
-                // Preview image
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const avatarPreview = document.getElementById('avatarPreview');
-                    if (avatarPreview) {
-                        avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Profile Avatar">`;
-                    }
-                };
-                reader.readAsDataURL(file);
-                
-                showNotification('Avatar selected. Remember to save your changes.', 'success');
-            }
-        }
-        
-        // Initialize profile editing functionality
-        function initProfileEditing() {
-            // Add event listener to the Edit Profile button
-            const editProfileBtn = document.querySelector('.action-btn');
-            if (editProfileBtn) {
-                editProfileBtn.addEventListener('click', openProfileModal);
-            }
-            
-            // Set up profile form submission
-            const profileForm = document.getElementById('profileForm');
-            if (profileForm) {
-                profileForm.addEventListener('submit', handleProfileSubmit);
-            }
-            
-            // Set up avatar upload
-            const avatarInput = document.getElementById('avatarInput');
-            if (avatarInput) {
-                avatarInput.addEventListener('change', handleAvatarUpload);
-            }
-            
-            // Set up tab navigation
-            const profileTabs = document.querySelectorAll('.profile-tab');
-            profileTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Remove active class from all tabs
-                    profileTabs.forEach(t => t.classList.remove('active'));
-                    
-                    // Add active class to clicked tab
-                    tab.classList.add('active');
-                    
-                    // Hide all tab content
-                    document.querySelectorAll('.profile-tab-content').forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    
-                    // Show selected tab content
-                    const tabId = `${tab.dataset.tab}Tab`;
-                    const tabContent = document.getElementById(tabId);
-                    if (tabContent) {
-                        tabContent.classList.add('active');
-                    }
-                });
+        try {
+            const token = getAuthToken();
+            const response = await fetch(`${API_BASE_URL}/api/user/change-password`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ currentPassword, newPassword })
             });
             
-            // Add real-time validation
-            const formInputs = document.querySelectorAll('.form-input, .form-select, .form-textarea');
-            formInputs.forEach(input => {
-                input.addEventListener('blur', function() {
-                    validateField(this);
-                    calculateProfileCompletion();
+            const result = await response.json();
+            
+            if (result.success) {
+                showNotification('Password changed successfully!');
+                closePasswordModal();
+                document.getElementById('passwordForm').reset();
+            } else {
+                showNotification(result.message || 'Failed to change password', 'error');
+            }
+        } catch (error) {
+            console.error('Password change error:', error);
+            showNotification('Error changing password. Please try again.', 'error');
+        }
+    }
+    
+    // Handle account deletion
+    async function confirmAccountDeletion() {
+        const confirmation = document.getElementById('deleteConfirmation').value;
+        
+        if (confirmation !== 'DELETE MY ACCOUNT') {
+            showNotification('Please type the confirmation phrase exactly as shown', 'error');
+            return;
+        }
+        
+        if (!confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
+            return;
+        }
+        
+        try {
+            const token = getAuthToken();
+            const response = await fetch(`${API_BASE_URL}/api/user/account`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ confirmation })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showNotification('Account deleted successfully');
+                setTimeout(() => {
+                    logout(); // Redirect to login page
+                }, 2000);
+            } else {
+                showNotification(result.message || 'Failed to delete account', 'error');
+            }
+        } catch (error) {
+            console.error('Account deletion error:', error);
+            showNotification('Error deleting account. Please try again.', 'error');
+        }
+    }
+    
+    // Initialize profile editing functionality
+    function initProfileEditing() {
+        // Add event listener to the Edit Profile button
+        const editProfileBtn = document.querySelector('.profile-card .action-btn');
+        if (editProfileBtn) {
+            editProfileBtn.addEventListener('click', openProfileModal);
+        }
+        
+        // Set up profile form submission
+        const profileForm = document.getElementById('profileForm');
+        if (profileForm) {
+            profileForm.addEventListener('submit', handleProfileSubmit);
+        }
+        
+        // Set up avatar upload
+        const avatarInput = document.getElementById('avatarInput');
+        if (avatarInput) {
+            avatarInput.addEventListener('change', handleAvatarUpload);
+        }
+        
+        // Set up password form submission
+        const passwordForm = document.getElementById('passwordForm');
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', handlePasswordChange);
+        }
+        
+        // Set up account deletion
+        const deleteAccountBtn = document.querySelector('.logout-btn[onclick="confirmAccountDeletion()"]');
+        if (deleteAccountBtn) {
+            deleteAccountBtn.addEventListener('click', confirmAccountDeletion);
+        }
+        
+        // Set up tab navigation
+        const profileTabs = document.querySelectorAll('.profile-tab');
+        profileTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                profileTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all tab content
+                document.querySelectorAll('.profile-tab-content').forEach(content => {
+                    content.classList.remove('active');
                 });
                 
-                input.addEventListener('input', function() {
-                    clearFieldError(this);
-                });
-            });
-        }
-        
-        // Field validation
-        function validateField(field) {
-            const value = field.value.trim();
-            let isValid = true;
-            let errorMessage = '';
-            
-            // Clear previous error
-            clearFieldError(field);
-            
-            // Required field validation
-            if (field.hasAttribute('required') && value === '') {
-                isValid = false;
-                errorMessage = 'This field is required';
-            }
-            
-            // Email validation
-            if (field.type === 'email' && value !== '') {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(value)) {
-                    isValid = false;
-                    errorMessage = 'Please enter a valid email address';
-                }
-            }
-            
-            // URL validation
-            if (field.type === 'url' && value !== '') {
-                try {
-                    new URL(value);
-                } catch {
-                    isValid = false;
-                    errorMessage = 'Please enter a valid URL';
-                }
-            }
-            
-            // Bio length validation
-            if (field.id === 'profileBio' && value.length > 500) {
-                isValid = false;
-                errorMessage = 'Bio must be less than 500 characters';
-            }
-            
-            if (!isValid) {
-                showFieldError(field, errorMessage);
-            }
-            
-            return isValid;
-        }
-        
-        // Show field error
-        function showFieldError(field, message) {
-            // Remove any existing error
-            clearFieldError(field);
-            
-            // Add error class
-            field.classList.add('error');
-            
-            // Create error message element
-            const errorElement = document.createElement('div');
-            errorElement.className = 'field-error';
-            errorElement.style.color = 'var(--error)';
-            errorElement.style.fontSize = '0.8em';
-            errorElement.style.marginTop = '5px';
-            errorElement.textContent = message;
-            
-            // Insert after field
-            field.parentNode.appendChild(errorElement);
-        }
-        
-        // Clear field error
-        function clearFieldError(field) {
-            field.classList.remove('error');
-            
-            // Remove error message
-            const errorElement = field.parentNode.querySelector('.field-error');
-            if (errorElement) {
-                errorElement.remove();
-            }
-        }
-        
-        // Validate entire form
-        function validateForm() {
-            let isValid = true;
-            const formInputs = document.querySelectorAll('.form-input, .form-select, .form-textarea');
-            
-            formInputs.forEach(input => {
-                if (!validateField(input)) {
-                    isValid = false;
+                // Show selected tab content
+                const tabId = `${tab.dataset.tab}Tab`;
+                const tabContent = document.getElementById(tabId);
+                if (tabContent) {
+                    tabContent.classList.add('active');
                 }
             });
-            
-            return isValid;
-        }
-        
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            initProfileEditing();
         });
-    </script>
+        
+        // Add real-time validation
+        const formInputs = document.querySelectorAll('.form-input, .form-select, .form-textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                validateField(this);
+                calculateProfileCompletion();
+            });
+            
+            input.addEventListener('input', function() {
+                clearFieldError(this);
+            });
+        });
+    }
+    
+    // Field validation
+    function validateField(field) {
+        const value = field.value.trim();
+        let isValid = true;
+        let errorMessage = '';
+        
+        // Clear previous error
+        clearFieldError(field);
+        
+        // Required field validation
+        if (field.hasAttribute('required') && value === '') {
+            isValid = false;
+            errorMessage = 'This field is required';
+        }
+        
+        // Email validation
+        if (field.type === 'email' && value !== '') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+                isValid = false;
+                errorMessage = 'Please enter a valid email address';
+            }
+        }
+        
+        // URL validation
+        if (field.type === 'url' && value !== '') {
+            try {
+                new URL(value);
+            } catch {
+                isValid = false;
+                errorMessage = 'Please enter a valid URL';
+            }
+        }
+        
+        // Bio length validation
+        if (field.id === 'profileBio' && value.length > 500) {
+            isValid = false;
+            errorMessage = 'Bio must be less than 500 characters';
+        }
+        
+        if (!isValid) {
+            showFieldError(field, errorMessage);
+        }
+        
+        return isValid;
+    }
+    
+    // Show field error
+    function showFieldError(field, message) {
+        // Remove any existing error
+        clearFieldError(field);
+        
+        // Add error class
+        field.classList.add('error');
+        
+        // Create error message element
+        const errorElement = document.createElement('div');
+        errorElement.className = 'field-error';
+        errorElement.style.color = 'var(--error)';
+        errorElement.style.fontSize = '0.8em';
+        errorElement.style.marginTop = '5px';
+        errorElement.textContent = message;
+        
+        // Insert after field
+        field.parentNode.appendChild(errorElement);
+    }
+    
+    // Clear field error
+    function clearFieldError(field) {
+        field.classList.remove('error');
+        
+        // Remove error message
+        const errorElement = field.parentNode.querySelector('.field-error');
+        if (errorElement) {
+            errorElement.remove();
+        }
+    }
+    
+    // Validate entire form
+    function validateForm() {
+        let isValid = true;
+        const formInputs = document.querySelectorAll('.form-input, .form-select, .form-textarea');
+        
+        formInputs.forEach(input => {
+            if (!validateField(input)) {
+                isValid = false;
+            }
+        });
+        
+        return isValid;
+    }
+    
+    // Modal control functions
+    function openPasswordModal() {
+        const modal = document.getElementById('passwordModal');
+        if (modal) {
+            modal.classList.add('show');
+        }
+    }
+    
+    function closePasswordModal() {
+        const modal = document.getElementById('passwordModal');
+        if (modal) {
+            modal.classList.remove('show');
+            document.getElementById('passwordForm').reset();
+        }
+    }
+    
+    function openDeleteAccountModal() {
+        const modal = document.getElementById('deleteAccountModal');
+        if (modal) {
+            modal.classList.add('show');
+        }
+    }
+    
+    function closeDeleteAccountModal() {
+        const modal = document.getElementById('deleteAccountModal');
+        if (modal) {
+            modal.classList.remove('show');
+            document.getElementById('deleteConfirmation').value = '';
+        }
+    }
+    
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initProfileEditing();
+        
+        // Add event listeners for modal controls
+        document.querySelectorAll('[onclick^="open"]').forEach(element => {
+            const onclick = element.getAttribute('onclick');
+            if (onclick.includes('openPasswordModal')) {
+                element.addEventListener('click', openPasswordModal);
+            } else if (onclick.includes('openDeleteAccountModal')) {
+                element.addEventListener('click', openDeleteAccountModal);
+            }
+        });
+        
+        document.querySelectorAll('[onclick^="close"]').forEach(element => {
+            const onclick = element.getAttribute('onclick');
+            if (onclick.includes('closePasswordModal')) {
+                element.addEventListener('click', closePasswordModal);
+            } else if (onclick.includes('closeDeleteAccountModal')) {
+                element.addEventListener('click', closeDeleteAccountModal);
+            } else if (onclick.includes('closeProfileModal')) {
+                element.addEventListener('click', closeProfileModal);
+            }
+        });
+    });
+</script>
 </body>
 </html>
