@@ -30,6 +30,16 @@
             --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
         }
 
+        /* Light mode variables */
+        .light-mode {
+            --dark-bg: #f0f2f5;
+            --darker-bg: #e4e6eb;
+            --card-bg: #ffffff;
+            --text-dark: #1a1a1a;
+            --text-light: #4a4a4a;
+            --text-muted: #7a7a7a;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -43,6 +53,7 @@
             overflow-x: hidden;
             padding-top: 110px; /* Space for fixed navbar + ticker */
             line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* Top Navigation Bar - Enhanced contrast */
@@ -61,6 +72,11 @@
             border-bottom: 1px solid var(--primary);
             transition: var(--transition);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .light-mode .top-navbar {
+            background-color: rgba(240, 242, 245, 0.98);
+            border-bottom: 1px solid var(--primary);
         }
 
         .nav-center-container {
@@ -116,6 +132,10 @@
             overflow: hidden;
         }
 
+        .light-mode .top-nav-links li a {
+            color: var(--text-dark);
+        }
+
         .top-nav-links li a::before {
             content: '';
             position: absolute;
@@ -137,6 +157,157 @@
         .top-nav-links li a:hover::before {
             transform: scaleX(1);
             transform-origin: left;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+            margin-left: 15px;
+        }
+
+        .light-mode .theme-toggle {
+            color: var(--text-dark);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(0, 214, 143, 0.1);
+            transform: rotate(30deg);
+        }
+
+        /* Notification Bell */
+        .notification-bell {
+            position: relative;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+            margin-left: 10px;
+        }
+
+        .light-mode .notification-bell {
+            color: var(--text-dark);
+        }
+
+        .notification-bell:hover {
+            background: rgba(0, 184, 217, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--error);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 1.5s infinite;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            z-index: 1001;
+            display: none;
+            margin-top: 10px;
+            border: 1px solid var(--primary);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 214, 143, 0.3);
+        }
+
+        .notification-header h3 {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .mark-all-read {
+            background: transparent;
+            border: none;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mark-all-read:hover {
+            color: var(--primary);
+        }
+
+        .notification-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: rgba(0, 214, 143, 0.05);
+            border-left: 3px solid var(--primary);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .light-mode .notification-item {
+            background: rgba(0, 214, 143, 0.08);
+        }
+
+        .notification-item:hover {
+            transform: translateX(5px);
+            background: rgba(0, 214, 143, 0.1);
+        }
+
+        .notification-item.unread {
+            background: rgba(0, 184, 217, 0.1);
+            border-left: 3px solid var(--secondary);
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .notification-empty {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
         }
 
         /* Top Navigation Hamburger Menu */
@@ -193,10 +364,18 @@
             padding: 0;
         }
 
+        .light-mode .news-ticker-container {
+            background: rgba(255, 255, 255, 0.98);
+        }
+
         .news-ticker {
             padding: 8px 0;
             color: var(--text-light);
             font-size: 0.9em;
+        }
+
+        .light-mode .news-ticker {
+            color: var(--text-dark);
         }
 
         .news-ticker-content {
@@ -249,6 +428,10 @@
             justify-content: center;
             z-index: 9999;
             backdrop-filter: blur(10px);
+        }
+
+        .light-mode .loading-overlay {
+            background: rgba(240, 242, 245, 0.95);
         }
 
         .loading-container {
@@ -413,6 +596,10 @@
             flex-direction: column;
         }
 
+        .light-mode .sidebar {
+            background: rgba(255, 255, 255, 0.98);
+        }
+
         .sidebar.open {
             transform: translateX(0);
         }
@@ -448,6 +635,11 @@
             position: relative;
             overflow: hidden;
             color: var(--text-light);
+        }
+
+        .light-mode .nav-item {
+            color: var(--text-dark);
+            background: rgba(0, 214, 143, 0.08);
         }
 
         .nav-item::before {
@@ -526,6 +718,10 @@
             overflow: hidden;
         }
 
+        .light-mode .hero-section {
+            background: linear-gradient(135deg, rgba(0, 214, 143, 0.1), rgba(0, 184, 217, 0.1));
+        }
+
         .hero-content {
             position: relative;
             z-index: 2;
@@ -554,6 +750,10 @@
             font-size: 1.1em;
         }
 
+        .light-mode .welcome-text p {
+            color: var(--text-dark);
+        }
+
         /* Subjects Section - Better contrast */
         .subjects-section {
             background: rgba(255, 255, 255, 0.08);
@@ -562,6 +762,10 @@
             backdrop-filter: blur(15px);
             border: 1px solid rgba(0, 214, 143, 0.4);
             margin-top: 20px;
+        }
+
+        .light-mode .subjects-section {
+            background: rgba(0, 0, 0, 0.05);
         }
 
         .subjects-header {
@@ -612,6 +816,10 @@
             user-select: none;
         }
 
+        .light-mode .subject-chip {
+            color: var(--text-dark);
+        }
+
         .subject-chip:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 214, 143, 0.3);
@@ -655,6 +863,296 @@
             cursor: not-allowed;
         }
 
+        /* NEW: Two-column layout for additional features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* NEW: Upcoming Events Section */
+        .events-section {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(123, 104, 238, 0.4);
+            height: 100%;
+        }
+
+        .light-mode .events-section {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-header h3 {
+            color: var(--accent);
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-all-btn {
+            background: transparent;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .view-all-btn:hover {
+            background: rgba(123, 104, 238, 0.1);
+            transform: scale(1.05);
+        }
+
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .event-item {
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(123, 104, 238, 0.1);
+            border-left: 3px solid var(--accent);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .event-item:hover {
+            transform: translateX(5px);
+            background: rgba(123, 104, 238, 0.15);
+        }
+
+        .event-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .event-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        /* NEW: Announcements Section */
+        .announcements-section {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 193, 7, 0.4);
+            height: 100%;
+        }
+
+        .light-mode .announcements-section {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .announcements-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .announcement-item {
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 3px solid var(--warning);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .announcement-item:hover {
+            transform: translateX(5px);
+            background: rgba(255, 193, 7, 0.15);
+        }
+
+        .announcement-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .announcement-date {
+            font-size: 0.8em;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* NEW: Progress Chart Section */
+        .progress-section {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 184, 217, 0.4);
+            margin-bottom: 30px;
+        }
+
+        .light-mode .progress-section {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-container {
+            height: 200px;
+            position: relative;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            padding: 0 10px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--secondary), var(--primary));
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+
+        .chart-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--text-muted);
+        }
+
+        .chart-value {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        /* NEW: Quick Stats Section */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 15px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 214, 143, 0.4);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .stat-item {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 214, 143, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        /* NEW: Resources Section */
+        .resources-section {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 71, 87, 0.4);
+            margin-bottom: 30px;
+        }
+
+        .light-mode .resources-section {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .resource-card {
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 71, 87, 0.15);
+        }
+
+        .resource-icon {
+            font-size: 1.5em;
+            color: var(--error);
+            margin-bottom: 10px;
+        }
+
+        .resource-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .resource-desc {
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
         /* Subject Modal - Better contrast */
         .modal-overlay {
             position: fixed;
@@ -685,6 +1183,10 @@
             backdrop-filter: blur(20px);
             border: 1px solid var(--primary);
             position: relative;
+        }
+
+        .light-mode .subject-modal {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(245, 245, 245, 0.98));
         }
 
         .modal-header {
@@ -757,6 +1259,11 @@
             color: var(--text-light);
         }
 
+        .light-mode .subject-option {
+            color: var(--text-dark);
+            background: rgba(0, 0, 0, 0.05);
+        }
+
         .subject-option:hover {
             background: rgba(0, 214, 143, 0.15);
             border-color: var(--primary);
@@ -798,6 +1305,10 @@
             border: 1px solid rgba(0, 184, 217, 0.4);
         }
 
+        .light-mode .modal-btn.secondary {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
         .modal-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 214, 143, 0.3);
@@ -819,6 +1330,10 @@
             text-align: center;
             transform: perspective(1000px) rotateY(-5deg);
             transition: transform 0.3s ease;
+        }
+
+        .light-mode .profile-card {
+            background: rgba(0, 0, 0, 0.05);
         }
 
         .profile-card:hover {
@@ -854,6 +1369,10 @@
             font-size: 0.9em;
         }
 
+        .light-mode .user-info p {
+            color: var(--text-dark);
+        }
+
         /* Quick Actions - Better contrast */
         .quick-actions {
             display: grid;
@@ -873,6 +1392,10 @@
             position: relative;
             overflow: hidden;
             font-weight: 500;
+        }
+
+        .light-mode .action-btn {
+            color: var(--text-dark);
         }
 
         .action-btn:hover {
@@ -917,6 +1440,10 @@
             transition: transform 0.3s ease;
         }
 
+        .light-mode .stat-card {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
         .stat-card:hover {
             transform: scale(1.05);
         }
@@ -933,6 +1460,10 @@
         .stat-label {
             color: var(--text-light);
             font-size: 1.1em;
+        }
+
+        .light-mode .stat-label {
+            color: var(--text-dark);
         }
 
         /* Floating Elements */
@@ -1047,6 +1578,10 @@
                 -webkit-backdrop-filter: blur(10px);
                 border-bottom: 1px solid var(--primary);
             }
+
+            .light-mode .top-nav-links {
+                background-color: rgba(240, 242, 245, 0.98);
+            }
             
             .top-nav-links.show {
                 transform: translateY(0);
@@ -1087,6 +1622,12 @@
                 width: 45px;
                 height: 45px;
             }
+
+            /* Adjust notification dropdown for mobile */
+            .notification-dropdown {
+                width: 300px;
+                right: -20px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1100,6 +1641,11 @@
             
             .news-ticker-container {
                 top: 70px; /* Adjusted for mobile */
+            }
+
+            .notification-dropdown {
+                width: 280px;
+                right: -40px;
             }
         }
 
@@ -1116,6 +1662,11 @@
             0% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.4); }
             70% { box-shadow: 0 0 0 10px rgba(0, 214, 143, 0); }
             100% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .ripple {
@@ -1167,12 +1718,39 @@
                 </ul>
             </div>
 
-            <!--Top Hamburger-->
-            <button class="top-hamburger" id="top-hamburger-btn" aria-label="Menu">
-                <span class="top-hamburger-line"></span>
-                <span class="top-hamburger-line"></span>
-                <span class="top-hamburger-line"></span>
-            </button>
+            <!-- Right side icons -->
+            <div style="display: flex; align-items: center;">
+                <!-- Theme Toggle -->
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                
+                <!-- Notification Bell -->
+                <div style="position: relative;">
+                    <button class="notification-bell" id="notificationBell" aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">3</span>
+                    </button>
+                    
+                    <!-- Notification Dropdown -->
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                            <button class="mark-all-read" id="markAllRead">Mark all as read</button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <!-- Notifications will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!--Top Hamburger-->
+                <button class="top-hamburger" id="top-hamburger-btn" aria-label="Menu">
+                    <span class="top-hamburger-line"></span>
+                    <span class="top-hamburger-line"></span>
+                    <span class="top-hamburger-line"></span>
+                </button>
+            </div>
         </nav>
         
         <!-- News Ticker - directly under navbar, NO gap -->
@@ -1282,6 +1860,76 @@
             </div>
         </div>
 
+        <!-- NEW: Quick Stats Section -->
+        <div class="quick-stats">
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-tasks"></i></div>
+                <div class="stat-value" id="completedTasks">12</div>
+                <div class="stat-label">Completed Tasks</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-value" id="pendingTasks">5</div>
+                <div class="stat-label">Pending Tasks</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="stat-value" id="upcomingEvents">3</div>
+                <div class="stat-label">Upcoming Events</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                <div class="stat-value" id="achievements">8</div>
+                <div class="stat-label">Achievements</div>
+            </div>
+        </div>
+
+        <!-- NEW: Features Grid (Events and Announcements) -->
+        <div class="features-grid">
+            <!-- Upcoming Events Section -->
+            <div class="events-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-calendar-day"></i> Upcoming Events</h3>
+                    <button class="view-all-btn">View All</button>
+                </div>
+                <div class="events-list" id="upcomingEventsList">
+                    <!-- Events will be populated here -->
+                </div>
+            </div>
+
+            <!-- Announcements Section -->
+            <div class="announcements-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-bullhorn"></i> Recent Announcements</h3>
+                    <button class="view-all-btn">View All</button>
+                </div>
+                <div class="announcements-list" id="announcementsList">
+                    <!-- Announcements will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Progress Chart Section -->
+        <div class="progress-section">
+            <div class="section-header">
+                <h3><i class="fas fa-chart-line"></i> Weekly Progress</h3>
+            </div>
+            <div class="chart-container" id="progressChart">
+                <!-- Chart will be populated here -->
+            </div>
+        </div>
+
+        <!-- NEW: Resources Section -->
+        <div class="resources-section">
+            <div class="section-header">
+                <h3><i class="fas fa-book-open"></i> Featured Resources</h3>
+                <button class="view-all-btn">View All</button>
+            </div>
+            <div class="resources-grid" id="featuredResources">
+                <!-- Resources will be populated here -->
+            </div>
+        </div>
+
         <!-- Quick Actions -->
         <div class="quick-actions">
             <button class="action-btn">🎯 Join Event</button>
@@ -1327,6 +1975,234 @@
             'Business', 'English', 'Puzzles and Riddles', 'Earth and Space Sciences',
             'Robotics'
         ];
+
+        // NEW: Sample data for new features
+        const sampleEvents = [
+            { title: "Science Fair 2023", date: "Oct 15, 2023", time: "10:00 AM", location: "School Gym" },
+            { title: "Robotics Workshop", date: "Oct 22, 2023", time: "3:30 PM", location: "Lab B" },
+            { title: "Chemistry Olympiad", date: "Nov 5, 2023", time: "9:00 AM", location: "Chemistry Lab" },
+            { title: "Physics Quiz Competition", date: "Nov 12, 2023", time: "2:00 PM", location: "Auditorium" }
+        ];
+
+        const sampleAnnouncements = [
+            { title: "New Research Opportunity", date: "Oct 10, 2023", content: "Applications are now open for the summer research program." },
+            { title: "Website Update", date: "Oct 5, 2023", content: "We've updated our resources section with new study materials." },
+            { title: "Meeting Cancelled", date: "Oct 3, 2023", content: "This week's meeting is cancelled due to school events." },
+            { title: "Competition Results", date: "Sep 28, 2023", content: "Congratulations to all participants in the recent science bowl!" }
+        ];
+
+        const sampleResources = [
+            { title: "Physics Formula Sheet", type: "pdf", description: "Complete formula reference for all topics" },
+            { title: "Chemistry Lab Safety", type: "video", description: "Important safety procedures for the lab" },
+            { title: "Math Problem Sets", type: "document", description: "Practice problems with solutions" },
+            { title: "Biology Study Guide", type: "pdf", description: "Exam preparation materials" }
+        ];
+
+        const sampleNotifications = [
+            { title: "New Message", content: "You have a new message from Dr. Smith", time: "2 hours ago", read: false },
+            { title: "Event Reminder", content: "Science Fair starts in 3 days", time: "5 hours ago", read: false },
+            { title: "Assignment Graded", content: "Your physics project has been graded", time: "1 day ago", read: true },
+            { title: "New Resource", content: "New study materials available", time: "2 days ago", read: true }
+        ];
+
+        // NEW: Theme toggle functionality
+        function setupThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const icon = themeToggle.querySelector('i');
+            
+            // Check for saved theme preference or respect OS preference
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
+                document.body.classList.add('light-mode');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+            
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                
+                if (document.body.classList.contains('light-mode')) {
+                    localStorage.setItem('theme', 'light');
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    localStorage.setItem('theme', 'dark');
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            });
+        }
+
+        // NEW: Notification functionality
+        function setupNotifications() {
+            const notificationBell = document.getElementById('notificationBell');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const notificationList = document.getElementById('notificationList');
+            const markAllRead = document.getElementById('markAllRead');
+            const notificationBadge = document.getElementById('notificationBadge');
+            
+            // Populate notifications
+            function populateNotifications() {
+                notificationList.innerHTML = '';
+                
+                if (sampleNotifications.length === 0) {
+                    notificationList.innerHTML = '<div class="notification-empty">No notifications</div>';
+                    return;
+                }
+                
+                sampleNotifications.forEach(notification => {
+                    const notificationItem = document.createElement('div');
+                    notificationItem.className = `notification-item ${notification.read ? '' : 'unread'}`;
+                    notificationItem.innerHTML = `
+                        <div class="notification-title">${notification.title}</div>
+                        <div>${notification.content}</div>
+                        <div class="notification-time">${notification.time}</div>
+                    `;
+                    
+                    notificationItem.addEventListener('click', () => {
+                        notification.read = true;
+                        updateNotificationBadge();
+                        populateNotifications();
+                    });
+                    
+                    notificationList.appendChild(notificationItem);
+                });
+            }
+            
+            // Update notification badge
+            function updateNotificationBadge() {
+                const unreadCount = sampleNotifications.filter(n => !n.read).length;
+                notificationBadge.textContent = unreadCount;
+                notificationBadge.style.display = unreadCount > 0 ? 'flex' : 'none';
+            }
+            
+            // Toggle dropdown
+            notificationBell.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('show');
+            });
+            
+            // Mark all as read
+            markAllRead.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sampleNotifications.forEach(n => n.read = true);
+                updateNotificationBadge();
+                populateNotifications();
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!notificationBell.contains(e.target) && !notificationDropdown.contains(e.target)) {
+                    notificationDropdown.classList.remove('show');
+                }
+            });
+            
+            // Initialize
+            populateNotifications();
+            updateNotificationBadge();
+        }
+
+        // NEW: Populate events
+        function populateEvents() {
+            const eventsList = document.getElementById('upcomingEventsList');
+            eventsList.innerHTML = '';
+            
+            sampleEvents.slice(0, 3).forEach(event => {
+                const eventItem = document.createElement('div');
+                eventItem.className = 'event-item';
+                eventItem.innerHTML = `
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-details">
+                        <span>${event.date}</span>
+                        <span>${event.location}</span>
+                    </div>
+                `;
+                eventsList.appendChild(eventItem);
+            });
+            
+            // Update quick stats
+            document.getElementById('upcomingEvents').textContent = sampleEvents.length;
+        }
+
+        // NEW: Populate announcements
+        function populateAnnouncements() {
+            const announcementsList = document.getElementById('announcementsList');
+            announcementsList.innerHTML = '';
+            
+            sampleAnnouncements.slice(0, 3).forEach(announcement => {
+                const announcementItem = document.createElement('div');
+                announcementItem.className = 'announcement-item';
+                announcementItem.innerHTML = `
+                    <div class="announcement-title">
+                        <i class="fas fa-bullhorn"></i> ${announcement.title}
+                    </div>
+                    <div>${announcement.content}</div>
+                    <div class="announcement-date">${announcement.date}</div>
+                `;
+                announcementsList.appendChild(announcementItem);
+            });
+        }
+
+        // NEW: Populate resources
+        function populateResources() {
+            const resourcesGrid = document.getElementById('featuredResources');
+            resourcesGrid.innerHTML = '';
+            
+            sampleResources.forEach(resource => {
+                let icon = 'file';
+                if (resource.type === 'pdf') icon = 'file-pdf';
+                if (resource.type === 'video') icon = 'video';
+                
+                const resourceCard = document.createElement('div');
+                resourceCard.className = 'resource-card';
+                resourceCard.innerHTML = `
+                    <div class="resource-icon"><i class="fas fa-${icon}"></i></div>
+                    <div class="resource-title">${resource.title}</div>
+                    <div class="resource-desc">${resource.description}</div>
+                `;
+                resourcesGrid.appendChild(resourceCard);
+            });
+        }
+
+        // NEW: Create progress chart
+        function createProgressChart() {
+            const chartContainer = document.getElementById('progressChart');
+            chartContainer.innerHTML = '';
+            
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const data = [4, 6, 3, 5, 8, 2, 4]; // Sample data
+            
+            const maxValue = Math.max(...data);
+            
+            days.forEach((day, index) => {
+                const height = (data[index] / maxValue) * 150; // Scale to max 150px height
+                
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+                bar.style.height = `${height}px`;
+                
+                const value = document.createElement('div');
+                value.className = 'chart-value';
+                value.textContent = data[index];
+                
+                const label = document.createElement('div');
+                label.className = 'chart-label';
+                label.textContent = day;
+                
+                bar.appendChild(value);
+                bar.appendChild(label);
+                chartContainer.appendChild(bar);
+            });
+        }
+
+        // NEW: Update quick stats
+        function updateQuickStats() {
+            document.getElementById('completedTasks').textContent = '12';
+            document.getElementById('pendingTasks').textContent = '5';
+            document.getElementById('achievements').textContent = '8';
+        }
 
         // Top Navigation Hamburger Toggle
         document.addEventListener('DOMContentLoaded', function() {
@@ -1383,6 +2259,15 @@
                     }
                 });
             }
+
+            // NEW: Setup additional features
+            setupThemeToggle();
+            setupNotifications();
+            populateEvents();
+            populateAnnouncements();
+            populateResources();
+            createProgressChart();
+            updateQuickStats();
         });
 
         // Check authentication and update navigation
