@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
+
   <!-- Homepage -->
   <url>
     <loc>https://bhsciencesociety.vercel.app/index.html</loc>
@@ -9,7 +9,7 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- About Page -->
+  <!-- About -->
   <url>
     <loc>https://bhsciencesociety.vercel.app/about.html</loc>
     <lastmod>2025-08-27</lastmod>
@@ -17,7 +17,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Research Page -->
+  <!-- Research -->
   <url>
     <loc>https://bhsciencesociety.vercel.app/research.html</loc>
     <lastmod>2025-08-27</lastmod>
@@ -25,23 +25,23 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Events (Closed) Page -->
+  <!-- Events (Closed) -->
   <url>
-    <loc>https://bhsciencesociety.vercel.app/events.html</loc>
+    <loc>https://bhsciencesociety.vercel.app/events-closed.html</loc>
     <lastmod>2025-08-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- Team (Closed) Page -->
+  <!-- Team (Closed) -->
   <url>
-    <loc>https://bhsciencesociety.vercel.app/team.html</loc>
+    <loc>https://bhsciencesociety.vercel.app/team-closed.html</loc>
     <lastmod>2025-08-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- Register Page -->
+  <!-- Register -->
   <url>
     <loc>https://bhsciencesociety.vercel.app/register.html</loc>
     <lastmod>2025-08-27</lastmod>
@@ -49,7 +49,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Login Page -->
+  <!-- Login -->
   <url>
     <loc>https://bhsciencesociety.vercel.app/login.html</loc>
     <lastmod>2025-08-27</lastmod>
@@ -57,39 +57,7 @@
     <priority>0.6</priority>
   </url>
 
-  <!-- Dashboard Page -->
-  <url>
-    <loc>https://bhsciencesociety.vercel.app/dashboard.html</loc>
-    <lastmod>2025-08-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Admin Page -->
-  <url>
-    <loc>https://bhsciencesociety.vercel.app/admin.html</loc>
-    <lastmod>2025-08-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <!-- Admin Login Page -->
-  <url>
-    <loc>https://bhsciencesociety.vercel.app/admin-login.html</loc>
-    <lastmod>2025-08-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <!-- Reset Password Page -->
-  <url>
-    <loc>https://bhsciencesociety.vercel.app/reset-password.html</loc>
-    <lastmod>2025-08-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <!-- Thank You Page -->
+  <!-- Thank You -->
   <url>
     <loc>https://bhsciencesociety.vercel.app/thank-you.html</loc>
     <lastmod>2025-08-27</lastmod>
