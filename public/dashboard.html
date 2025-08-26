@@ -2004,13 +2004,7 @@
         ];
 
         // NEW: Theme toggle functionality
-        function setupThemeToggle() {
-            const themeToggle = document.getElementById('themeToggle');
-            const icon = themeToggle.querySelector('i');
-            
-            // Check for saved theme preference or respect OS preference
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
             
           
 
@@ -2240,7 +2234,6 @@
             }
 
             // NEW: Setup additional features
-            setupThemeToggle();
             setupNotifications();
             populateEvents();
             populateAnnouncements();
@@ -2956,7 +2949,7 @@
             console.log('Current User:', currentUser);
             console.log('User Subjects:', userSubjects);
             console.log('Auth Token:', getAuthToken());
-        }};
+        };
     </script>
 </body>
 </html>
