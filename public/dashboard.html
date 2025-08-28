@@ -2325,7 +2325,7 @@
             </div>
             
             <form id="profileForm">
-                <!-- Basic Info Tab -->
+            <!-- In the Basic Info Tab section of the profile modal -->
                 <div class="profile-tab-content active" id="basicTab">
                     <div class="avatar-upload">
                         <div class="avatar-preview" id="avatarPreview">
@@ -2339,7 +2339,8 @@
                     
                     <div class="form-group full-width">
                         <label class="form-label">Full Name</label>
-                        <input type="text" class="form-input" id="profileFullName" name="fullName" placeholder="Enter your full name">
+                        <input type="text" class="form-input" id="profileFullName" name="fullName" placeholder="Enter your full name" readonly>
+                        <div class="form-hint">Name cannot be changed</div>
                     </div>
                     
                     <div class="form-group">
@@ -2361,8 +2362,8 @@
                         <input type="date" class="form-input" id="profileDob" name="dob">
                     </div>
                 </div>
-                
-                <!-- Academic Tab -->
+            
+            <!-- Academic Tab - Remove city, country, and school fields -->
                 <div class="profile-tab-content" id="academicTab">
                     <div class="form-group">
                         <label class="form-label">Grade/Year</label>
@@ -2377,30 +2378,14 @@
                         </select>
                     </div>
                     
-                    <div class="form-group">
-                        <label class="form-label">School Name</label>
-                        <input type="text" class="form-input" id="profileSchool" name="school" placeholder="Enter your school name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">City</label>
-                        <input type="text" class="form-input" id="profileCity" name="city" placeholder="Enter your city">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Country</label>
-                        <select class="form-select" id="profileCountry" name="country">
-                            <option value="">Select your country</option>
-                            <!-- Countries will be populated dynamically -->
-                        </select>
-                    </div>
-                    
                     <div class="form-group full-width">
                         <label class="form-label">Bio/Introduction</label>
                         <textarea class="form-textarea" id="profileBio" name="bio" placeholder="Tell us about yourself, your interests, and goals..."></textarea>
                         <div class="form-hint">Max 500 characters</div>
                     </div>
                 </div>
+                
+             
                 
                 <!-- Social Tab -->
                 <div class="profile-tab-content" id="socialTab">
@@ -3703,7 +3688,10 @@ async function loadProfileData() {
 
     
     // Populate form with profile data
+// Populate form with profile data
 function populateProfileForm(data) {
+    console.log('Populating form with data:', data);
+    
     // Basic info
     document.getElementById('profileFullName').value = data.fullName || '';
     document.getElementById('profileEmail').value = data.email || '';
@@ -3712,9 +3700,6 @@ function populateProfileForm(data) {
     
     // Academic info
     document.getElementById('profileGrade').value = data.grade || '';
-    document.getElementById('profileSchool').value = data.school || '';
-    document.getElementById('profileCity').value = data.city || '';
-    document.getElementById('profileCountry').value = data.country || '';
     document.getElementById('profileBio').value = data.bio || '';
     
     // Social info
@@ -3741,9 +3726,7 @@ function populateProfileForm(data) {
     // Calculate profile completion percentage
     function calculateProfileCompletion() {
         const fields = [
-            'fullName', 'email', 'phone', 'dob', 
-            'grade', 'school', 'city', 'country', 'bio',
-            'linkedin', 'github', 'twitter', 'instagram', 'website'
+            'bio', 'linkedin','instagram'
         ];
         
         let completed = 0;
