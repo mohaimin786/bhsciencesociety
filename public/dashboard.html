@@ -2326,7 +2326,7 @@
             
             <form id="profileForm">
             <!-- In the Basic Info Tab section of the profile modal -->
-                <div class="profile-tab-content active" id="basicTab">
+                 <div class="profile-tab-content active" id="basicTab">
                     <div class="avatar-upload">
                         <div class="avatar-preview" id="avatarPreview">
                             <span id="avatarInitials">?</span>
@@ -2359,11 +2359,12 @@
                     
                     <div class="form-group">
                         <label class="form-label">Date of Birth</label>
-                        <input type="date" class="form-input" id="profileDob" name="dob">
+                        <input type="date" class="form-input" id="profileDob" name="dob" readonly>
+                        <div class="form-hint">Date of birth cannot be changed</div>
                     </div>
                 </div>
-            
-            <!-- Academic Tab - Remove city, country, and school fields -->
+                
+                <!-- Academic Tab - Remove city, country, and school fields -->
                 <div class="profile-tab-content" id="academicTab">
                     <div class="form-group">
                         <label class="form-label">Grade/Year</label>
@@ -3698,8 +3699,12 @@ function populateProfileForm(data) {
     document.getElementById('profilePhone').value = data.phone || '';
     document.getElementById('profileDob').value = data.dob || '';
     
-    // Academic info
-    document.getElementById('profileGrade').value = data.grade || '';
+    // Academic info - make sure grade is properly set
+    const gradeSelect = document.getElementById('profileGrade');
+    if (gradeSelect && data.grade) {
+        gradeSelect.value = data.grade;
+    }
+    
     document.getElementById('profileBio').value = data.bio || '';
     
     // Social info
@@ -3722,6 +3727,7 @@ function populateProfileForm(data) {
         }
     }
 }
+
     
     // Calculate profile completion percentage
     function calculateProfileCompletion() {
@@ -3877,54 +3883,64 @@ async function handleProfileSubmit(e) {
     
     // Handle avatar upload
     async function handleAvatarUpload(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        // Check if file is an image
-        if (!file.type.match('image.*')) {
-            showNotification('Please select an image file', 'error');
-            return;
-        }
-        
-        // Check file size (max 2MB)
-        if (file.size > 2 * 1024 * 1024) {
-            showNotification('Image must be less than 2MB', 'error');
-            return;
-        }
-        
-        try {
-            const formData = new FormData();
-            formData.append('avatar', file);
-            
-            const token = getAuthToken();
-            const response = await fetch(`${API_BASE_URL}/api/user/avatar-upload`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                // Update avatar preview
-                const avatarPreview = document.getElementById('avatarPreview');
-                if (avatarPreview) {
-                    avatarPreview.innerHTML = `<img src="${result.avatar}" alt="Profile Avatar" style="width: 100%; height: 100%; object-fit: cover;">`;
-                }
-                showNotification('Avatar uploaded successfully!');
-                
-                // Update profile data
-                profileData.avatar = result.avatar;
-            } else {
-                throw new Error(result.message || 'Upload failed');
-            }
-        } catch (error) {
-            console.error('Avatar upload error:', error);
-            showNotification('Failed to upload avatar. Please try again.', 'error');
-        }
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    // Check if file is an image
+    if (!file.type.match('image.*')) {
+        showNotification('Please select an image file', 'error');
+        return;
     }
+    
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+        showNotification('Image must be less than 2MB', 'error');
+        return;
+    }
+    
+    try {
+        const formData = new FormData();
+        formData.append('avatar', file);
+        
+        const token = getAuthToken();
+        const response = await fetch(`${API_BASE_URL}/api/user/avatar-upload`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Update avatar preview in modal
+            const avatarPreview = document.getElementById('avatarPreview');
+            if (avatarPreview) {
+                avatarPreview.innerHTML = `<img src="${result.avatar}" alt="Profile Avatar" style="width: 100%; height: 100%; object-fit: cover;">`;
+            }
+            
+            // Update avatar in hero section immediately
+            const profileInitials = document.getElementById('profileInitials');
+            if (profileInitials) {
+                profileInitials.innerHTML = `<img src="${result.avatar}" alt="Profile Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            }
+            
+            showNotification('Avatar uploaded successfully!');
+            
+            // Update profile data
+            profileData.avatar = result.avatar;
+            
+            // Auto-save the change
+            autoSaveProfile();
+        } else {
+            throw new Error(result.message || 'Upload failed');
+        }
+    } catch (error) {
+        console.error('Avatar upload error:', error);
+        showNotification('Failed to upload avatar. Please try again.', 'error');
+    }
+}
     
     // Handle password change
     async function handlePasswordChange(e) {
