@@ -3697,7 +3697,23 @@ function populateProfileForm(data) {
     document.getElementById('profileFullName').value = data.fullName || '';
     document.getElementById('profileEmail').value = data.email || '';
     document.getElementById('profilePhone').value = data.phone || '';
-    document.getElementById('profileDob').value = data.dob || '';
+    if (data.dob) {
+    let dobValue = data.dob;
+    console.log('Raw DOB value:', dobValue);
+    
+    // If DOB is in DD/MM/YYYY format, convert to YYYY-MM-DD
+    if (dobValue.includes('/')) {
+        const parts = dobValue.split('/');
+        if (parts.length === 3) {
+            dobValue = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            console.log('Converted DOB to:', dobValue);
+        }
+    }
+    document.getElementById('profileDob').value = dobValue;
+} else {
+    console.log('No DOB found in data');
+    document.getElementById('profileDob').value = '';
+}
     
     // Academic info - make sure grade is properly set
     const gradeSelect = document.getElementById('profileGrade');
