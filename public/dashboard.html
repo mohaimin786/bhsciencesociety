@@ -4482,24 +4482,28 @@ async function handleProfileSubmit(e) {
 </script>
     <script>
     // Settings functionality
- function openSettings() {
-        console.log("Opening settings...");
+    function openSettings() {
+        console.log("Opening settings page...");
         
-        // Hide main content and show settings page
         const mainContent = document.getElementById('mainContent');
         const settingsPage = document.getElementById('settingsPage');
         
         if (mainContent && settingsPage) {
-            mainContent.style.display = 'none';
+            // Hide all main content children
+            const mainChildren = mainContent.children;
+            for (let i = 0; i < mainChildren.length; i++) {
+                if (mainChildren[i].id !== 'settingsPage') {
+                    mainChildren[i].style.display = 'none';
+                }
+            }
+            
+            // Show settings page
             settingsPage.style.display = 'block';
             
             // Load settings data
             loadSettingsData();
             
-            // Scroll to top
             window.scrollTo(0, 0);
-        } else {
-            console.error("Could not find mainContent or settingsPage elements");
         }
     }
     
