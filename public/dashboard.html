@@ -3749,26 +3749,29 @@ async function initializeDashboard() {
         }
 
         // Navigation handlers
-        function setupNavigation() {
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const page = this.textContent.toLowerCase();
-                    console.log(`Navigating to: ${page}`);
-                    
-                    this.style.background = 'rgba(0, 214, 143, 0.3)';
-                    setTimeout(() => {
-                        this.style.background = 'rgba(92, 225, 183, 0.1)';
-                    }, 200);
-                    
-                    if (page === 'profile') {
-                        showUserProfile();
-                    } else {
-                        showNotification(`${page.charAt(0).toUpperCase() + page.slice(1)} section coming soon!`);
-                    }
-                });
+ function setupNavigation() {
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const page = this.textContent.toLowerCase().trim();
+                console.log(`Navigating to: ${page}`);
+                
+                this.style.background = 'rgba(0, 214, 143, 0.3)';
+                setTimeout(() => {
+                    this.style.background = 'rgba(92, 225, 183, 0.1)';
+                }, 200);
+                
+                // Handle specific navigation items
+                if (page === 'settings') {
+                    openSettings(); // This will open the settings page
+                } else if (page === 'dashboard') {
+                    goBackToDashboard(); // This will return to dashboard
+                } else {
+                    showNotification(`${page.charAt(0).toUpperCase() + page.slice(1)} section coming soon!`);
+                }
             });
-        }
+        });
+    }
 
         function showUserProfile() {
             if (currentUser) {
