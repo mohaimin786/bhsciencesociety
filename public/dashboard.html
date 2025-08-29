@@ -3697,7 +3697,7 @@ function populateProfileForm(data) {
     document.getElementById('profileFullName').value = data.fullName || '';
     document.getElementById('profileEmail').value = data.email || '';
     document.getElementById('profilePhone').value = data.phone || '';
-    document.getElementById('profileDob').value = dobValue || '';
+    document.getElementById('profileDob').value = data.dob || '';
 
     
     // Academic info - make sure grade is properly set
