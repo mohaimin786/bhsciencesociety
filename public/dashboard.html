@@ -55,6 +55,76 @@
             line-height: 1.6;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
+        .settings-page {
+        position: fixed;
+        top: 110px;
+        left: 0;
+        width: 100%;
+        height: calc(100vh - 110px);
+        background: var(--dark-bg);
+        z-index: 1000;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .light-mode .settings-page {
+        background: var(--dark-bg);
+    }
+
+    .settings-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(0, 214, 143, 0.3);
+    }
+
+    .back-to-dashboard {
+        background: rgba(0, 214, 143, 0.1);
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        padding: 10px 15px;
+        color: var(--primary);
+        cursor: pointer;
+        margin-right: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .back-to-dashboard:hover {
+        background: rgba(0, 214, 143, 0.2);
+        transform: translateX(-3px);
+    }
+
+    .settings-header h2 {
+        color: var(--primary);
+        font-size: 1.8em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .settings-content {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 30px;
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(0, 214, 143, 0.3);
+    }
+
+    .light-mode .settings-content {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    .settings-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(0, 214, 143, 0.3);
+    }
 
         /* Top Navigation Bar - Enhanced contrast */
         .top-navbar {
@@ -2221,7 +2291,7 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-content">
             <h3>Navigation</h3>
-            <div class="nav-item"><i class="fas fa-home"></i> Dashboard</div>
+             <div class="nav-item" onclick="goBackToDashboard()"><i class="fas fa-home"></i> Dashboard</div>
             <div class="nav-item"><i class="fas fa-calendar-alt"></i> Events</div>
             <div class="nav-item"><i class="fas fa-project-diagram"></i> Projects</div>
             <div class="nav-item"><i class="fas fa-trophy"></i> Leaderboard</div>
@@ -2473,7 +2543,182 @@
     </form>
   </div>
 </div>
-
+<div class="settings-page" id="settingsPage" style="display: none;">
+    <div class="settings-header">
+        <button class="back-to-dashboard" onclick="goBackToDashboard()">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </button>
+        <h2><i class="fas fa-cog"></i> Settings</h2>
+    </div>
+    
+    <div class="settings-content">
+        <!-- Profile Completion Meter -->
+        <div class="profile-completion">
+            <div class="completion-header">
+                <div class="completion-title">Profile Completion</div>
+                <div class="completion-percentage" id="settingsProfileCompletion">0%</div>
+            </div>
+            <div class="completion-bar">
+                <div class="completion-progress" id="settingsCompletionProgress" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <!-- Tab Navigation -->
+        <div class="profile-tabs">
+            <div class="profile-tab active" data-tab="basic">Basic Info</div>
+            <div class="profile-tab" data-tab="academic">Academic</div>
+            <div class="profile-tab" data-tab="social">Social</div>
+            <div class="profile-tab" data-tab="security">Security</div>
+        </div>
+        
+        <form id="settingsForm">
+            <!-- Basic Info Tab -->
+            <div class="profile-tab-content active" id="basicTab">
+                <div class="avatar-upload">
+                    <div class="avatar-preview" id="settingsAvatarPreview">
+                        <span id="settingsAvatarInitials">?</span>
+                    </div>
+                    <label class="avatar-upload-btn">
+                        <i class="fas fa-camera"></i> Change Avatar
+                        <input type="file" id="settingsAvatarInput" accept="image/*" style="display: none;">
+                    </label>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="settingsFullName" name="fullName" placeholder="Enter your full name" readonly>
+                    <div class="form-hint">Name cannot be changed</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="settingsEmail" name="email" placeholder="your.email@example.com" disabled>
+                    <div class="form-hint">Email cannot be changed</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <div class="input-with-icon">
+                        <input type="tel" class="form-input" id="settingsPhone" name="phone" placeholder="+1 234 567 8900">
+                        <i class="fas fa-phone input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Date of Birth</label>
+                    <input type="text" class="form-input" id="settingsDob" name="dob" readonly>
+                    <div class="form-hint">Date of birth cannot be changed</div>
+                </div>
+            </div>
+            
+            <!-- Academic Tab -->
+            <div class="profile-tab-content" id="academicTab">
+                <div class="form-group">
+                    <label class="form-label">Grade</label>
+                    <input type="text" class="form-input" id="settingsGrade" name="grade" placeholder="9">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Bio/Introduction</label>
+                    <textarea class="form-textarea" id="settingsBio" name="bio" placeholder="Tell us about yourself, your interests, and goals..."></textarea>
+                    <div class="form-hint">Max 500 characters</div>
+                </div>
+            </div>
+            
+            <!-- Social Tab -->
+            <div class="profile-tab-content" id="socialTab">
+                <div class="form-group">
+                    <label class="form-label"><i class="fab fa-linkedin"></i> LinkedIn</label>
+                    <div class="input-with-icon">
+                        <input type="url" class="form-input" id="settingsLinkedin" name="linkedin" placeholder="https://linkedin.com/in/yourname">
+                        <i class="fab fa-linkedin input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label"><i class="fab fa-github"></i> GitHub</label>
+                    <div class="input-with-icon">
+                        <input type="url" class="form-input" id="settingsGithub" name="github" placeholder="https://github.com/yourusername">
+                        <i class="fab fa-github input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label"><i class="fab fa-twitter"></i> Twitter</label>
+                    <div class="input-with-icon">
+                        <input type="url" class="form-input" id="settingsTwitter" name="twitter" placeholder="https://twitter.com/yourusername">
+                        <i class="fab fa-twitter input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label"><i class="fab fa-instagram"></i> Instagram</label>
+                    <div class="input-with-icon">
+                        <input type="url" class="form-input" id="settingsInstagram" name="instagram" placeholder="https://instagram.com/yourusername">
+                        <i class="fab fa-instagram input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Website/Blog</label>
+                    <div class="input-with-icon">
+                        <input type="url" class="form-input" id="settingsWebsite" name="website" placeholder="https://yourwebsite.com">
+                        <i class="fas fa-globe input-icon"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Security Tab -->
+            <div class="profile-tab-content" id="securityTab">
+                <div class="form-group">
+                    <label class="form-label">Current Password</label>
+                    <div class="input-with-icon">
+                        <input type="password" class="form-input" id="settingsCurrentPassword" name="currentPassword">
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <div class="input-with-icon">
+                        <input type="password" class="form-input" id="settingsNewPassword" name="newPassword" minlength="6">
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                    <div class="form-hint">Must be at least 6 characters long</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <div class="input-with-icon">
+                        <input type="password" class="form-input" id="settingsConfirmPassword" name="confirmPassword" minlength="6">
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width" style="margin-top: 30px;">
+                    <label class="form-label" style="color: var(--error);">
+                        <i class="fas fa-exclamation-triangle"></i> Danger Zone
+                    </label>
+                    <div style="border: 1px solid var(--error); border-radius: 10px; padding: 15px; margin-top: 10px;">
+                        <p style="margin-bottom: 15px; color: var(--text-light);">
+                            Once you delete your account, there is no going back. Please be certain.
+                        </p>
+                        <button type="button" class="logout-btn" onclick="openDeleteAccountModal()">
+                            <i class="fas fa-trash-alt"></i> Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-actions">
+                <button type="button" class="profile-cancel-btn" onclick="goBackToDashboard()">Cancel</button>
+                <button type="submit" class="profile-save-btn" id="settingsSaveBtn">
+                    <span id="settingsSaveBtnText">Save Changes</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 <!-- Account Deletion Modal -->
 <div class="modal-overlay" id="deleteAccountModal">
   <div class="profile-modal">
@@ -4236,6 +4481,269 @@ async function handleProfileSubmit(e) {
                 element.addEventListener('click', closeProfileModal);
             }
         });
+    });
+</script>
+    <script>
+    // Settings functionality
+    function openSettings() {
+        // Hide main content and show settings page
+        document.getElementById('mainContent').style.display = 'none';
+        document.getElementById('settingsPage').style.display = 'block';
+        
+        // Load settings data
+        loadSettingsData();
+    }
+    
+    function goBackToDashboard() {
+        // Show main content and hide settings page
+        document.getElementById('mainContent').style.display = 'block';
+        document.getElementById('settingsPage').style.display = 'none';
+    }
+    
+    function loadSettingsData() {
+        // Use the same data loading as profile modal
+        loadProfileData();
+        
+        // Update the settings form with the loaded data
+        populateSettingsForm(profileData);
+    }
+    
+    function populateSettingsForm(data) {
+        // Basic info
+        document.getElementById('settingsFullName').value = data.fullName || '';
+        document.getElementById('settingsEmail').value = data.email || '';
+        document.getElementById('settingsPhone').value = data.phone || '';
+        document.getElementById('settingsDob').value = data.dob || '';
+        
+        // Academic info
+        document.getElementById('settingsGrade').value = data.grade || '';
+        document.getElementById('settingsBio').value = data.bio || '';
+        
+        // Social info
+        document.getElementById('settingsLinkedin').value = data.linkedin || '';
+        document.getElementById('settingsGithub').value = data.github || '';
+        document.getElementById('settingsTwitter').value = data.twitter || '';
+        document.getElementById('settingsInstagram').value = data.instagram || '';
+        document.getElementById('settingsWebsite').value = data.website || '';
+        
+        // Set avatar
+        const avatarPreview = document.getElementById('settingsAvatarPreview');
+        if (avatarPreview) {
+            if (data.avatar) {
+                avatarPreview.innerHTML = `<img src="${data.avatar}" alt="Profile Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            } else {
+                const avatarInitials = document.getElementById('settingsAvatarInitials');
+                if (avatarInitials) {
+                    avatarInitials.textContent = getInitials(data.fullName || '?');
+                }
+            }
+        }
+        
+        // Update completion percentage
+        calculateSettingsProfileCompletion();
+    }
+    
+    function calculateSettingsProfileCompletion() {
+        const fields = [
+            'bio', 'linkedin', 'github', 'twitter', 'instagram', 'website'
+        ];
+        
+        let completed = 0;
+        fields.forEach(field => {
+            if (profileData[field] && String(profileData[field]).trim() !== '') {
+                completed++;
+            }
+        });
+        
+        const percentage = Math.round((completed / fields.length) * 100);
+        
+        // Update UI
+        const completionElement = document.getElementById('settingsProfileCompletion');
+        const progressElement = document.getElementById('settingsCompletionProgress');
+        
+        if (completionElement) {
+            completionElement.textContent = `${percentage}%`;
+        }
+        
+        if (progressElement) {
+            progressElement.style.width = `${percentage}%`;
+        }
+        
+        return percentage;
+    }
+    
+    // Handle settings form submission
+    async function handleSettingsSubmit(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(e.target);
+        const updatedData = {};
+        
+        for (let [key, value] of formData.entries()) {
+            updatedData[key] = value.trim();
+        }
+
+        // Check if password change is requested
+        if (updatedData.currentPassword || updatedData.newPassword || updatedData.confirmPassword) {
+            if (!updatedData.currentPassword) {
+                showNotification('Current password is required to change password', 'error');
+                return;
+            }
+            
+            if (!updatedData.newPassword) {
+                showNotification('New password is required', 'error');
+                return;
+            }
+            
+            if (updatedData.newPassword !== updatedData.confirmPassword) {
+                showNotification('New passwords do not match', 'error');
+                return;
+            }
+            
+            if (updatedData.newPassword.length < 6) {
+                showNotification('New password must be at least 6 characters long', 'error');
+                return;
+            }
+            
+            // Handle password change
+            try {
+                const token = getAuthToken();
+                const response = await fetch(`${API_BASE_URL}/api/user/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        currentPassword: updatedData.currentPassword,
+                        newPassword: updatedData.newPassword
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Password changed successfully!');
+                    // Clear password fields
+                    document.getElementById('settingsCurrentPassword').value = '';
+                    document.getElementById('settingsNewPassword').value = '';
+                    document.getElementById('settingsConfirmPassword').value = '';
+                } else {
+                    showNotification(result.message || 'Failed to change password', 'error');
+                    return;
+                }
+            } catch (err) {
+                console.error('Password change error:', err);
+                showNotification('Error changing password. Please try again.', 'error');
+                return;
+            }
+        }
+        
+        // Remove password fields from update data
+        delete updatedData.currentPassword;
+        delete updatedData.newPassword;
+        delete updatedData.confirmPassword;
+
+        // Show loading state
+        const saveBtn = document.getElementById('settingsSaveBtn');
+        const saveBtnText = document.getElementById('settingsSaveBtnText');
+        if (saveBtn && saveBtnText) {
+            saveBtn.disabled = true;
+            saveBtnText.textContent = 'Saving...';
+        }
+
+        try {
+            const token = getAuthToken();
+            const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    // Update current user data
+                    if (currentUser) {
+                        currentUser = { ...currentUser, ...updatedData };
+                        updateUserDisplay(currentUser);
+                    }
+                    
+                    // Update profile data
+                    profileData = { ...profileData, ...updatedData };
+                    
+                    // Show success message
+                    showNotification('Settings updated successfully!');
+                    
+                    return true;
+                }
+            }
+            throw new Error('Failed to update settings');
+        } catch (error) {
+            console.error('Settings update error:', error);
+            showNotification('Failed to update settings. Please try again.', 'error');
+            return false;
+        } finally {
+            // Reset button state
+            if (saveBtn && saveBtnText) {
+                saveBtn.disabled = false;
+                saveBtnText.textContent = 'Save Changes';
+            }
+        }
+    }
+    
+    // Initialize settings functionality
+    function initSettings() {
+        // Add event listener to the Settings nav item
+        const settingsNavItem = document.querySelector('.nav-item:nth-child(6)'); // Assuming Settings is the 6th item
+        if (settingsNavItem) {
+            settingsNavItem.addEventListener('click', openSettings);
+        }
+        
+        // Set up settings form submission
+        const settingsForm = document.getElementById('settingsForm');
+        if (settingsForm) {
+            settingsForm.addEventListener('submit', handleSettingsSubmit);
+        }
+        
+        // Set up settings avatar upload
+        const settingsAvatarInput = document.getElementById('settingsAvatarInput');
+        if (settingsAvatarInput) {
+            settingsAvatarInput.addEventListener('change', handleAvatarUpload);
+        }
+        
+        // Set up tab navigation for settings
+        const settingsTabs = document.querySelectorAll('.settings-content .profile-tab');
+        settingsTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                settingsTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all tab content
+                document.querySelectorAll('.settings-content .profile-tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show selected tab content
+                const tabId = `${tab.dataset.tab}Tab`;
+                const tabContent = document.getElementById(tabId);
+                if (tabContent) {
+                    tabContent.classList.add('active');
+                }
+            });
+        });
+    }
+    
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initSettings();
     });
 </script>
 </body>
