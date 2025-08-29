@@ -3749,29 +3749,23 @@ async function initializeDashboard() {
         }
 
         // Navigation handlers
- function setupNavigation() {
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const page = this.textContent.toLowerCase().trim();
-                console.log(`Navigating to: ${page}`);
-                
-                this.style.background = 'rgba(0, 214, 143, 0.3)';
-                setTimeout(() => {
-                    this.style.background = 'rgba(92, 225, 183, 0.1)';
-                }, 200);
-                
-                // Handle specific navigation items
-                if (page === 'settings') {
-                    openSettings(); // This will open the settings page
-                } else if (page === 'dashboard') {
-                    goBackToDashboard(); // This will return to dashboard
-                } else {
-                    showNotification(`${page.charAt(0).toUpperCase() + page.slice(1)} section coming soon!`);
-                }
-            });
+function setupNavigation() {
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const text = this.textContent.toLowerCase().trim();
+            console.log(`Navigating to: ${text}`);
+            
+            if (text.includes('settings')) {
+                openSettings(); // This should open the settings page
+            } else if (text.includes('dashboard')) {
+                goBackToDashboard();
+            } else {
+                showNotification(`${text.charAt(0).toUpperCase() + text.slice(1)} section coming soon!`);
+            }
         });
-    }
+    });
+}
 
         function showUserProfile() {
             if (currentUser) {
@@ -4488,19 +4482,41 @@ async function handleProfileSubmit(e) {
 </script>
     <script>
     // Settings functionality
-    function openSettings() {
-        // Hide main content and show settings page
-        document.getElementById('mainContent').style.display = 'none';
-        document.getElementById('settingsPage').style.display = 'block';
+ function openSettings() {
+        console.log("Opening settings...");
         
-        // Load settings data
-        loadSettingsData();
+        // Hide main content and show settings page
+        const mainContent = document.getElementById('mainContent');
+        const settingsPage = document.getElementById('settingsPage');
+        
+        if (mainContent && settingsPage) {
+            mainContent.style.display = 'none';
+            settingsPage.style.display = 'block';
+            
+            // Load settings data
+            loadSettingsData();
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        } else {
+            console.error("Could not find mainContent or settingsPage elements");
+        }
     }
     
     function goBackToDashboard() {
+        console.log("Going back to dashboard...");
+        
         // Show main content and hide settings page
-        document.getElementById('mainContent').style.display = 'block';
-        document.getElementById('settingsPage').style.display = 'none';
+        const mainContent = document.getElementById('mainContent');
+        const settingsPage = document.getElementById('settingsPage');
+        
+        if (mainContent && settingsPage) {
+            mainContent.style.display = 'block';
+            settingsPage.style.display = 'none';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
     }
     
     function loadSettingsData() {
