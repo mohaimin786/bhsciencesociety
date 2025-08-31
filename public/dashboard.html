@@ -55,6 +55,9 @@
             line-height: 1.6;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
+         .hidden-content {
+            display: none !important;
+        }
         .settings-page {
         position: fixed;
         top: 110px;
@@ -4482,47 +4485,50 @@ async function handleProfileSubmit(e) {
 </script>
     <script>
     // Settings functionality
-    function openSettings() {
-        console.log("Opening settings page...");
-        
-        const mainContent = document.getElementById('mainContent');
-        const settingsPage = document.getElementById('settingsPage');
-        
-        if (mainContent && settingsPage) {
-            // Hide all main content children
-            const mainChildren = mainContent.children;
-            for (let i = 0; i < mainChildren.length; i++) {
-                if (mainChildren[i].id !== 'settingsPage') {
-                    mainChildren[i].style.display = 'none';
-                }
+        function openSettings() {
+            console.log("Opening settings page...");
+            
+            const mainContent = document.getElementById('mainContent');
+            const settingsPage = document.getElementById('settingsPage');
+            
+            if (mainContent && settingsPage) {
+                // Hide all dashboard elements by adding a class
+                const dashboardElements = mainContent.querySelectorAll(':not(#settingsPage)');
+                dashboardElements.forEach(el => {
+                    el.classList.add('hidden-content');
+                });
+                
+                // Show settings page
+                settingsPage.style.display = 'block';
+                
+                // Load settings data
+                loadSettingsData();
+                
+                window.scrollTo(0, 0);
             }
-            
-            // Show settings page
-            settingsPage.style.display = 'block';
-            
-            // Load settings data
-            loadSettingsData();
-            
-            window.scrollTo(0, 0);
         }
-    }
     
-    function goBackToDashboard() {
-        console.log("Going back to dashboard...");
-        
-        // Show main content and hide settings page
-        const mainContent = document.getElementById('mainContent');
-        const settingsPage = document.getElementById('settingsPage');
-        
-        if (mainContent && settingsPage) {
-            mainContent.style.display = 'block';
-            settingsPage.style.display = 'none';
+        function goBackToDashboard() {
+            console.log("Going back to dashboard...");
             
-            // Scroll to top
-            window.scrollTo(0, 0);
+            const mainContent = document.getElementById('mainContent');
+            const settingsPage = document.getElementById('settingsPage');
+            
+            if (mainContent && settingsPage) {
+                // Show all dashboard elements
+                const dashboardElements = mainContent.querySelectorAll('.hidden-content');
+                dashboardElements.forEach(el => {
+                    el.classList.remove('hidden-content');
+                });
+                
+                // Hide settings page
+                settingsPage.style.display = 'none';
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }
         }
-    }
-    
+
     function loadSettingsData() {
         // Use the same data loading as profile modal
         loadProfileData();
