@@ -4516,38 +4516,24 @@ function navigateTo(page) {
 
     setTimeout(() => {
         fetch(targetFile)
-            .then(response => response.text())
-            .then(html => {
-                // Replace full body
-                document.body.innerHTML = html;
-
-                // Reapply fade-in class to new body
-                document.body.classList.add('fade-in');
-
-                setTimeout(() => {
-                    document.body.classList.remove('fade-in');
-                }, 300);
-
-                // Re-run scripts
-                if (page === 'settings' && typeof initSettingsPage === 'function') {
-                    initSettingsPage();
-                }
-                if (page === 'dashboard' && typeof initializeDashboard === 'function') {
-                    const savedScroll = sessionStorage.getItem('dashboardScroll');
-                    if (savedScroll) {
-                        setTimeout(() => {
-                            window.scrollTo(0, parseInt(savedScroll));
-                        }, 100);
-                    }
-                    initializeDashboard();
-                }
-            })
-            .catch(error => {
-                console.error('Error loading page:', error);
-                window.location.href = targetFile;
-            });
-    }, 300); // same as fade-out duration
-}
+          .then(res => res.text())
+          .then(html => {
+              // Parse fetched HTML
+              const doc = new DOMParser().parseFromString(html, "text/html");
+        
+              // Replace body *contents* but not the <body> tag
+              document.body.innerHTML = doc.body.innerHTML;
+        
+              // Now you can still use document.body.classList safely
+              document.body.classList.add('fade-in');
+              setTimeout(() => document.body.classList.remove('fade-in'), 300);
+          });
+                    .catch(error => {
+                        console.error('Error loading page:', error);
+                        window.location.href = targetFile;
+                    });
+            }, 300); // same as fade-out duration
+        }
 
 
 // Back to dashboard function
