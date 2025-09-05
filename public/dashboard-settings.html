@@ -316,6 +316,31 @@
             margin-top: 5px;
         }
 
+        /* Password strength indicator */
+        .password-strength {
+            margin-top: 5px;
+            height: 5px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .light-mode .password-strength {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .password-strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .password-strength-text {
+            font-size: 0.75em;
+            margin-top: 3px;
+            text-align: right;
+        }
+
         /* Avatar Upload */
         .avatar-upload {
             display: flex;
@@ -748,6 +773,10 @@
                             <input type="password" class="form-input" id="newPassword" name="newPassword" minlength="6">
                             <i class="fas fa-lock input-icon"></i>
                         </div>
+                        <div class="password-strength">
+                            <div class="password-strength-meter" id="passwordStrengthMeter"></div>
+                        </div>
+                        <div class="password-strength-text" id="passwordStrengthText"></div>
                         <div class="form-hint">Must be at least 6 characters long</div>
                     </div>
                     
@@ -757,6 +786,7 @@
                             <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" minlength="6">
                             <i class="fas fa-lock input-icon"></i>
                         </div>
+                        <div class="form-hint" id="passwordMatchHint"></div>
                     </div>
                 </div>
                 
@@ -868,6 +898,18 @@
                     clearFieldError(this);
                 });
             });
+            
+            // Password strength checker
+            const newPasswordInput = document.getElementById('newPassword');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            
+            if (newPasswordInput) {
+                newPasswordInput.addEventListener('input', checkPasswordStrength);
+            }
+            
+            if (confirmPasswordInput) {
+                confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+            }
             
             console.log('Settings page initialized');
         }
@@ -1167,6 +1209,79 @@
             } catch (error) {
                 console.error('Avatar upload error:', error);
                 showNotification('Failed to upload avatar. Please try again.', 'error');
+            }
+        }
+        
+        // Check password strength
+        function checkPasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const meter = document.getElementById('passwordStrengthMeter');
+            const text = document.getElementById('passwordStrengthText');
+            
+            if (!password) {
+                meter.style.width = '0%';
+                meter.style.backgroundColor = 'transparent';
+                text.textContent = '';
+                return;
+            }
+            
+            // Calculate password strength
+            let strength = 0;
+            let feedback = '';
+            
+            // Length check
+            if (password.length >= 8) strength += 25;
+            
+            // Contains numbers
+            if (/\d/.test(password)) strength += 25;
+            
+            // Contains lowercase and uppercase
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 25;
+            
+            // Contains special characters
+            if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+            
+            // Update meter
+            meter.style.width = strength + '%';
+            
+            // Set color and text based on strength
+            if (strength < 50) {
+                meter.style.backgroundColor = '#FF4757'; // Red
+                text.textContent = 'Weak';
+                text.style.color = '#FF4757';
+            } else if (strength < 75) {
+                meter.style.backgroundColor = '#FFC107'; // Yellow/Orange
+                text.textContent = 'Medium';
+                text.style.color = '#FFC107';
+            } else if (strength < 100) {
+                meter.style.backgroundColor = '#2D87D0'; // Blue
+                text.textContent = 'Strong';
+                text.style.color = '#2D87D0';
+            } else {
+                meter.style.backgroundColor = '#00D68F'; // Green
+                text.textContent = 'Very Strong';
+                text.style.color = '#00D68F';
+            }
+        }
+        
+        // Check if passwords match
+        function checkPasswordMatch() {
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const hint = document.getElementById('passwordMatchHint');
+            
+            if (!confirmPassword) {
+                hint.textContent = '';
+                hint.style.color = '';
+                return;
+            }
+            
+            if (password === confirmPassword) {
+                hint.textContent = 'Passwords match';
+                hint.style.color = '#00D68F';
+            } else {
+                hint.textContent = 'Passwords do not match';
+                hint.style.color = '#FF4757';
             }
         }
         
