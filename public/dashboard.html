@@ -55,6 +55,18 @@
             line-height: 1.6;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
+        body {
+          opacity: 1;
+          transition: opacity 0.3s ease;
+        }
+        
+        body.fade-out {
+          opacity: 0;
+        }
+        
+        body.fade-in {
+          opacity: 1;
+        }
          .hidden-content {
             display: none !important;
         }
@@ -4489,8 +4501,6 @@ async function handleProfileSubmit(e) {
 
 // SPA Navigation function
 function navigateTo(page) {
-    const content = document.getElementById('content');
-
     let targetFile = null;
     if (page === 'settings') {
         sessionStorage.setItem('dashboardScroll', window.scrollY);
@@ -4502,23 +4512,23 @@ function navigateTo(page) {
     if (!targetFile) return;
 
     // Start fade-out
-    content.classList.add('fade-out');
+    document.body.classList.add('fade-out');
 
     setTimeout(() => {
         fetch(targetFile)
             .then(response => response.text())
             .then(html => {
-                // Swap content
-                content.innerHTML = html;
+                // Replace full body
+                document.body.innerHTML = html;
 
-                // Trigger fade-in
-                content.classList.remove('fade-out');
-                content.classList.add('fade-in');
+                // Reapply fade-in class to new body
+                document.body.classList.add('fade-in');
 
-                // After animation cleanup
-                setTimeout(() => content.classList.remove('fade-in'), 300);
+                setTimeout(() => {
+                    document.body.classList.remove('fade-in');
+                }, 300);
 
-                // Reinitialize scripts if needed
+                // Re-run scripts
                 if (page === 'settings' && typeof initSettingsPage === 'function') {
                     initSettingsPage();
                 }
@@ -4534,10 +4544,11 @@ function navigateTo(page) {
             })
             .catch(error => {
                 console.error('Error loading page:', error);
-                window.location.href = targetFile; // fallback
+                window.location.href = targetFile;
             });
-    }, 300); // matches fade-out duration
+    }, 300); // same as fade-out duration
 }
+
 
 // Back to dashboard function
 function goBackToDashboard() {
