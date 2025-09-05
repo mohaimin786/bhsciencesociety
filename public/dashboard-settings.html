@@ -55,6 +55,10 @@
             transition: background-color 0.3s ease, color 0.3s ease;
             padding: 20px;
             min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 214, 143, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 184, 217, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 50% 80%, rgba(123, 104, 238, 0.1) 0%, transparent 25%);
         }
 
         .settings-container {
@@ -69,6 +73,18 @@
             margin-bottom: 30px;
             padding-bottom: 15px;
             border-bottom: 1px solid rgba(0, 214, 143, 0.3);
+            position: relative;
+        }
+
+        .settings-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            border-radius: 3px;
         }
 
         .back-to-dashboard {
@@ -84,11 +100,13 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
+            font-weight: 500;
         }
 
         .back-to-dashboard:hover {
             background: rgba(0, 214, 143, 0.2);
             transform: translateX(-3px);
+            box-shadow: 0 5px 15px rgba(0, 214, 143, 0.2);
         }
 
         .settings-header h1 {
@@ -97,6 +115,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            text-shadow: 0 0 10px rgba(0, 214, 143, 0.3);
         }
 
         .settings-content {
@@ -105,6 +124,20 @@
             padding: 30px;
             backdrop-filter: blur(15px);
             border: 1px solid rgba(0, 214, 143, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .settings-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            border-radius: 5px 5px 0 0;
         }
 
         .light-mode .settings-content {
@@ -114,9 +147,22 @@
         /* Profile Completion Meter */
         .profile-completion {
             margin-bottom: 25px;
-            padding: 15px;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 214, 143, 0.3);
+            position: relative;
+        }
+
+        .profile-completion::before {
+            content: '📊';
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            font-size: 24px;
+            background: var(--card-bg);
+            padding: 5px;
+            border-radius: 50%;
             border: 1px solid rgba(0, 214, 143, 0.3);
         }
 
@@ -128,7 +174,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .completion-title {
@@ -142,16 +188,18 @@
         }
 
         .completion-percentage {
-            font-size: 1.1em;
+            font-size: 1.3em;
             font-weight: bold;
             color: var(--primary);
+            text-shadow: 0 0 5px rgba(0, 214, 143, 0.3);
         }
 
         .completion-bar {
-            height: 8px;
+            height: 10px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+            border-radius: 5px;
             overflow: hidden;
+            position: relative;
         }
 
         .light-mode .completion-bar {
@@ -161,23 +209,25 @@
         .completion-progress {
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 4px;
+            border-radius: 5px;
             transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 214, 143, 0.3);
         }
 
         /* Tab Navigation */
         .profile-tabs {
             display: flex;
             gap: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 5px;
+            border: 1px solid rgba(0, 214, 143, 0.2);
         }
 
         .profile-tab {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
             border-radius: 8px;
             cursor: pointer;
@@ -185,25 +235,31 @@
             font-size: 0.9em;
             font-weight: 500;
             color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .profile-tab.active {
             background: rgba(0, 214, 143, 0.2);
             color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 214, 143, 0.1);
         }
 
         .profile-tab-content {
             display: none;
+            animation: fadeIn 0.5s ease;
         }
 
         .profile-tab-content.active {
             display: block;
-            animation: fadeIn 0.3s ease;
         }
 
         /* Form Styles */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            position: relative;
         }
 
         .form-group.full-width {
@@ -212,10 +268,13 @@
 
         .form-label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             color: var(--text-light);
             font-weight: 500;
-            font-size: 0.9em;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .light-mode .form-label {
@@ -224,13 +283,14 @@
 
         .form-input {
             width: 100%;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.1);
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(0, 214, 143, 0.3);
             border-radius: 10px;
             color: var(--text-dark);
             font-family: 'Roboto', sans-serif;
             transition: all 0.3s ease;
+            font-size: 0.95em;
         }
 
         .light-mode .form-input {
@@ -242,20 +302,22 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(0, 214, 143, 0.2);
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
         }
 
         .form-textarea {
             width: 100%;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.1);
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(0, 214, 143, 0.3);
             border-radius: 10px;
             color: var(--text-dark);
             font-family: 'Roboto', sans-serif;
             transition: all 0.3s ease;
             resize: vertical;
-            min-height: 100px;
+            min-height: 120px;
+            font-size: 0.95em;
         }
 
         .light-mode .form-textarea {
@@ -267,7 +329,7 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(0, 214, 143, 0.2);
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.12);
         }
 
         .input-with-icon {
@@ -280,18 +342,22 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--primary);
+            font-size: 1.1em;
         }
 
         .form-hint {
             font-size: 0.8em;
             color: var(--text-muted);
-            margin-top: 5px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         /* Password strength indicator */
         .password-strength {
-            margin-top: 5px;
-            height: 5px;
+            margin-top: 8px;
+            height: 6px;
             border-radius: 3px;
             background: rgba(255, 255, 255, 0.1);
             overflow: hidden;
@@ -305,12 +371,14 @@
             height: 100%;
             width: 0;
             transition: width 0.3s ease, background-color 0.3s ease;
+            border-radius: 3px;
         }
 
         .password-strength-text {
-            font-size: 0.75em;
-            margin-top: 3px;
+            font-size: 0.8em;
+            margin-top: 5px;
             text-align: right;
+            font-weight: 500;
         }
 
         /* Avatar Upload */
@@ -318,30 +386,33 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            position: relative;
         }
 
         .avatar-preview {
-            width: 120px;
-            height: 120px;
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             margin-bottom: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
+            font-size: 45px;
             color: var(--darker-bg);
             font-weight: bold;
             position: relative;
             overflow: hidden;
             cursor: pointer;
             transition: all 0.3s ease;
+            border: 3px solid rgba(0, 214, 143, 0.5);
+            box-shadow: 0 5px 20px rgba(0, 214, 143, 0.2);
         }
 
         .avatar-preview:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(0, 214, 143, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 214, 143, 0.4);
         }
 
         .avatar-preview img {
@@ -354,16 +425,18 @@
             background: rgba(255, 255, 255, 0.1);
             border: 1px dashed var(--primary);
             border-radius: 8px;
-            padding: 8px 15px;
+            padding: 10px 16px;
             color: var(--primary);
             cursor: pointer;
             font-size: 0.9em;
             transition: all 0.3s ease;
             text-align: center;
+            font-weight: 500;
         }
 
         .avatar-upload-btn:hover {
             background: rgba(0, 214, 143, 0.1);
+            transform: translateY(-2px);
         }
 
         /* Form Actions */
@@ -372,14 +445,14 @@
             gap: 15px;
             justify-content: flex-end;
             margin-top: 30px;
-            padding-top: 20px;
+            padding-top: 25px;
             border-top: 1px solid rgba(0, 214, 143, 0.3);
         }
 
         .profile-save-btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 1em;
             transition: all 0.3s ease;
@@ -388,6 +461,7 @@
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: var(--darker-bg);
             font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 214, 143, 0.3);
         }
 
         .profile-save-btn:disabled {
@@ -398,19 +472,20 @@
         }
 
         .profile-save-btn:not(:disabled):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 214, 143, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 214, 143, 0.4);
         }
 
         .profile-cancel-btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(0, 184, 217, 0.4);
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 1em;
             transition: all 0.3s ease;
             color: var(--secondary);
+            font-weight: 500;
         }
 
         .light-mode .profile-cancel-btn {
@@ -419,16 +494,31 @@
 
         .profile-cancel-btn:hover {
             background: rgba(0, 184, 217, 0.1);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 184, 217, 0.2);
         }
 
         /* Danger Zone */
         .danger-zone {
             margin-top: 40px;
-            padding: 20px;
+            padding: 25px;
             border: 1px solid var(--error);
-            border-radius: 10px;
+            border-radius: 12px;
             background: rgba(255, 71, 87, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .danger-zone::before {
+            content: '⚠️';
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            font-size: 24px;
+            background: var(--card-bg);
+            padding: 5px;
+            border-radius: 50%;
+            border: 1px solid var(--error);
         }
 
         .danger-zone h3 {
@@ -436,13 +526,15 @@
             margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 1.2em;
         }
 
         .danger-zone p {
             color: var(--text-light);
-            margin-bottom: 15px;
-            font-size: 0.9em;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            line-height: 1.5;
         }
 
         .light-mode .danger-zone p {
@@ -452,20 +544,21 @@
         .delete-btn {
             background: linear-gradient(135deg, var(--error), #cc0000);
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 14px 24px;
+            border-radius: 10px;
             color: var(--text-dark);
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             font-weight: 600;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
         }
 
         .delete-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4);
         }
 
         /* Modal Styles */
@@ -481,6 +574,7 @@
             display: none;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal-overlay.show {
@@ -498,6 +592,7 @@
             backdrop-filter: blur(20px);
             border: 1px solid var(--primary);
             position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .light-mode .profile-modal {
@@ -554,6 +649,10 @@
             transform: translateX(100%);
             transition: transform 0.3s ease;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .notification.show {
@@ -578,6 +677,29 @@
             to { opacity: 1; }
         }
 
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid var(--primary);
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .settings-container {
@@ -599,6 +721,16 @@
             .profile-save-btn,
             .profile-cancel-btn {
                 width: 100%;
+            }
+            
+            .settings-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .back-to-dashboard {
+                margin-right: 0;
             }
         }
     </style>
@@ -626,10 +758,18 @@
             
             <!-- Tab Navigation -->
             <div class="profile-tabs">
-                <div class="profile-tab active" data-tab="basic">Basic Info</div>
-                <div class="profile-tab" data-tab="academic">Academic</div>
-                <div class="profile-tab" data-tab="social">Social</div>
-                <div class="profile-tab" data-tab="security">Security</div>
+                <div class="profile-tab active" data-tab="basic">
+                    <i class="fas fa-user"></i> Basic Info
+                </div>
+                <div class="profile-tab" data-tab="academic">
+                    <i class="fas fa-graduation-cap"></i> Academic
+                </div>
+                <div class="profile-tab" data-tab="social">
+                    <i class="fas fa-share-alt"></i> Social
+                </div>
+                <div class="profile-tab" data-tab="security">
+                    <i class="fas fa-lock"></i> Security
+                </div>
             </div>
             
             <form id="settingsForm">
@@ -646,19 +786,19 @@
                     </div>
                     
                     <div class="form-group full-width">
-                        <label class="form-label">Full Name</label>
+                        <label class="form-label"><i class="fas fa-signature"></i> Full Name</label>
                         <input type="text" class="form-input" id="fullName" name="fullName" placeholder="Enter your full name" readonly>
-                        <div class="form-hint">Name cannot be changed</div>
+                        <div class="form-hint"><i class="fas fa-info-circle"></i> Name cannot be changed</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Email Address</label>
+                        <label class="form-label"><i class="fas fa-envelope"></i> Email Address</label>
                         <input type="email" class="form-input" id="email" name="email" placeholder="your.email@example.com" disabled>
-                        <div class="form-hint">Email cannot be changed</div>
+                        <div class="form-hint"><i class="fas fa-info-circle"></i> Email cannot be changed</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Phone Number</label>
+                        <label class="form-label"><i class="fas fa-phone"></i> Phone Number</label>
                         <div class="input-with-icon">
                             <input type="tel" class="form-input" id="phone" name="phone" placeholder="+1 234 567 8900">
                             <i class="fas fa-phone input-icon"></i>
@@ -666,23 +806,31 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Date of Birth</label>
+                        <label class="form-label"><i class="fas fa-birthday-cake"></i> Date of Birth</label>
                         <input type="text" class="form-input" id="dob" name="dob" readonly>
-                        <div class="form-hint">Date of birth cannot be changed</div>
+                        <div class="form-hint"><i class="fas fa-info-circle"></i> Date of birth cannot be changed</div>
                     </div>
                 </div>
                 
                 <!-- Academic Tab -->
                 <div class="profile-tab-content" id="academicTab">
                     <div class="form-group">
-                        <label class="form-label">Grade</label>
+                        <label class="form-label"><i class="fas fa-layer-group"></i> Grade</label>
                         <input type="text" class="form-input" id="grade" name="grade" placeholder="9">
                     </div>
                     
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-book"></i> Subjects</label>
+                        <div class="subjects-container" id="subjectsContainer">
+                            <!-- Subjects will be populated here -->
+                        </div>
+                        <div class="form-hint"><i class="fas fa-info-circle"></i> Your selected subjects</div>
+                    </div>
+                    
                     <div class="form-group full-width">
-                        <label class="form-label">Bio/Introduction</label>
+                        <label class="form-label"><i class="fas fa-user-edit"></i> Bio/Introduction</label>
                         <textarea class="form-textarea" id="bio" name="bio" placeholder="Tell us about yourself, your interests, and goals..."></textarea>
-                        <div class="form-hint">Max 500 characters</div>
+                        <div class="form-hint"><i class="fas fa-info-circle"></i> Max 500 characters</div>
                     </div>
                 </div>
                 
@@ -721,7 +869,7 @@
                     </div>
                     
                     <div class="form-group full-width">
-                        <label class="form-label">Website/Blog</label>
+                        <label class="form-label"><i class="fas fa-globe"></i> Website/Blog</label>
                         <div class="input-with-icon">
                             <input type="url" class="form-input" id="website" name="website" placeholder="https://yourwebsite.com">
                             <i class="fas fa-globe input-icon"></i>
@@ -732,7 +880,7 @@
                 <!-- Security Tab -->
                 <div class="profile-tab-content" id="securityTab">
                     <div class="form-group">
-                        <label class="form-label">Current Password</label>
+                        <label class="form-label"><i class="fas fa-lock"></i> Current Password</label>
                         <div class="input-with-icon">
                             <input type="password" class="form-input" id="currentPassword" name="currentPassword">
                             <i class="fas fa-lock input-icon"></i>
@@ -740,23 +888,23 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">New Password</label>
+                        <label class="form-label"><i class="fas fa-key"></i> New Password</label>
                         <div class="input-with-icon">
                             <input type="password" class="form-input" id="newPassword" name="newPassword" minlength="6">
-                            <i class="fas fa-lock input-icon"></i>
+                            <i class="fas fa-key input-icon"></i>
                         </div>
                         <div class="password-strength">
                             <div class="password-strength-meter" id="passwordStrengthMeter"></div>
                         </div>
                         <div class="password-strength-text" id="passwordStrengthText"></div>
-                        <div class="form-hint">Must be at least 6 characters long</div>
+                        <div class="form-hint"><i class="fas fa-info-circle"></i> Must be at least 6 characters long</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Confirm New Password</label>
+                        <label class="form-label"><i class="fas fa-check-circle"></i> Confirm New Password</label>
                         <div class="input-with-icon">
                             <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" minlength="6">
-                            <i class="fas fa-lock input-icon"></i>
+                            <i class="fas fa-check-circle input-icon"></i>
                         </div>
                         <div class="form-hint" id="passwordMatchHint"></div>
                     </div>
@@ -773,7 +921,7 @@
             <!-- Danger Zone -->
             <div class="danger-zone">
                 <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
-                <p>Once you delete your account, there is no going back. Please be certain.</p>
+                <p>Once you delete your account, there is no going back. Please be certain. All your data will be permanently removed from our servers.</p>
                 <button type="button" class="delete-btn" onclick="openDeleteAccountModal()">
                     <i class="fas fa-trash-alt"></i> Delete Account
                 </button>
@@ -813,6 +961,7 @@
         
         // Global variables
         let profileData = {};
+        let dashboardInfo = {};
         let avatarFile = null;
         
         // Initialize settings page
@@ -911,6 +1060,10 @@
                     const result = await response.json();
                     if (result.success) {
                         profileData = result.user;
+                        
+                        // Now fetch dashboard info to get additional data like subjects
+                        await fetchDashboardInfo();
+                        
                         populateSettingsForm(profileData);
                         calculateProfileCompletion();
                         return;
@@ -940,6 +1093,62 @@
             }
         }
         
+        // Fetch dashboard info to get subjects and other data
+        async function fetchDashboardInfo() {
+            try {
+                const token = getAuthToken();
+                if (!token) return;
+                
+                const response = await fetch(`${API_BASE_URL}/api/dashboard-info`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data && result.data.length > 0) {
+                        // Find the user's dashboard info by matching email
+                        const userDashboardInfo = result.data.find(item => 
+                            item.email && item.email.toLowerCase() === profileData.email.toLowerCase()
+                        );
+                        
+                        if (userDashboardInfo) {
+                            dashboardInfo = userDashboardInfo;
+                            console.log('Dashboard info loaded:', dashboardInfo);
+                            
+                            // Update the subjects display
+                            updateSubjectsDisplay();
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching dashboard info:', error);
+            }
+        }
+        
+        // Update subjects display
+        function updateSubjectsDisplay() {
+            const subjectsContainer = document.getElementById('subjectsContainer');
+            if (!subjectsContainer) return;
+            
+            subjectsContainer.innerHTML = '';
+            
+            if (!dashboardInfo.subjects || dashboardInfo.subjects.length === 0) {
+                subjectsContainer.innerHTML = '<div class="no-subjects">No subjects selected</div>';
+                return;
+            }
+            
+            dashboardInfo.subjects.forEach(subject => {
+                const subjectChip = document.createElement('div');
+                subjectChip.className = 'subject-chip';
+                subjectChip.textContent = subject;
+                subjectsContainer.appendChild(subjectChip);
+            });
+        }
+        
         // Populate form with profile data
         function populateSettingsForm(data) {
             console.log('Populating form with data:', data);
@@ -950,8 +1159,8 @@
             document.getElementById('phone').value = data.phone || '';
             document.getElementById('dob').value = data.dob || '';
             
-            // Academic info
-            document.getElementById('grade').value = data.grade || '';
+            // Academic info - use dashboard info if available
+            document.getElementById('grade').value = dashboardInfo.grade || data.grade || '';
             document.getElementById('bio').value = data.bio || '';
             
             // Social info
@@ -978,7 +1187,7 @@
         // Calculate profile completion percentage
         function calculateProfileCompletion() {
             const fields = [
-                'bio', 'phone', 'linkedin', 'github', 'twitter', 'instagram', 'website'
+                'bio', 'phone', 'grade', 'linkedin', 'github', 'twitter', 'instagram', 'website'
             ];
             
             let completed = 0;
@@ -988,7 +1197,13 @@
                 }
             });
             
-            const percentage = Math.round((completed / fields.length) * 100);
+            // Also check if subjects are selected
+            if (dashboardInfo.subjects && dashboardInfo.subjects.length > 0) {
+                completed++;
+            }
+            
+            const totalFields = fields.length + 1; // +1 for subjects
+            const percentage = Math.round((completed / totalFields) * 100);
             
             // Update UI
             const completionElement = document.getElementById('profileCompletion');
@@ -1083,7 +1298,7 @@
             const saveBtnText = document.getElementById('saveBtnText');
             if (saveBtn && saveBtnText) {
                 saveBtn.disabled = true;
-                saveBtnText.textContent = 'Saving...';
+                saveBtnText.innerHTML = '<span class="loading-spinner"></span> Saving...';
             }
 
             try {
@@ -1329,9 +1544,17 @@
         }
         
         function showNotification(message, type = 'success') {
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+            
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
-            notification.textContent = message;
+            
+            // Add icon based on type
+            const icon = type === 'success' ? '✅' : '❌';
+            notification.innerHTML = `${icon} ${message}`;
+            
             document.body.appendChild(notification);
             
             setTimeout(() => notification.classList.add('show'), 100);
@@ -1402,7 +1625,7 @@
             errorElement.style.color = 'var(--error)';
             errorElement.style.fontSize = '0.8em';
             errorElement.style.marginTop = '5px';
-            errorElement.textContent = message;
+            errorElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
             
             // Insert after field
             field.parentNode.appendChild(errorElement);
