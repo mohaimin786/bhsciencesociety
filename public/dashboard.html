@@ -2299,7 +2299,7 @@
             <div class="nav-item"><i class="fas fa-project-diagram"></i> Projects</div>
             <div class="nav-item"><i class="fas fa-trophy"></i> Leaderboard</div>
             <div class="nav-item"><i class="fas fa-book"></i> Resources</div>
-            <div class="nav-item" onclick="openSettings()"><i class="fas fa-cog"></i> Settings</div>
+            <div class="nav-item" onclick="navigateTo('settings')"><i class="fas fa-cog"></i> Settings</div>
             <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
     </div>
@@ -2506,247 +2506,8 @@
         </div>
     </div>
         <!-- Password Change Modal -->
-<div class="modal-overlay" id="passwordModal">
-  <div class="profile-modal">
-    <div class="profile-modal-header">
-      <h2><i class="fas fa-key"></i> Change Password</h2>
-      <button class="close-modal" onclick="closePasswordModal()">&times;</button>
-    </div>
-    
-    <form id="passwordForm">
-      <div class="form-group">
-        <label class="form-label">Current Password</label>
-        <div class="input-with-icon">
-          <input type="password" class="form-input" id="currentPassword" name="currentPassword" required>
-          <i class="fas fa-lock input-icon"></i>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label class="form-label">New Password</label>
-        <div class="input-with-icon">
-          <input type="password" class="form-input" id="newPassword" name="newPassword" required minlength="6">
-          <i class="fas fa-lock input-icon"></i>
-        </div>
-        <div class="form-hint">Must be at least 6 characters long</div>
-      </div>
-      
-      <div class="form-group">
-        <label class="form-label">Confirm New Password</label>
-        <div class="input-with-icon">
-          <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" required minlength="6">
-          <i class="fas fa-lock input-icon"></i>
-        </div>
-      </div>
-      
-      <div class="profile-modal-actions">
-        <button type="button" class="profile-cancel-btn" onclick="closePasswordModal()">Cancel</button>
-        <button type="submit" class="profile-save-btn">Change Password</button>
-      </div>
-    </form>
-  </div>
-</div>
-<div class="settings-page" id="settingsPage" style="display: none;">
-    <div class="settings-header">
-        <button class="back-to-dashboard" onclick="goBackToDashboard()">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </button>
-        <h2><i class="fas fa-cog"></i> Settings</h2>
-    </div>
-    
-    <div class="settings-content">
-        <!-- Profile Completion Meter -->
-        <div class="profile-completion">
-            <div class="completion-header">
-                <div class="completion-title">Profile Completion</div>
-                <div class="completion-percentage" id="settingsProfileCompletion">0%</div>
-            </div>
-            <div class="completion-bar">
-                <div class="completion-progress" id="settingsCompletionProgress" style="width: 0%"></div>
-            </div>
-        </div>
-        
-        <!-- Tab Navigation -->
-        <div class="profile-tabs">
-            <div class="profile-tab active" data-tab="basic">Basic Info</div>
-            <div class="profile-tab" data-tab="academic">Academic</div>
-            <div class="profile-tab" data-tab="social">Social</div>
-            <div class="profile-tab" data-tab="security">Security</div>
-        </div>
-        
-        <form id="settingsForm">
-            <!-- Basic Info Tab -->
-            <div class="profile-tab-content active" id="basicTab">
-                <div class="avatar-upload">
-                    <div class="avatar-preview" id="settingsAvatarPreview">
-                        <span id="settingsAvatarInitials">?</span>
-                    </div>
-                    <label class="avatar-upload-btn">
-                        <i class="fas fa-camera"></i> Change Avatar
-                        <input type="file" id="settingsAvatarInput" accept="image/*" style="display: none;">
-                    </label>
-                </div>
-                
-                <div class="form-group full-width">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-input" id="settingsFullName" name="fullName" placeholder="Enter your full name" readonly>
-                    <div class="form-hint">Name cannot be changed</div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" class="form-input" id="settingsEmail" name="email" placeholder="your.email@example.com" disabled>
-                    <div class="form-hint">Email cannot be changed</div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Phone Number</label>
-                    <div class="input-with-icon">
-                        <input type="tel" class="form-input" id="settingsPhone" name="phone" placeholder="+1 234 567 8900">
-                        <i class="fas fa-phone input-icon"></i>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Date of Birth</label>
-                    <input type="text" class="form-input" id="settingsDob" name="dob" readonly>
-                    <div class="form-hint">Date of birth cannot be changed</div>
-                </div>
-            </div>
-            
-            <!-- Academic Tab -->
-            <div class="profile-tab-content" id="academicTab">
-                <div class="form-group">
-                    <label class="form-label">Grade</label>
-                    <input type="text" class="form-input" id="settingsGrade" name="grade" placeholder="9">
-                </div>
-                
-                <div class="form-group full-width">
-                    <label class="form-label">Bio/Introduction</label>
-                    <textarea class="form-textarea" id="settingsBio" name="bio" placeholder="Tell us about yourself, your interests, and goals..."></textarea>
-                    <div class="form-hint">Max 500 characters</div>
-                </div>
-            </div>
-            
-            <!-- Social Tab -->
-            <div class="profile-tab-content" id="socialTab">
-                <div class="form-group">
-                    <label class="form-label"><i class="fab fa-linkedin"></i> LinkedIn</label>
-                    <div class="input-with-icon">
-                        <input type="url" class="form-input" id="settingsLinkedin" name="linkedin" placeholder="https://linkedin.com/in/yourname">
-                        <i class="fab fa-linkedin input-icon"></i>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label"><i class="fab fa-github"></i> GitHub</label>
-                    <div class="input-with-icon">
-                        <input type="url" class="form-input" id="settingsGithub" name="github" placeholder="https://github.com/yourusername">
-                        <i class="fab fa-github input-icon"></i>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label"><i class="fab fa-twitter"></i> Twitter</label>
-                    <div class="input-with-icon">
-                        <input type="url" class="form-input" id="settingsTwitter" name="twitter" placeholder="https://twitter.com/yourusername">
-                        <i class="fab fa-twitter input-icon"></i>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label"><i class="fab fa-instagram"></i> Instagram</label>
-                    <div class="input-with-icon">
-                        <input type="url" class="form-input" id="settingsInstagram" name="instagram" placeholder="https://instagram.com/yourusername">
-                        <i class="fab fa-instagram input-icon"></i>
-                    </div>
-                </div>
-                
-                <div class="form-group full-width">
-                    <label class="form-label">Website/Blog</label>
-                    <div class="input-with-icon">
-                        <input type="url" class="form-input" id="settingsWebsite" name="website" placeholder="https://yourwebsite.com">
-                        <i class="fas fa-globe input-icon"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Security Tab -->
-            <div class="profile-tab-content" id="securityTab">
-                <div class="form-group">
-                    <label class="form-label">Current Password</label>
-                    <div class="input-with-icon">
-                        <input type="password" class="form-input" id="settingsCurrentPassword" name="currentPassword">
-                        <i class="fas fa-lock input-icon"></i>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">New Password</label>
-                    <div class="input-with-icon">
-                        <input type="password" class="form-input" id="settingsNewPassword" name="newPassword" minlength="6">
-                        <i class="fas fa-lock input-icon"></i>
-                    </div>
-                    <div class="form-hint">Must be at least 6 characters long</div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Confirm New Password</label>
-                    <div class="input-with-icon">
-                        <input type="password" class="form-input" id="settingsConfirmPassword" name="confirmPassword" minlength="6">
-                        <i class="fas fa-lock input-icon"></i>
-                    </div>
-                </div>
-                
-                <div class="form-group full-width" style="margin-top: 30px;">
-                    <label class="form-label" style="color: var(--error);">
-                        <i class="fas fa-exclamation-triangle"></i> Danger Zone
-                    </label>
-                    <div style="border: 1px solid var(--error); border-radius: 10px; padding: 15px; margin-top: 10px;">
-                        <p style="margin-bottom: 15px; color: var(--text-light);">
-                            Once you delete your account, there is no going back. Please be certain.
-                        </p>
-                        <button type="button" class="logout-btn" onclick="openDeleteAccountModal()">
-                            <i class="fas fa-trash-alt"></i> Delete Account
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="settings-actions">
-                <button type="button" class="profile-cancel-btn" onclick="goBackToDashboard()">Cancel</button>
-                <button type="submit" class="profile-save-btn" id="settingsSaveBtn">
-                    <span id="settingsSaveBtnText">Save Changes</span>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-<!-- Account Deletion Modal -->
-<div class="modal-overlay" id="deleteAccountModal">
-  <div class="profile-modal">
-    <div class="profile-modal-header">
-      <h2><i class="fas fa-exclamation-triangle"></i> Delete Account</h2>
-      <button class="close-modal" onclick="closeDeleteAccountModal()">&times;</button>
-    </div>
-    
-    <div class="form-group full-width">
-      <p style="color: var(--error); margin-bottom: 20px;">
-        <i class="fas fa-exclamation-circle"></i> Warning: This action cannot be undone. All your data will be permanently deleted.
-      </p>
-    </div>
-    
-    <div class="form-group full-width">
-      <label class="form-label">To confirm, type "DELETE MY ACCOUNT" below:</label>
-      <input type="text" class="form-input" id="deleteConfirmation" name="deleteConfirmation" required>
-    </div>
-    
-    <div class="profile-modal-actions">
-      <button type="button" class="profile-cancel-btn" onclick="closeDeleteAccountModal()">Cancel</button>
-      <button type="button" class="logout-btn" onclick="confirmAccountDeletion()">Delete My Account</button>
-    </div>
-  </div>
-</div>
+
+
         <!-- NEW: Quick Stats Section -->
         <div class="quick-stats">
             <div class="stat-item">
@@ -4442,46 +4203,15 @@ async function handleProfileSubmit(e) {
         }
     }
     
-    function openDeleteAccountModal() {
-        const modal = document.getElementById('deleteAccountModal');
-        if (modal) {
-            modal.classList.add('show');
-        }
-    }
+
     
-    function closeDeleteAccountModal() {
-        const modal = document.getElementById('deleteAccountModal');
-        if (modal) {
-            modal.classList.remove('show');
-            document.getElementById('deleteConfirmation').value = '';
-        }
-    }
     
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
         initProfileEditing();
-        
-        // Add event listeners for modal controls
-        document.querySelectorAll('[onclick^="open"]').forEach(element => {
-            const onclick = element.getAttribute('onclick');
-            if (onclick.includes('openPasswordModal')) {
-                element.addEventListener('click', openPasswordModal);
-            } else if (onclick.includes('openDeleteAccountModal')) {
-                element.addEventListener('click', openDeleteAccountModal);
-            }
-        });
-        
-        document.querySelectorAll('[onclick^="close"]').forEach(element => {
-            const onclick = element.getAttribute('onclick');
-            if (onclick.includes('closePasswordModal')) {
-                element.addEventListener('click', closePasswordModal);
-            } else if (onclick.includes('closeDeleteAccountModal')) {
-                element.addEventListener('click', closeDeleteAccountModal);
-            } else if (onclick.includes('closeProfileModal')) {
-                element.addEventListener('click', closeProfileModal);
-            }
-        });
-    });
+    }
+
+  
 </script>
     <script>
     // Settings functionality
@@ -4508,26 +4238,7 @@ async function handleProfileSubmit(e) {
             }
         }
     
-        function goBackToDashboard() {
-            console.log("Going back to dashboard...");
-            
-            const mainContent = document.getElementById('mainContent');
-            const settingsPage = document.getElementById('settingsPage');
-            
-            if (mainContent && settingsPage) {
-                // Show all dashboard elements
-                const dashboardElements = mainContent.querySelectorAll('.hidden-content');
-                dashboardElements.forEach(el => {
-                    el.classList.remove('hidden-content');
-                });
-                
-                // Hide settings page
-                settingsPage.style.display = 'none';
-                
-                // Scroll to top
-                window.scrollTo(0, 0);
-            }
-        }
+       
 
     function loadSettingsData() {
         // Use the same data loading as profile modal
@@ -4774,6 +4485,63 @@ async function handleProfileSubmit(e) {
     document.addEventListener('DOMContentLoaded', function() {
         initSettings();
     });
+        Update the navigation item for settings:
+html
+<div class="nav-item" onclick="navigateTo('settings')"><i class="fas fa-cog"></i> Settings</div>
+Add SPA navigation functions:
+Add this JavaScript function to handle SPA navigation:
+
+javascript
+// SPA Navigation function
+function navigateTo(page) {
+    if (page === 'settings') {
+        // Store current scroll position
+        sessionStorage.setItem('dashboardScroll', window.scrollY);
+        
+        // Load settings page
+        fetch('dashboard-settings.html')
+            .then(response => response.text())
+            .then(html => {
+                document.body.innerHTML = html;
+                // Initialize settings page scripts
+                if (typeof initSettingsPage === 'function') {
+                    initSettingsPage();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading settings page:', error);
+                // Fallback to traditional navigation
+                window.location.href = 'dashboard-settings.html';
+            });
+    } else if (page === 'dashboard') {
+        // This would be handled in the settings page
+    }
+}
+
+// Back to dashboard function
+function goBackToDashboard() {
+    // Load dashboard page
+    fetch('dashboard.html')
+        .then(response => response.text())
+        .then(html => {
+            document.body.innerHTML = html;
+            // Restore scroll position
+            const savedScroll = sessionStorage.getItem('dashboardScroll');
+            if (savedScroll) {
+                setTimeout(() => {
+                    window.scrollTo(0, parseInt(savedScroll));
+                }, 100);
+            }
+            // Reinitialize dashboard
+            if (typeof initializeDashboard === 'function') {
+                initializeDashboard();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading dashboard:', error);
+            window.location.href = 'dashboard.html';
+        });
+}
 </script>
 </body>
 </html>
