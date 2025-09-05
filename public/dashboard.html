@@ -4489,28 +4489,54 @@ async function handleProfileSubmit(e) {
 
 // SPA Navigation function
 function navigateTo(page) {
+    const content = document.getElementById('content');
+
+    let targetFile = null;
     if (page === 'settings') {
-        // Store current scroll position
         sessionStorage.setItem('dashboardScroll', window.scrollY);
-        
-        // Load settings page
-        fetch('dashboard-settings.html')
+        targetFile = 'dashboard-settings.html';
+    } else if (page === 'dashboard') {
+        targetFile = 'dashboard.html';
+    }
+
+    if (!targetFile) return;
+
+    // Start fade-out
+    content.classList.add('fade-out');
+
+    setTimeout(() => {
+        fetch(targetFile)
             .then(response => response.text())
             .then(html => {
-                document.body.innerHTML = html;
-                // Initialize settings page scripts
-                if (typeof initSettingsPage === 'function') {
+                // Swap content
+                content.innerHTML = html;
+
+                // Trigger fade-in
+                content.classList.remove('fade-out');
+                content.classList.add('fade-in');
+
+                // After animation cleanup
+                setTimeout(() => content.classList.remove('fade-in'), 300);
+
+                // Reinitialize scripts if needed
+                if (page === 'settings' && typeof initSettingsPage === 'function') {
                     initSettingsPage();
+                }
+                if (page === 'dashboard' && typeof initializeDashboard === 'function') {
+                    const savedScroll = sessionStorage.getItem('dashboardScroll');
+                    if (savedScroll) {
+                        setTimeout(() => {
+                            window.scrollTo(0, parseInt(savedScroll));
+                        }, 100);
+                    }
+                    initializeDashboard();
                 }
             })
             .catch(error => {
-                console.error('Error loading settings page:', error);
-                // Fallback to traditional navigation
-                window.location.href = 'dashboard-settings.html';
+                console.error('Error loading page:', error);
+                window.location.href = targetFile; // fallback
             });
-    } else if (page === 'dashboard') {
-        // This would be handled in the settings page
-    }
+    }, 300); // matches fade-out duration
 }
 
 // Back to dashboard function
