@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Account Deletion - BHSS</title>
+    <link rel="icon" href="https://cdn.glitch.global/87942ebb-4f4c-494c-ae2d-2ce4d0b6cefb/logo.png?v=1747136438719" type="image/png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00D68F;
+            --error: #FF4757;
+            --dark-bg: #0D1117;
+            --text-dark: #FFFFFF;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .confirmation-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid var(--error);
+            text-align: center;
+        }
+        
+        .confirmation-icon {
+            font-size: 64px;
+            color: var(--error);
+            margin-bottom: 20px;
+        }
+        
+        .confirmation-title {
+            color: var(--error);
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .confirmation-message {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .user-info {
+            background: rgba(255, 71, 87, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .confirmation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .confirm-btn {
+            background: var(--error);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        
+        .confirm-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .cancel-btn {
+            background: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--text-dark);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid var(--error);
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .notification {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .notification.success {
+            background: rgba(0, 214, 143, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .notification.error {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <div class="confirmation-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        
+        <h1 class="confirmation-title">Confirm Account Deletion</h1>
+        
+        <div id="notification" class="notification"></div>
+        
+        <div id="userInfo" class="user-info" style="display: none;">
+            <p>Account: <span id="userEmail"></span></p>
+            <p>Name: <span id="userName"></span></p>
+        </div>
+        
+        <div id="confirmationContent">
+            <p class="confirmation-message">
+                You are about to permanently delete your BHSS account. This action cannot be undone.
+                All your data will be permanently removed from our servers.
+            </p>
+            
+            <div class="confirmation-buttons">
+                <button id="confirmBtn" class="confirm-btn" onclick="confirmDeletion()">
+                    <span id="confirmText">Confirm Deletion</span>
+                </button>
+                <button class="cancel-btn" onclick="cancelDeletion()">Cancel</button>
+            </div>
+        </div>
+        
+        <div id="successContent" style="display: none;">
+            <p class="confirmation-message">
+                Your account has been successfully deleted. You will be redirected shortly.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const userId = urlParams.get('id');
+        
+        // Verify token on page load
+        window.addEventListener('load', async () => {
+            if (!token || !userId) {
+                showNotification('Invalid deletion link. Please request a new deletion link from your account settings.', 'error');
+                document.getElementById('confirmationContent').style.display = 'none';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/user/verify-deletion-token?token=${token}&id=${userId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show user info
+                    document.getElementById('userEmail').textContent = result.user.email;
+                    document.getElementById('userName').textContent = result.user.fullName;
+                    document.getElementById('userInfo').style.display = 'block';
+                } else {
+                    showNotification(result.message || 'Invalid or expired deletion link', 'error');
+                    document.getElementById('confirmationContent').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Token verification error:', error);
+                showNotification('Error verifying deletion link. Please try again.', 'error');
+                document.getElementById('confirmationContent').style.display = 'none';
+            }
+        });
+        
+        async function confirmDeletion() {
+            const confirmBtn = document.getElementById('confirmBtn');
+            const confirmText = document.getElementById('confirmText');
+            
+            confirmBtn.disabled = true;
+            confirmText.innerHTML = '<span class="loading"></span> Deleting...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/user/confirm-account-deletion`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token, userId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    document.getElementById('confirmationContent').style.display = 'none';
+                    document.getElementById('successContent').style.display = 'block';
+                    
+                    // Redirect after delay
+                    setTimeout(() => {
+                        window.location.href = 'https://bhsciencesociety.vercel.app/index.html';
+                    }, 3000);
+                } else {
+                    showNotification(result.message || 'Failed to delete account', 'error');
+                    confirmBtn.disabled = false;
+                    confirmText.textContent = 'Confirm Deletion';
+                }
+            } catch (error) {
+                console.error('Deletion error:', error);
+                showNotification('Error deleting account. Please try again.', 'error');
+                confirmBtn.disabled = false;
+                confirmText.textContent = 'Confirm Deletion';
+            }
+        }
+        
+        function cancelDeletion() {
+            window.location.href = 'https://bhsciencesociety.vercel.app/dashboard.html';
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+        }
+        
+        // API base URL (same as in your settings page)
+        const API_BASE_URL = 'https://bhss-backend.up.railway.app';
+    </script>
+</body>
+</html>
