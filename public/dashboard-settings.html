@@ -581,59 +581,130 @@
             display: flex;
         }
 
-        .profile-modal {
+        .confirmation-modal {
             background: linear-gradient(135deg, rgba(22, 27, 34, 0.98), rgba(30, 35, 42, 0.98));
             border-radius: 20px;
-            padding: 30px;
+            padding: 35px;
             max-width: 500px;
             width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
             backdrop-filter: blur(20px);
-            border: 1px solid var(--primary);
+            border: 2px solid rgba(255, 71, 87, 0.4);
             position: relative;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            overflow: hidden;
         }
 
-        .light-mode .profile-modal {
+        .confirmation-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--error), #cc0000);
+            border-radius: 4px 4px 0 0;
+        }
+
+        .light-mode .confirmation-modal {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(245, 245, 245, 0.98));
+            border-color: rgba(255, 71, 87, 0.4);
         }
 
-        .profile-modal-header {
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--error), #cc0000);
+            border-radius: 50%;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(0, 214, 143, 0.3);
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.3);
         }
 
-        .profile-modal-header h2 {
-            color: var(--primary);
-            font-size: 1.5em;
+        .modal-title {
+            color: var(--error);
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-message {
+            color: var(--text-light);
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .light-mode .modal-message {
+            color: var(--text-dark);
+        }
+
+        .modal-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            color: var(--warning);
+            font-size: 0.95em;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--secondary);
-            font-size: 24px;
-            cursor: pointer;
-            width: 30px;
-            height: 30px;
+        .modal-actions {
             display: flex;
-            align-items: center;
+            gap: 15px;
             justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s ease;
         }
 
-        .close-modal:hover {
-            background: rgba(255, 71, 87, 0.3);
-            color: var(--error);
+        .modal-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 184, 217, 0.4);
+            color: var(--secondary);
+        }
+
+        .modal-btn-cancel:hover {
+            background: rgba(0, 184, 217, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 217, 0.2);
+        }
+
+        .modal-btn-confirm {
+            background: linear-gradient(135deg, var(--error), #cc0000);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .modal-btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4);
+        }
+
+        .modal-btn-confirm:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
         }
 
         /* Notification styles */
@@ -673,8 +744,8 @@
 
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         @keyframes pulse {
@@ -731,6 +802,19 @@
             
             .back-to-dashboard {
                 margin-right: 0;
+            }
+
+            .confirmation-modal {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-btn {
+                width: 100%;
             }
         }
     </style>
@@ -922,33 +1006,38 @@
             <div class="danger-zone">
               <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
               <p>Once you delete your account, there is no going back. Please be certain. All your data will be permanently removed from our servers.</p>
-              <button type="button" class="delete-btn" onclick="requestAccountDeletion()">
+              <button type="button" class="delete-btn" onclick="showAccountDeletionModal()">
                 <i class="fas fa-trash-alt"></i> Request Account Deletion
               </button>
             </div>
+        </div>
+    </div>
 
-    <!-- Delete Account Modal -->
-    <div class="modal-overlay" id="deleteAccountModal">
-        <div class="profile-modal">
-            <div class="profile-modal-header">
-                <h2><i class="fas fa-exclamation-triangle"></i> Delete Account</h2>
-                <button class="close-modal" onclick="closeDeleteAccountModal()">&times;</button>
+    <!-- Account Deletion Confirmation Modal -->
+    <div class="modal-overlay" id="accountDeletionModal">
+        <div class="confirmation-modal">
+            <div class="modal-icon">
+                <i class="fas fa-exclamation-triangle"></i>
             </div>
             
-            <div class="form-group full-width">
-                <p style="color: var(--error); margin-bottom: 20px;">
-                    <i class="fas fa-exclamation-circle"></i> Warning: This action cannot be undone. All your data will be permanently deleted.
-                </p>
+            <h2 class="modal-title">Delete Account?</h2>
+            
+            <p class="modal-message">
+                Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.
+            </p>
+            
+            <div class="modal-warning">
+                <i class="fas fa-info-circle"></i>
+                A confirmation email will be sent to your registered email address to complete the deletion process.
             </div>
             
-            <div class="form-group full-width">
-                <label class="form-label">To confirm, type "DELETE MY ACCOUNT" below:</label>
-                <input type="text" class="form-input" id="deleteConfirmation" name="deleteConfirmation" required>
-            </div>
-            
-            <div class="settings-actions">
-                <button type="button" class="profile-cancel-btn" onclick="closeDeleteAccountModal()">Cancel</button>
-                <button type="button" class="delete-btn" onclick="confirmAccountDeletion()">Delete My Account</button>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeAccountDeletionModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="modal-btn modal-btn-confirm" onclick="confirmAccountDeletion()">
+                    <i class="fas fa-check"></i> Yes, Delete Account
+                </button>
             </div>
         </div>
     </div>
@@ -1128,47 +1217,46 @@
         }
         
         // Update subjects display
-        // Update subjects display
-function updateSubjectsDisplay() {
-    const subjectsContainer = document.getElementById('subjectsContainer');
-    if (!subjectsContainer) return;
-    
-    subjectsContainer.innerHTML = '';
-    
-    // Check if we have subjects from dashboardInfo
-    const subjects = dashboardInfo.subjects || [];
-    
-    if (!subjects || subjects.length === 0) {
-        subjectsContainer.innerHTML = '<div class="no-subjects" style="color: var(--text-muted); padding: 10px; text-align: center;">No subjects selected</div>';
-        return;
-    }
-    
-    // Add CSS for subject chips if not already present
-    if (!document.getElementById('subjectChipsStyle')) {
-        const style = document.createElement('style');
-        style.id = 'subjectChipsStyle';
-        style.textContent = `
-            .subject-chip {
-                display: inline-block;
-                background: rgba(0, 214, 143, 0.2);
-                color: var(--primary);
-                padding: 6px 12px;
-                border-radius: 16px;
-                margin: 4px;
-                font-size: 0.9em;
-                border: 1px solid rgba(0, 214, 143, 0.3);
+        function updateSubjectsDisplay() {
+            const subjectsContainer = document.getElementById('subjectsContainer');
+            if (!subjectsContainer) return;
+            
+            subjectsContainer.innerHTML = '';
+            
+            // Check if we have subjects from dashboardInfo
+            const subjects = dashboardInfo.subjects || [];
+            
+            if (!subjects || subjects.length === 0) {
+                subjectsContainer.innerHTML = '<div class="no-subjects" style="color: var(--text-muted); padding: 10px; text-align: center;">No subjects selected</div>';
+                return;
             }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    subjects.forEach(subject => {
-        const subjectChip = document.createElement('div');
-        subjectChip.className = 'subject-chip';
-        subjectChip.textContent = subject;
-        subjectsContainer.appendChild(subjectChip);
-    });
-}
+            
+            // Add CSS for subject chips if not already present
+            if (!document.getElementById('subjectChipsStyle')) {
+                const style = document.createElement('style');
+                style.id = 'subjectChipsStyle';
+                style.textContent = `
+                    .subject-chip {
+                        display: inline-block;
+                        background: rgba(0, 214, 143, 0.2);
+                        color: var(--primary);
+                        padding: 6px 12px;
+                        border-radius: 16px;
+                        margin: 4px;
+                        font-size: 0.9em;
+                        border: 1px solid rgba(0, 214, 143, 0.3);
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            subjects.forEach(subject => {
+                const subjectChip = document.createElement('div');
+                subjectChip.className = 'subject-chip';
+                subjectChip.textContent = subject;
+                subjectsContainer.appendChild(subjectChip);
+            });
+        }
         
         // Populate form with profile data
         function populateSettingsForm(data) {
@@ -1493,23 +1581,35 @@ function updateSubjectsDisplay() {
             }
         }
         
-        // Handle account deletion
+        // Show account deletion modal
+        function showAccountDeletionModal() {
+            const modal = document.getElementById('accountDeletionModal');
+            if (modal) {
+                modal.classList.add('show');
+            }
+        }
+        
+        // Close account deletion modal
+        function closeAccountDeletionModal() {
+            const modal = document.getElementById('accountDeletionModal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+        
+        // Confirm account deletion and send email
         async function confirmAccountDeletion() {
-            const confirmation = document.getElementById('deleteConfirmation').value;
+            const confirmBtn = document.querySelector('.modal-btn-confirm');
+            const originalText = confirmBtn.innerHTML;
             
-            if (confirmation !== 'DELETE MY ACCOUNT') {
-                showNotification('Please type the confirmation phrase exactly as shown', 'error');
-                return;
-            }
-            
-            if (!confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
-                return;
-            }
+            // Show loading state
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="loading-spinner"></span> Sending Email...';
             
             try {
                 const token = getAuthToken();
-                const response = await fetch(`${API_BASE_URL}/api/user/account`, {
-                    method: 'DELETE',
+                const response = await fetch(`${API_BASE_URL}/api/user/request-account-deletion`, {
+                    method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -1519,34 +1619,18 @@ function updateSubjectsDisplay() {
                 const result = await response.json();
                 
                 if (result.success) {
-                    showNotification('Account deleted successfully');
-                    // Clear local storage and redirect to login
-                    localStorage.clear();
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
+                    showNotification('Account deletion confirmation link sent to your email. Please check your inbox.', 'success');
+                    closeAccountDeletionModal();
                 } else {
-                    showNotification(result.message || 'Failed to delete account', 'error');
+                    showNotification(result.message || 'Failed to request account deletion', 'error');
                 }
             } catch (error) {
-                console.error('Account deletion error:', error);
-                showNotification('Error deleting account. Please try again.', 'error');
-            }
-        }
-        
-        // Modal control functions
-        function openDeleteAccountModal() {
-            const modal = document.getElementById('deleteAccountModal');
-            if (modal) {
-                modal.classList.add('show');
-            }
-        }
-        
-        function closeDeleteAccountModal() {
-            const modal = document.getElementById('deleteAccountModal');
-            if (modal) {
-                modal.classList.remove('show');
-                document.getElementById('deleteConfirmation').value = '';
+                console.error('Account deletion request error:', error);
+                showNotification('Error requesting account deletion. Please try again.', 'error');
+            } finally {
+                // Reset button state
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = originalText;
             }
         }
         
@@ -1673,52 +1757,23 @@ function updateSubjectsDisplay() {
             }
         }
         
+        // Close modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('accountDeletionModal');
+            if (event.target === modal) {
+                closeAccountDeletionModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        window.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAccountDeletionModal();
+            }
+        });
+        
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', initSettingsPage);
     </script>
-            <script>
-                // Request account deletion
-async function requestAccountDeletion() {
-  if (!confirm('Are you sure you want to delete your account? This will send a confirmation link to your email.')) {
-    return;
-  }
-
-  try {
-    const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/api/user/request-account-deletion`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const result = await response.json();
-    
-    if (result.success) {
-      showNotification('Account deletion confirmation link sent to your email. Please check your inbox.', 'success');
-    } else {
-      showNotification(result.message || 'Failed to request account deletion', 'error');
-    }
-  } catch (error) {
-    console.error('Account deletion request error:', error);
-    showNotification('Error requesting account deletion. Please try again.', 'error');
-  }
-}
-
-// Remove the old confirmAccountDeletion function and replace it with:
-function openDeleteAccountModal() {
-  // This is no longer needed since we're using email confirmation
-  showNotification('Please use the "Request Account Deletion" button to start the deletion process.', 'info');
-}
-
-function closeDeleteAccountModal() {
-  // This is no longer needed
-  const modal = document.getElementById('deleteAccountModal');
-  if (modal) {
-    modal.classList.remove('show');
-  }
-}
-            </script>
 </body>
 </html>
