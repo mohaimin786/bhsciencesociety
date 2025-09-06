@@ -141,12 +141,24 @@
         <h1 class="confirmation-title">Confirm Account Deletion</h1>
         
         <div id="notification" class="notification"></div>
-        
-        <div id="userInfo" class="user-info" style="display: none;">
-            <p>Account: <span id="userEmail"></span></p>
-            <p>Name: <span id="userName"></span></p>
+        <div class="form-group">
+          <label for="deletionReason">Reason for deletion (required):</label>
+          <textarea 
+            id="deletionReason" 
+            name="deletionReason" 
+            rows="4" 
+            placeholder="Please tell us why you want to delete your account (minimum 10 characters)"
+            minlength="10"
+            required
+          ></textarea>
+          <small>Minimum 10 characters required</small>
         </div>
-        
+        <div id="userInfo" class="user-info" style="display: none;">
+          <p>Account: <span id="userEmail"></span></p>
+          <p>Name: <span id="userName"></span></p>
+          <p>Reason: <span id="deletionReason"></span></p>
+        </div>
+                
         <div id="confirmationContent">
             <p class="confirmation-message">
                 You are about to permanently delete your BHSS account. This action cannot be undone.
@@ -169,6 +181,8 @@
     </div>
 
     <script>
+          const API_BASE_URL = 'https://bhss-backend.up.railway.app';
+
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
         const userId = urlParams.get('id');
@@ -189,6 +203,8 @@
                     // Show user info
                     document.getElementById('userEmail').textContent = result.user.email;
                     document.getElementById('userName').textContent = result.user.fullName;
+                    document.getElementById('deletionReason').textContent = result.reason;
+
                     document.getElementById('userInfo').style.display = 'block';
                 } else {
                     showNotification(result.message || 'Invalid or expired deletion link', 'error');
