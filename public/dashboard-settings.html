@@ -920,14 +920,12 @@
             
             <!-- Danger Zone -->
             <div class="danger-zone">
-                <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
-                <p>Once you delete your account, there is no going back. Please be certain. All your data will be permanently removed from our servers.</p>
-                <button type="button" class="delete-btn" onclick="openDeleteAccountModal()">
-                    <i class="fas fa-trash-alt"></i> Delete Account
-                </button>
+              <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+              <p>Once you delete your account, there is no going back. Please be certain. All your data will be permanently removed from our servers.</p>
+              <button type="button" class="delete-btn" onclick="requestAccountDeletion()">
+                <i class="fas fa-trash-alt"></i> Request Account Deletion
+              </button>
             </div>
-        </div>
-    </div>
 
     <!-- Delete Account Modal -->
     <div class="modal-overlay" id="deleteAccountModal">
@@ -1678,5 +1676,49 @@ function updateSubjectsDisplay() {
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', initSettingsPage);
     </script>
+            <script>
+                // Request account deletion
+async function requestAccountDeletion() {
+  if (!confirm('Are you sure you want to delete your account? This will send a confirmation link to your email.')) {
+    return;
+  }
+
+  try {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/api/user/request-account-deletion`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const result = await response.json();
+    
+    if (result.success) {
+      showNotification('Account deletion confirmation link sent to your email. Please check your inbox.', 'success');
+    } else {
+      showNotification(result.message || 'Failed to request account deletion', 'error');
+    }
+  } catch (error) {
+    console.error('Account deletion request error:', error);
+    showNotification('Error requesting account deletion. Please try again.', 'error');
+  }
+}
+
+// Remove the old confirmAccountDeletion function and replace it with:
+function openDeleteAccountModal() {
+  // This is no longer needed since we're using email confirmation
+  showNotification('Please use the "Request Account Deletion" button to start the deletion process.', 'info');
+}
+
+function closeDeleteAccountModal() {
+  // This is no longer needed
+  const modal = document.getElementById('deleteAccountModal');
+  if (modal) {
+    modal.classList.remove('show');
+  }
+}
+            </script>
 </body>
 </html>
