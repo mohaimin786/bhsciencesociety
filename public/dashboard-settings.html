@@ -155,7 +155,7 @@
         }
 
         .profile-completion::before {
-            content: '📊';
+     
             position: absolute;
             top: -15px;
             right: 20px;
@@ -510,7 +510,7 @@
         }
 
         .danger-zone::before {
-            content: '⚠️';
+            
             position: absolute;
             top: -15px;
             right: 20px;
@@ -1130,24 +1130,47 @@
         }
         
         // Update subjects display
-        function updateSubjectsDisplay() {
-            const subjectsContainer = document.getElementById('subjectsContainer');
-            if (!subjectsContainer) return;
-            
-            subjectsContainer.innerHTML = '';
-            
-            if (!dashboardInfo.subjects || dashboardInfo.subjects.length === 0) {
-                subjectsContainer.innerHTML = '<div class="no-subjects">No subjects selected</div>';
-                return;
+        // Update subjects display
+function updateSubjectsDisplay() {
+    const subjectsContainer = document.getElementById('subjectsContainer');
+    if (!subjectsContainer) return;
+    
+    subjectsContainer.innerHTML = '';
+    
+    // Check if we have subjects from dashboardInfo
+    const subjects = dashboardInfo.subjects || [];
+    
+    if (!subjects || subjects.length === 0) {
+        subjectsContainer.innerHTML = '<div class="no-subjects" style="color: var(--text-muted); padding: 10px; text-align: center;">No subjects selected</div>';
+        return;
+    }
+    
+    // Add CSS for subject chips if not already present
+    if (!document.getElementById('subjectChipsStyle')) {
+        const style = document.createElement('style');
+        style.id = 'subjectChipsStyle';
+        style.textContent = `
+            .subject-chip {
+                display: inline-block;
+                background: rgba(0, 214, 143, 0.2);
+                color: var(--primary);
+                padding: 6px 12px;
+                border-radius: 16px;
+                margin: 4px;
+                font-size: 0.9em;
+                border: 1px solid rgba(0, 214, 143, 0.3);
             }
-            
-            dashboardInfo.subjects.forEach(subject => {
-                const subjectChip = document.createElement('div');
-                subjectChip.className = 'subject-chip';
-                subjectChip.textContent = subject;
-                subjectsContainer.appendChild(subjectChip);
-            });
-        }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    subjects.forEach(subject => {
+        const subjectChip = document.createElement('div');
+        subjectChip.className = 'subject-chip';
+        subjectChip.textContent = subject;
+        subjectsContainer.appendChild(subjectChip);
+    });
+}
         
         // Populate form with profile data
         function populateSettingsForm(data) {
@@ -1156,8 +1179,8 @@
             // Basic info
             document.getElementById('fullName').value = data.fullName || '';
             document.getElementById('email').value = data.email || '';
-            document.getElementById('phone').value = data.phone || '';
-            document.getElementById('dob').value = data.dob || '';
+            document.getElementById('phone').value = dashboardInfo.phone || '';
+            document.getElementById('dob').value = dashboardInfo.dob || '';
             
             // Academic info - use dashboard info if available
             document.getElementById('grade').value = dashboardInfo.grade || data.grade || '';
