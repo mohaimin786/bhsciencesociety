@@ -184,7 +184,7 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE_URL}/api/user/verify-deletion-token?token=${token}&id=${userId}`);
+                const response = await fetch(`${API_BASE_URL}/api/user/verify-deletion-token?token=${encodeURIComponent(token)}&id=${encodeURIComponent(userId)}`);
                 const result = await response.json();
                 
                 if (result.success) {
